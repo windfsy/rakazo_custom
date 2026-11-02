@@ -34,7 +34,8 @@ export function honchoEnvironment(input: HonchoConfiguration): Record<string, st
 export async function honchoRedisReachable(cacheUrl: string, overrideHost?: string) {
   const redis = await import("node:net");
   const url = new URL(cacheUrl);
-  const host = overrideHost || (url.hostname === "host.docker.internal" ? "127.0.0.1" : url.hostname);
+  const host =
+    overrideHost || (url.hostname === "host.docker.internal" ? "127.0.0.1" : url.hostname);
   return new Promise<boolean>((resolve) => {
     const socket = redis.createConnection({
       host,
@@ -57,6 +58,9 @@ export async function honchoRedisReachable(cacheUrl: string, overrideHost?: stri
 /** A shared queue across restarts lives in Postgres; stopping only stops its consumers. */
 export function createHonchoService(docker: Docker) {
   let pending: Promise<void> | undefined;
+  // Resolved by ensureImage, so the schema check can tell whether the running
+  // container came from the image being applied.
+  let imageDigest: string | undefined;
   const fingerprint = (input: HonchoConfiguration) =>
     createHash("sha256").update(JSON.stringify(input)).digest("hex");
   const appliedFingerprint = (input: HonchoConfiguration) =>
@@ -87,7 +91,8 @@ export function createHonchoService(docker: Docker) {
 
   async function ensureImage() {
     try {
-      await docker.getImage(image).inspect();
+      const info = await docker.getImage(image).inspect();
+      imageDigest = info.Id;
     } catch (error) {
       if ((error as { statusCode?: number }).statusCode !== 404) throw error;
       throw new Error("Honcho image is missing. Run `pnpm honcho:build`.");
@@ -159,38 +164,68 @@ export function createHonchoService(docker: Docker) {
     return container;
   }
 
+  /**
+   * Whether Alembic and the schema step still need to run.
+   *
+   * A running API container proves the schema matches its embedding
+   * dimensions: the startup validator refuses to boot otherwise, and Alembic
+   * has already migrated this database. So when the previous API ran the exact
+   * configuration being applied, both steps are no-ops and starting a
+   * migration container only costs time.
+   */
+  async function schemaUpToDate(input: HonchoConfiguration) {
+    try {
+      const info = await docker.getContainer(`${managed.name}-api`).inspect();
+      if (!info.State.Running) return false;
+      if (info.Config.Labels["rakazo.honcho.config"] !== appliedFingerprint(input)) return false;
+      // A different image may carry new migrations.
+      return info.Image === imageDigest;
+    } catch {
+      return false;
+    }
+  }
+
   async function apply(input: HonchoConfiguration) {
     if (pending) return pending;
     pending = (async () => {
       await ensureImage();
-      // Alembic owns the schema in its own database. Only one process runs it.
-      const migration = docker.getContainer(`${managed.name}-migrate`);
-      try {
-        const info = await migration.inspect();
-        if (info.State.Running) await migration.wait();
-        await migration.remove();
-      } catch (error) {
-        if ((error as { statusCode?: number }).statusCode !== 404) throw error;
+      if (!(await schemaUpToDate(input))) {
+        // Alembic owns the schema in its own database. Only one process runs it.
+        const migration = docker.getContainer(`${managed.name}-migrate`);
+        try {
+          const info = await migration.inspect();
+          if (info.State.Running) await migration.wait();
+          await migration.remove();
+        } catch (error) {
+          if ((error as { statusCode?: number }).statusCode !== 404) throw error;
+        }
+        const networkName = await network();
+        const migrate = await docker.createContainer({
+          name: `${managed.name}-migrate`,
+          Image: image,
+          // Alembic creates the default vector(1536) schema; configure_embeddings
+          // then ALTERs the columns to EMBEDDING_VECTOR_DIMENSIONS so the
+          // startup validators don't crash-loop on a non-default dimension.
+          Cmd: ["sh", "-c", "alembic upgrade head && python scripts/configure_embeddings.py --yes"],
+          Env: Object.entries(environment(input)).map(([key, value]) => `${key}=${value}`),
+          Labels: {
+            "rakazo.managed": "honcho",
+            "rakazo.honcho.config": appliedFingerprint(input),
+          },
+          HostConfig: { AutoRemove: false, ...(networkName ? { NetworkMode: networkName } : {}) },
+        });
+        await migrate.start();
+        const result = await migrate.wait();
+        await migrate.remove();
+        if (result.StatusCode !== 0)
+          throw new Error(`Honcho migration failed (${result.StatusCode})`);
       }
-      const networkName = await network();
-      const migrate = await docker.createContainer({
-        name: `${managed.name}-migrate`,
-        Image: image,
-        // Alembic creates the default vector(1536) schema; configure_embeddings
-        // then ALTERs the columns to EMBEDDING_VECTOR_DIMENSIONS so the
-        // startup validators don't crash-loop on a non-default dimension.
-        Cmd: ["sh", "-c", "alembic upgrade head && python scripts/configure_embeddings.py --yes"],
-        Env: Object.entries(environment(input)).map(([key, value]) => `${key}=${value}`),
-        Labels: { "rakazo.managed": "honcho", "rakazo.honcho.config": appliedFingerprint(input) },
-        HostConfig: { AutoRemove: false, ...(networkName ? { NetworkMode: networkName } : {}) },
-      });
-      await migrate.start();
-      const result = await migrate.wait();
-      await migrate.remove();
-      if (result.StatusCode !== 0)
-        throw new Error(`Honcho migration failed (${result.StatusCode})`);
-      await replace(`${managed.name}-api`, input, []);
-      await replace(`${managed.name}-deriver`, input, ["python", "-m", "src.deriver"]);
+      // The API and Deriver share a queue but not a lifecycle: replacing both
+      // at once halves the wait, and neither depends on the other's container.
+      await Promise.all([
+        replace(`${managed.name}-api`, input, []),
+        replace(`${managed.name}-deriver`, input, ["python", "-m", "src.deriver"]),
+      ]);
       for (let attempt = 0; attempt < 60; attempt++) {
         try {
           const response = await fetch(`${apiUrl}/health`, {

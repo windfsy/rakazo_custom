@@ -66,18 +66,6 @@ function managedHonchoEnabled() {
   return process.env.HONCHO_MANAGED === "true" && Boolean(process.env.HONCHO_ADMIN_TOKEN);
 }
 
-/** Cheap liveness check: is there a Honcho API to validate against right now? */
-async function honchoApiReachable(honchoUrl: string) {
-  try {
-    const response = await fetch(`${honchoUrl.replace(/\/$/, "")}/health`, {
-      signal: AbortSignal.timeout(3000),
-    });
-    return response.ok;
-  } catch {
-    return false;
-  }
-}
-
 export function managedHonchoDeps(deps: ManagedHonchoDeps): ManagedHonchoDeps {
   return {
     ...deps,
@@ -461,7 +449,8 @@ async function reconcileManagedHoncho(
       };
       // Surface missing credentials as a setup step, not a provider failure:
       // the reconcile runs while the account has no model connection yet.
-      const reasoningKey = models[models.LLM_UNIFIED_MODEL_CONFIG__OVERRIDES__API_KEY_ENV || "LLM_OPENAI_API_KEY"];
+      const reasoningKey =
+        models[models.LLM_UNIFIED_MODEL_CONFIG__OVERRIDES__API_KEY_ENV || "LLM_OPENAI_API_KEY"];
       if (!reasoningKey) throw new Error("Connect a model before starting Honcho.");
       if (!models.HONCHO_EMBEDDING_API_KEY || models.HONCHO_EMBEDDING_API_KEY === "local") {
         if (!models.EMBEDDING_MODEL_CONFIG__OVERRIDES__BASE_URL) {
@@ -470,15 +459,15 @@ async function reconcileManagedHoncho(
       }
       const databaseUrl = process.env.HONCHO_DB_CONNECTION_URI;
       if (!databaseUrl) throw new Error("HONCHO_DB_CONNECTION_URI is not configured.");
-      // Validate against the running Honcho before touching containers. On a
-      // cold start there is no container to ask; the in-container probe after
-      // apply covers that case.
       const honchoUrl = process.env.HONCHO_URL || "http://127.0.0.1:8000";
       const validationInput = () => ({
         reasoning: {
           model: models.LLM_UNIFIED_MODEL_CONFIG__MODEL || "",
           transport: models.LLM_UNIFIED_MODEL_CONFIG__TRANSPORT || "openai",
-          apiKey: models[models.LLM_UNIFIED_MODEL_CONFIG__OVERRIDES__API_KEY_ENV || "LLM_OPENAI_API_KEY"] || "",
+          apiKey:
+            models[
+              models.LLM_UNIFIED_MODEL_CONFIG__OVERRIDES__API_KEY_ENV || "LLM_OPENAI_API_KEY"
+            ] || "",
           baseUrl: models.LLM_UNIFIED_MODEL_CONFIG__OVERRIDES__BASE_URL,
           ...(models.LLM_UNIFIED_MODEL_CONFIG__OVERRIDES__PROVIDER_PARAMS
             ? {
@@ -495,15 +484,6 @@ async function reconcileManagedHoncho(
           dimensions: settings.embeddingDimensions ?? 1536,
         },
       });
-      if (await honchoApiReachable(honchoUrl)) {
-        const validation = await validateManagedHonchoModels(
-          honchoUrl,
-          process.env.HONCHO_ADMIN_TOKEN,
-          validationInput(),
-        );
-        const validationError = honchoValidationErrorMessage(validation);
-        if (validationError) throw new Error(validationError);
-      }
       const response = await supervisorRequest(
         deps,
         restart ? "/honcho/restart" : "/honcho/apply",
@@ -517,14 +497,17 @@ async function reconcileManagedHoncho(
       );
       const result = object(await response.json());
       if (!response.ok) throw new Error(String(result.error || "Honcho could not be configured"));
-      // Post-apply probe with the new configuration live in-container.
-      const applied = await validateManagedHonchoModels(
+      // Probe once, after the containers run the configuration being applied.
+      // Probing before the swap would only tell us what the previous
+      // configuration did, and a bad configuration fails the swap's health
+      // check anyway, so a second round trip buys nothing.
+      const validation = await validateManagedHonchoModels(
         honchoUrl,
         process.env.HONCHO_ADMIN_TOKEN,
         validationInput(),
       );
-      const appliedError = honchoValidationErrorMessage(applied);
-      if (appliedError) throw new Error(appliedError);
+      const validationError = honchoValidationErrorMessage(validation);
+      if (validationError) throw new Error(validationError);
       await deps.prisma.honchoRuntimeState.update({
         where: { id: "default" },
         data: {
