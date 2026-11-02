@@ -7,6 +7,10 @@ x-app-environment: &app-environment
   NODE_ENV: ${NODE_ENV:-production}
   # The app's own login, subject to row-level security (docs/self-host-configuration.md#database-roles).
   DATABASE_URL: postgres://rakazo_app:${POSTGRES_APP_PASSWORD:?Set POSTGRES_APP_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:-rakazo}
+  # Honcho's runtime role never grants access to Rakazo tables.
+  HONCHO_MANAGED: ${HONCHO_MANAGED:-true}
+  HONCHO_URL: http://rakazo-honcho-api:8000
+  HONCHO_ADMIN_TOKEN: ${HONCHO_ADMIN_TOKEN:?Set HONCHO_ADMIN_TOKEN in .env}
   REALTIME_DATABASE_URL:
   DB_POOL_MAX:
   DATA_DIR: /data
@@ -257,6 +261,12 @@ x-app-environment: &app-environment
 services:
   postgres:
     image: ${POSTGRES_IMAGE:-postgres:18}
+    # pgvector is required by Honcho; install once in the persistent data directory's image layer.
+    build:
+      context: ../honcho
+      dockerfile: Dockerfile.postgres
+      args:
+        POSTGRES_IMAGE: ${POSTGRES_IMAGE:-postgres:18}
     # A Postgres 16 POSTGRES_IMAGE would ignore these mounts and open an empty database.
     entrypoint:
       - sh
@@ -289,6 +299,45 @@ services:
       timeout: 5s
       retries: 20
 
+  redis:
+    image: redis:8.2
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  honcho-db-init:
+    image: ${POSTGRES_IMAGE:-postgres:18}
+    command:
+      - sh
+      - -ec
+      - |
+        if ! psql "$$DATABASE_MIGRATION_URL" -tAc "SELECT 1 FROM pg_available_extensions WHERE name = 'vector'" | grep -q 1; then
+          echo 'PostgreSQL pgvector is required for Honcho.' >&2
+          exit 1
+        fi
+        psql "$$DATABASE_MIGRATION_URL" -v ON_ERROR_STOP=1 -tAc "SELECT 1 FROM pg_database WHERE datname = 'honcho'" | grep -q 1 || psql "$$DATABASE_MIGRATION_URL" -v ON_ERROR_STOP=1 -c 'CREATE DATABASE honcho OWNER ${POSTGRES_USER:-rakazo}'
+        psql "$$DATABASE_MIGRATION_URL" -d honcho -v ON_ERROR_STOP=1 -c 'CREATE EXTENSION IF NOT EXISTS vector'
+    environment:
+      DATABASE_MIGRATION_URL: postgres://${POSTGRES_USER:-rakazo}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:-rakazo}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  honcho-build:
+    build:
+      context: ../honcho
+    image: rakazo/honcho:local
+    command: ["true"]
+    restart: "no"
+    depends_on:
+      honcho-db-init:
+        condition: service_completed_successfully
+
   supervisor:
     build:
       context: ../..
@@ -310,6 +359,12 @@ services:
       SANDBOX_COMPUTER_EGRESS: ${SANDBOX_COMPUTER_EGRESS:-auto}
       SANDBOX_COMPUTER_DNS: ${SANDBOX_COMPUTER_DNS:-}
       SANDBOX_COMPUTER_MOUNTS: ${SANDBOX_COMPUTER_MOUNTS:-}
+      HONCHO_NETWORK: ${HONCHO_NETWORK:-rakazo_default}
+      HONCHO_INTERNAL_HOST: rakazo-honcho-api
+      HONCHO_URL: http://rakazo-honcho-api:8000
+      HONCHO_DB_CONNECTION_URI: postgresql+psycopg://${POSTGRES_USER:-rakazo}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/honcho
+      HONCHO_CACHE_URL: redis://redis:6379/1?suppress=true
+      HONCHO_ADMIN_TOKEN: ${HONCHO_ADMIN_TOKEN:?Set HONCHO_ADMIN_TOKEN in .env}
       LOG_LEVEL: ${LOG_LEVEL:-info}
       LOG_FORMAT: ${LOG_FORMAT:-}
       AXIOM_TOKEN: ${AXIOM_TOKEN:-}
@@ -325,6 +380,10 @@ services:
     depends_on:
       computer:
         condition: service_completed_successfully
+      honcho-build:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
 
   computer:
     image: rakazo/computer:local
@@ -369,6 +428,8 @@ services:
       <<: *app-environment
       # Sign-in, sessions, billing and inbound webhooks: API only.
       API_HOST: "0.0.0.0"
+      HONCHO_DB_CONNECTION_URI: postgresql+psycopg://${POSTGRES_USER:-rakazo}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/honcho
+      HONCHO_CACHE_URL: redis://redis:6379/1?suppress=true
       API_PORT:
       BETTER_AUTH_SECRET:
       BETTER_AUTH_URL:
@@ -488,3 +549,4 @@ volumes:
   postgres:
   pgdata:
   webassets:
+  redis:

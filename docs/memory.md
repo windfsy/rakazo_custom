@@ -28,7 +28,17 @@ their notes. In **Settings → Memory**, choose **Connect memory provider**:
 
 - **Supermemory**: its cloud service, or your own instance.
 - **Serenity**: choose **Recall and write**, or **Recall only** to keep it read-only.
-- **Honcho**: reads from an existing Honcho peer and never writes to it.
+- **Honcho**: the built-in service, Honcho Cloud, or an existing self-hosted instance.
+
+## Built-in Honcho
+
+With `HONCHO_MANAGED=true`, the personal Space owner can enable Honcho from **Settings → Memory**. New Spaces created by that owner select it automatically. Existing provider connections are never replaced.
+
+The supervisor runs Honcho API, Deriver and Alembic migrations. Honcho has a separate database in the shared PostgreSQL instance, with pgvector enabled, and uses Redis database 1 for caching. Its work queue is in PostgreSQL. The API binds to loopback by default; the Deriver is not exposed. `HONCHO_ADMIN_TOKEN` must be a separate random value of at least 32 characters; it is Honcho's static admin bearer (Rakazo-side addition). Rakazo sends it as the deployment credential; users never receive it.
+
+Reasoning follows the personal Space's main model, or a fixed Rakazo model connection; it is applied through Honcho's `LLM_UNIFIED_MODEL_CONFIG` (a Rakazo-side addition) instead of per-feature fan-out. Configure embeddings independently: the model, OpenAI-compatible base URL, API key and dimensions (pgvector's HNSW limit is 2000). A chat connection does not necessarily provide embeddings; for example, Opencode Go does not expose an `/embeddings` endpoint. The running Honcho validates both endpoints through its real client code paths (`/admin/validate_models`, a Rakazo-side addition) before the service is marked ready. OAuth connections are not silently reused.
+
+Only the personal Space owner can change the shared service's model, embeddings, Deriver concurrency or restart it. Other Spaces retain isolated workspaces and can choose the existing isolated/shared memory scope without seeing service credentials. Service failures leave `MEMORY.md` and chat available; the background coordinator retries pending changes using a PostgreSQL lease.
 
 Once connected, **Default scope** decides what bots share in the provider:
 
