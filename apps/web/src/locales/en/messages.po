@@ -156,6 +156,16 @@ msgstr "{0} TB"
 msgid "{0} will still respond to direct mentions."
 msgstr "{0} will still respond to direct mentions."
 
+#. placeholder {0}: label || endpoint
+#: src/pages/memory-providers/registry.ts
+msgid "{0}, read/write"
+msgstr "{0}, read/write"
+
+#. placeholder {0}: label || endpoint
+#: src/pages/memory-providers/registry.ts
+msgid "{0}, recall only"
+msgstr "{0}, recall only"
+
 #: src/lib/billing.ts
 msgid "{amount} / {period}"
 msgstr "{amount} / {period}"
@@ -791,6 +801,10 @@ msgstr "Anthropic Messages"
 msgid "Any model, with your own key"
 msgstr "Any model, with your own key"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "API"
+msgstr "API"
+
 #: src/components/AskCard.tsx
 #: src/lib/localized-provider-hint.ts
 #: src/pages/memory-providers/HonchoSettingsForm.tsx
@@ -824,6 +838,14 @@ msgstr "Appearance: {label}"
 #: src/components/AskCard.tsx
 msgid "Apply"
 msgstr "Apply"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Apply configuration"
+msgstr "Apply configuration"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Applying…"
+msgstr "Applying…"
 
 #: src/components/teach/SkillDraftCard.tsx
 msgid "Approval boundaries"
@@ -1100,9 +1122,18 @@ msgid "Browse MCP servers"
 msgstr "Browse MCP servers"
 
 #: src/pages/KnowledgeSection.tsx
+#: src/pages/memory-providers/ConnectionModeFields.tsx
 #: src/pages/shell/agent-import.tsx
 msgid "Built-in"
 msgstr "Built-in"
+
+#: src/pages/memory-providers/registry.ts
+msgid "Built-in Honcho"
+msgstr "Built-in Honcho"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Built-in service"
+msgstr "Built-in service"
 
 #: src/pages/shell/chat-header.tsx
 msgid "Call"
@@ -1294,6 +1325,10 @@ msgstr "Checking…"
 #: src/pages/shell/avatar-studio-popover.tsx
 msgid "Choose a bot shape, color, or upload an image"
 msgstr "Choose a bot shape, color, or upload an image"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Choose a connection"
+msgstr "Choose a connection"
 
 #: src/pages/ModelSettingsOverlay.tsx
 #: src/pages/shell/composer-error.tsx
@@ -1630,6 +1665,7 @@ msgstr "Connect your own API key in Models or choose Rakazo credits in Billing."
 #: src/components/ComputerDeviceSettings.tsx
 #: src/components/integrations/IntegrationSetup.tsx
 #: src/components/integrations/plugin-marketplace.tsx
+#: src/pages/ManagedHonchoSettings.tsx
 #: src/pages/McpOAuthCallback.tsx
 #: src/pages/MemorySettingsOverlay.tsx
 #: src/pages/PluginsOverlay.tsx
@@ -2529,6 +2565,14 @@ msgstr "Denied"
 msgid "Deny"
 msgstr "Deny"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Deriver"
+msgstr "Deriver"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Deriver workers"
+msgstr "Deriver workers"
+
 #: src/pages/Board.tsx
 #: src/pages/shell/agent-import.tsx
 msgid "Description"
@@ -2566,6 +2610,10 @@ msgstr "Dictation failed: {code}"
 #: src/lib/dictation.ts
 msgid "Dictation failed."
 msgstr "Dictation failed."
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Dimensions"
+msgstr "Dimensions"
 
 #: src/pages/shell/bot-panel.tsx
 msgid "Disable a tool"
@@ -2740,6 +2788,18 @@ msgstr "Email me a code"
 #: src/lib/user-error.ts
 msgid "Email verification required"
 msgstr "Email verification required"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Embedding API key"
+msgstr "Embedding API key"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Embedding base URL"
+msgstr "Embedding base URL"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Embedding model"
+msgstr "Embedding model"
 
 #. placeholder {0}: humanizeTool(toolName)
 #: src/pages/shell/bot-panel.tsx
@@ -2997,6 +3057,14 @@ msgstr "Finished."
 msgid "Finishing MCP connection…"
 msgstr "Finishing MCP connection…"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Fixed connection"
+msgstr "Fixed connection"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Follow main model"
+msgstr "Follow main model"
+
 #: src/pages/Auth.tsx
 msgid "Forgot password?"
 msgstr "Forgot password?"
@@ -3172,6 +3240,14 @@ msgstr "Hold to talk"
 #: src/components/composer/HoldToTalk.tsx
 msgid "Hold to talk, release to send"
 msgstr "Hold to talk, release to send"
+
+#: src/pages/memory-providers/registry.ts
+msgid "Honcho Cloud"
+msgstr "Honcho Cloud"
+
+#: src/pages/memory-providers/registry.ts
+msgid "Honcho Cloud ({workspaceId})"
+msgstr "Honcho Cloud ({workspaceId})"
 
 #: src/lib/cron.ts
 msgid "hour"
@@ -3494,6 +3570,10 @@ msgstr "Load web images automatically"
 msgid "Loading activity…"
 msgstr "Loading activity…"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Loading Honcho status…"
+msgstr "Loading Honcho status…"
+
 #: src/pages/PluginsOverlay.tsx
 msgid "Loading integrations…"
 msgstr "Loading integrations…"
@@ -3815,6 +3895,10 @@ msgstr "Model"
 msgid "Model \"{modelId}\" was not listed."
 msgstr "Model \"{modelId}\" was not listed."
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Model connection"
+msgstr "Model connection"
+
 #: src/pages/shell/bot-panel.tsx
 msgid "Model connections"
 msgstr "Model connections"
@@ -3946,6 +4030,10 @@ msgstr "Needs an answer"
 #: src/lib/user-error.ts
 msgid "Needs an OAuth client ID"
 msgstr "Needs an OAuth client ID"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Needs attention"
+msgstr "Needs attention"
 
 #: src/pages/ActivityList.tsx
 msgid "Needs input"
@@ -4526,6 +4614,10 @@ msgstr "Post \"No changes\" in chat"
 msgid "POST to"
 msgstr "POST to"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "PostgreSQL"
+msgstr "PostgreSQL"
+
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Preferences"
 msgstr "Preferences"
@@ -4636,6 +4728,10 @@ msgstr "Reason"
 msgid "Reasoning effort"
 msgstr "Reasoning effort"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Reasoning model"
+msgstr "Reasoning model"
+
 #: src/pages/memory-providers/SerenitySettingsForm.tsx
 msgid "Recall and write"
 msgstr "Recall and write"
@@ -4733,6 +4829,10 @@ msgstr "Recruiting & HR"
 #: src/pages/McpServersOverlay.tsx
 msgid "Redirect URI"
 msgstr "Redirect URI"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Redis cache"
+msgstr "Redis cache"
 
 #: src/App.tsx
 #: src/components/ErrorBoundary.tsx
@@ -4960,6 +5060,10 @@ msgstr "Resize panel"
 msgid "Responses"
 msgstr "Responses"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Restart"
+msgstr "Restart"
+
 #: src/components/DesktopUpdates.tsx
 msgid "Restart to update"
 msgstr "Restart to update"
@@ -5080,6 +5184,7 @@ msgstr "running"
 
 #: src/components/SubagentCard.tsx
 #: src/pages/ActivityList.tsx
+#: src/pages/ManagedHonchoSettings.tsx
 #: src/pages/RoutineEditor.tsx
 msgid "Running"
 msgstr "Running"
@@ -5267,6 +5372,12 @@ msgstr "Select a bot"
 #: src/pages/memory-providers/ConnectionModeFields.tsx
 msgid "Self-hosted"
 msgstr "Self-hosted"
+
+#. placeholder {0}: baseUrl ?? ""
+#. placeholder {0}: config.settings.baseUrl ?? ""
+#: src/pages/memory-providers/registry.ts
+msgid "Self-hosted ({0})"
+msgstr "Self-hosted ({0})"
 
 #: src/pages/shell/composer.tsx
 msgid "Send"
@@ -5659,6 +5770,10 @@ msgstr "Stop speaking"
 msgid "Stop teaching"
 msgstr "Stop teaching"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Stopped"
+msgstr "Stopped"
+
 #. js-lingui-explicit-id
 #: src/lib/browser-notifications.ts
 msgid "Stopped."
@@ -5713,6 +5828,10 @@ msgstr "Subscription required"
 #: src/lib/cron.ts
 msgid "Sunday"
 msgstr "Sunday"
+
+#: src/pages/memory-providers/registry.ts
+msgid "Supermemory Cloud"
+msgstr "Supermemory Cloud"
 
 #: src/pages/model-settings/compatible-model-fields.tsx
 #: src/pages/Onboarding.tsx
@@ -6259,6 +6378,10 @@ msgstr "Use {oauthEnvReference} for the access token."
 #: src/pages/Onboarding.tsx
 msgid "Use a found model"
 msgstr "Use a found model"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Use an OpenAI-compatible embeddings service; chat providers may not support embeddings."
+msgstr "Use an OpenAI-compatible embeddings service; chat providers may not support embeddings."
 
 #: src/lib/model-connection-preflight.ts
 msgid "Use Connect to verify the key."

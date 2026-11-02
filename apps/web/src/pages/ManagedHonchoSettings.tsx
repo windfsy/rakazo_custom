@@ -1,3 +1,4 @@
+import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import type { ManagedHonchoStatus, SpaceMemoryConfig } from "@rakazo/contracts";
 import {
@@ -81,7 +82,7 @@ export function ManagedHonchoSettings({
     }
   }
 
-  if (!status) return <Spinner aria-label="Loading Honcho status…" />;
+  if (!status) return <Spinner aria-label={t`Loading Honcho status…`} />;
   if (!status.canManage) return null;
   return (
     <div className="mt-4 space-y-4 border-t border-border pt-4">

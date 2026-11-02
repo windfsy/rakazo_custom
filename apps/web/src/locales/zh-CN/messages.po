@@ -156,6 +156,16 @@ msgstr "{0} TB"
 msgid "{0} will still respond to direct mentions."
 msgstr "{0} 被直接 @ 时仍会回复。"
 
+#. placeholder {0}: label || endpoint
+#: src/pages/memory-providers/registry.ts
+msgid "{0}, read/write"
+msgstr "{0}，读写"
+
+#. placeholder {0}: label || endpoint
+#: src/pages/memory-providers/registry.ts
+msgid "{0}, recall only"
+msgstr "{0}，仅回忆"
+
 #: src/lib/billing.ts
 msgid "{amount} / {period}"
 msgstr "{amount} / {period}"
@@ -791,6 +801,10 @@ msgstr ""
 msgid "Any model, with your own key"
 msgstr "任意模型，使用你自己的密钥"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "API"
+msgstr "API"
+
 #: src/components/AskCard.tsx
 #: src/lib/localized-provider-hint.ts
 #: src/pages/memory-providers/HonchoSettingsForm.tsx
@@ -824,6 +838,14 @@ msgstr ""
 #: src/components/AskCard.tsx
 msgid "Apply"
 msgstr "应用"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Apply configuration"
+msgstr "应用配置"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Applying…"
+msgstr "正在应用…"
 
 #: src/components/teach/SkillDraftCard.tsx
 msgid "Approval boundaries"
@@ -1100,9 +1122,18 @@ msgid "Browse MCP servers"
 msgstr "浏览 MCP 服务器"
 
 #: src/pages/KnowledgeSection.tsx
+#: src/pages/memory-providers/ConnectionModeFields.tsx
 #: src/pages/shell/agent-import.tsx
 msgid "Built-in"
 msgstr "内置"
+
+#: src/pages/memory-providers/registry.ts
+msgid "Built-in Honcho"
+msgstr "内置 Honcho"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Built-in service"
+msgstr "内置服务"
 
 #: src/pages/shell/chat-header.tsx
 msgid "Call"
@@ -1294,6 +1325,10 @@ msgstr "正在检查…"
 #: src/pages/shell/avatar-studio-popover.tsx
 msgid "Choose a bot shape, color, or upload an image"
 msgstr "选择机器人形状和颜色，或上传图片"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Choose a connection"
+msgstr "选择连接"
 
 #: src/pages/ModelSettingsOverlay.tsx
 #: src/pages/shell/composer-error.tsx
@@ -1630,6 +1665,7 @@ msgstr "请在“模型”中连接你自己的 API 密钥，或在“账单”�
 #: src/components/ComputerDeviceSettings.tsx
 #: src/components/integrations/IntegrationSetup.tsx
 #: src/components/integrations/plugin-marketplace.tsx
+#: src/pages/ManagedHonchoSettings.tsx
 #: src/pages/McpOAuthCallback.tsx
 #: src/pages/MemorySettingsOverlay.tsx
 #: src/pages/PluginsOverlay.tsx
@@ -2529,6 +2565,14 @@ msgstr "已拒绝"
 msgid "Deny"
 msgstr "拒绝"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Deriver"
+msgstr "提取器"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Deriver workers"
+msgstr "提取器工作进程数"
+
 #: src/pages/Board.tsx
 #: src/pages/shell/agent-import.tsx
 msgid "Description"
@@ -2566,6 +2610,10 @@ msgstr ""
 #: src/lib/dictation.ts
 msgid "Dictation failed."
 msgstr ""
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Dimensions"
+msgstr "维度"
 
 #: src/pages/shell/bot-panel.tsx
 msgid "Disable a tool"
@@ -2740,6 +2788,18 @@ msgstr "把验证码发到我的邮箱"
 #: src/lib/user-error.ts
 msgid "Email verification required"
 msgstr "需要验证邮箱"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Embedding API key"
+msgstr "嵌入模型 API 密钥"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Embedding base URL"
+msgstr "嵌入模型 Base URL"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Embedding model"
+msgstr "嵌入模型"
 
 #. placeholder {0}: humanizeTool(toolName)
 #: src/pages/shell/bot-panel.tsx
@@ -2997,6 +3057,14 @@ msgstr "已完成。"
 msgid "Finishing MCP connection…"
 msgstr "正在完成 MCP 连接…"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Fixed connection"
+msgstr "固定连接"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Follow main model"
+msgstr "跟随主模型"
+
 #: src/pages/Auth.tsx
 msgid "Forgot password?"
 msgstr "忘记密码？"
@@ -3172,6 +3240,14 @@ msgstr "按住说话"
 #: src/components/composer/HoldToTalk.tsx
 msgid "Hold to talk, release to send"
 msgstr "按住说话，松开发送"
+
+#: src/pages/memory-providers/registry.ts
+msgid "Honcho Cloud"
+msgstr "Honcho 云端"
+
+#: src/pages/memory-providers/registry.ts
+msgid "Honcho Cloud ({workspaceId})"
+msgstr "Honcho 云端（{workspaceId}）"
 
 #: src/lib/cron.ts
 msgid "hour"
@@ -3494,6 +3570,10 @@ msgstr "自动加载网络图片"
 msgid "Loading activity…"
 msgstr "正在加载动态…"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Loading Honcho status…"
+msgstr "正在加载 Honcho 状态…"
+
 #: src/pages/PluginsOverlay.tsx
 msgid "Loading integrations…"
 msgstr "正在加载集成…"
@@ -3815,6 +3895,10 @@ msgstr "模型"
 msgid "Model \"{modelId}\" was not listed."
 msgstr "模型“{modelId}”未列出。"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Model connection"
+msgstr "模型连接"
+
 #: src/pages/shell/bot-panel.tsx
 msgid "Model connections"
 msgstr "模型连接"
@@ -3946,6 +4030,10 @@ msgstr "等你回答"
 #: src/lib/user-error.ts
 msgid "Needs an OAuth client ID"
 msgstr "需要 OAuth 客户端 ID"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Needs attention"
+msgstr "需要处理"
 
 #: src/pages/ActivityList.tsx
 msgid "Needs input"
@@ -4526,6 +4614,10 @@ msgstr "在聊天中发布“无变化”"
 msgid "POST to"
 msgstr "POST 到"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "PostgreSQL"
+msgstr "PostgreSQL"
+
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Preferences"
 msgstr "偏好设置"
@@ -4636,6 +4728,10 @@ msgstr "原因"
 msgid "Reasoning effort"
 msgstr "推理强度"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Reasoning model"
+msgstr "推理模型"
+
 #: src/pages/memory-providers/SerenitySettingsForm.tsx
 msgid "Recall and write"
 msgstr "读取并写入"
@@ -4733,6 +4829,10 @@ msgstr "招聘与人事"
 #: src/pages/McpServersOverlay.tsx
 msgid "Redirect URI"
 msgstr "重定向 URI"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Redis cache"
+msgstr "Redis 缓存"
 
 #: src/App.tsx
 #: src/components/ErrorBoundary.tsx
@@ -4960,6 +5060,10 @@ msgstr "调整面板大小"
 msgid "Responses"
 msgstr ""
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Restart"
+msgstr "重启"
+
 #: src/components/DesktopUpdates.tsx
 msgid "Restart to update"
 msgstr "重启后更新"
@@ -5080,6 +5184,7 @@ msgstr "运行中"
 
 #: src/components/SubagentCard.tsx
 #: src/pages/ActivityList.tsx
+#: src/pages/ManagedHonchoSettings.tsx
 #: src/pages/RoutineEditor.tsx
 msgid "Running"
 msgstr "运行中"
@@ -5267,6 +5372,12 @@ msgstr "选择 Bot"
 #: src/pages/memory-providers/ConnectionModeFields.tsx
 msgid "Self-hosted"
 msgstr "自托管"
+
+#. placeholder {0}: baseUrl ?? ""
+#. placeholder {0}: config.settings.baseUrl ?? ""
+#: src/pages/memory-providers/registry.ts
+msgid "Self-hosted ({0})"
+msgstr "自托管（{0}）"
 
 #: src/pages/shell/composer.tsx
 msgid "Send"
@@ -5659,6 +5770,10 @@ msgstr "停止朗读"
 msgid "Stop teaching"
 msgstr "停止示范"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Stopped"
+msgstr "已停止"
+
 #. js-lingui-explicit-id
 #: src/lib/browser-notifications.ts
 msgid "Stopped."
@@ -5713,6 +5828,10 @@ msgstr "需要订阅"
 #: src/lib/cron.ts
 msgid "Sunday"
 msgstr "周日"
+
+#: src/pages/memory-providers/registry.ts
+msgid "Supermemory Cloud"
+msgstr "Supermemory 云端"
 
 #: src/pages/model-settings/compatible-model-fields.tsx
 #: src/pages/Onboarding.tsx
@@ -6259,6 +6378,10 @@ msgstr "访问令牌请使用 {oauthEnvReference}。"
 #: src/pages/Onboarding.tsx
 msgid "Use a found model"
 msgstr "使用找到的模型"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Use an OpenAI-compatible embeddings service; chat providers may not support embeddings."
+msgstr "请使用兼容 OpenAI 的嵌入服务；聊天模型提供商不一定支持嵌入。"
 
 #: src/lib/model-connection-preflight.ts
 msgid "Use Connect to verify the key."

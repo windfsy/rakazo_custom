@@ -1,3 +1,4 @@
+import { t } from "@lingui/core/macro";
 import type { SpaceMemoryConfig } from "@rakazo/contracts";
 import type { ComponentType } from "react";
 import { HonchoSettingsForm } from "./HonchoSettingsForm";
@@ -28,10 +29,10 @@ export const MEMORY_PROVIDER_SETTINGS: readonly MemoryProviderSettingsRegistrati
     SettingsForm: HonchoSettingsForm,
     connectedLabel: (config) => {
       const { mode, baseUrl, workspaceId } = config.settings;
-      if (mode === "managed") return "Built-in Honcho";
+      if (mode === "managed") return t`Built-in Honcho`;
       if (mode === "local")
-        return [`Self-hosted (${baseUrl})`, workspaceId].filter(Boolean).join(", ");
-      return workspaceId ? `Honcho Cloud (${workspaceId})` : "Honcho Cloud";
+        return [t`Self-hosted (${baseUrl ?? ""})`, workspaceId].filter(Boolean).join(", ");
+      return workspaceId ? t`Honcho Cloud (${workspaceId})` : t`Honcho Cloud`;
     },
   },
   {
@@ -40,8 +41,8 @@ export const MEMORY_PROVIDER_SETTINGS: readonly MemoryProviderSettingsRegistrati
     SettingsForm: SupermemorySettingsForm,
     connectedLabel: (config) =>
       config.settings.mode === "cloud"
-        ? "Supermemory Cloud"
-        : `Self-hosted (${config.settings.baseUrl})`,
+        ? t`Supermemory Cloud`
+        : t`Self-hosted (${config.settings.baseUrl ?? ""})`,
   },
   {
     id: "serenity",
@@ -50,8 +51,9 @@ export const MEMORY_PROVIDER_SETTINGS: readonly MemoryProviderSettingsRegistrati
     connectedLabel: (config) => {
       const label = config.settings.brainLabel?.trim();
       const endpoint = config.settings.endpoint ?? "Serenity";
-      const mode = config.settings.allowWrites === "true" ? "read/write" : "recall only";
-      return `${label || endpoint}, ${mode}`;
+      return config.settings.allowWrites === "true"
+        ? t`${label || endpoint}, read/write`
+        : t`${label || endpoint}, recall only`;
     },
   },
 ];

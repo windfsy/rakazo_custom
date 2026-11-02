@@ -156,6 +156,16 @@ msgstr "{0} TB"
 msgid "{0} will still respond to direct mentions."
 msgstr "{0} ימשיך להגיב לאזכורים ישירים."
 
+#. placeholder {0}: label || endpoint
+#: src/pages/memory-providers/registry.ts
+msgid "{0}, read/write"
+msgstr ""
+
+#. placeholder {0}: label || endpoint
+#: src/pages/memory-providers/registry.ts
+msgid "{0}, recall only"
+msgstr ""
+
 #: src/lib/billing.ts
 msgid "{amount} / {period}"
 msgstr "{amount} / {period}"
@@ -791,6 +801,10 @@ msgstr ""
 msgid "Any model, with your own key"
 msgstr "כל מודל, עם מפתח משלך"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "API"
+msgstr ""
+
 #: src/components/AskCard.tsx
 #: src/lib/localized-provider-hint.ts
 #: src/pages/memory-providers/HonchoSettingsForm.tsx
@@ -824,6 +838,14 @@ msgstr ""
 #: src/components/AskCard.tsx
 msgid "Apply"
 msgstr "החלה"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Apply configuration"
+msgstr ""
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Applying…"
+msgstr ""
 
 #: src/components/teach/SkillDraftCard.tsx
 msgid "Approval boundaries"
@@ -1100,9 +1122,18 @@ msgid "Browse MCP servers"
 msgstr "עיון בשרתי MCP"
 
 #: src/pages/KnowledgeSection.tsx
+#: src/pages/memory-providers/ConnectionModeFields.tsx
 #: src/pages/shell/agent-import.tsx
 msgid "Built-in"
 msgstr "מובנה"
+
+#: src/pages/memory-providers/registry.ts
+msgid "Built-in Honcho"
+msgstr ""
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Built-in service"
+msgstr ""
 
 #: src/pages/shell/chat-header.tsx
 msgid "Call"
@@ -1294,6 +1325,10 @@ msgstr "בודק…"
 #: src/pages/shell/avatar-studio-popover.tsx
 msgid "Choose a bot shape, color, or upload an image"
 msgstr "בחירת צורה או צבע לבוט, או העלאת תמונה"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Choose a connection"
+msgstr ""
 
 #: src/pages/ModelSettingsOverlay.tsx
 #: src/pages/shell/composer-error.tsx
@@ -1630,6 +1665,7 @@ msgstr "חבר מפתח API משלך במודלים או בחר בקרדיטים
 #: src/components/ComputerDeviceSettings.tsx
 #: src/components/integrations/IntegrationSetup.tsx
 #: src/components/integrations/plugin-marketplace.tsx
+#: src/pages/ManagedHonchoSettings.tsx
 #: src/pages/McpOAuthCallback.tsx
 #: src/pages/MemorySettingsOverlay.tsx
 #: src/pages/PluginsOverlay.tsx
@@ -2529,6 +2565,14 @@ msgstr "נדחה"
 msgid "Deny"
 msgstr "דחייה"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Deriver"
+msgstr ""
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Deriver workers"
+msgstr ""
+
 #: src/pages/Board.tsx
 #: src/pages/shell/agent-import.tsx
 msgid "Description"
@@ -2565,6 +2609,10 @@ msgstr ""
 
 #: src/lib/dictation.ts
 msgid "Dictation failed."
+msgstr ""
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Dimensions"
 msgstr ""
 
 #: src/pages/shell/bot-panel.tsx
@@ -2740,6 +2788,18 @@ msgstr ""
 #: src/lib/user-error.ts
 msgid "Email verification required"
 msgstr "נדרש אימות אימייל"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Embedding API key"
+msgstr ""
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Embedding base URL"
+msgstr ""
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Embedding model"
+msgstr ""
 
 #. placeholder {0}: humanizeTool(toolName)
 #: src/pages/shell/bot-panel.tsx
@@ -2997,6 +3057,14 @@ msgstr "הסתיים."
 msgid "Finishing MCP connection…"
 msgstr "משלים את חיבור ה-MCP…"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Fixed connection"
+msgstr ""
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Follow main model"
+msgstr ""
+
 #: src/pages/Auth.tsx
 msgid "Forgot password?"
 msgstr "שכחת סיסמה?"
@@ -3171,6 +3239,14 @@ msgstr ""
 
 #: src/components/composer/HoldToTalk.tsx
 msgid "Hold to talk, release to send"
+msgstr ""
+
+#: src/pages/memory-providers/registry.ts
+msgid "Honcho Cloud"
+msgstr ""
+
+#: src/pages/memory-providers/registry.ts
+msgid "Honcho Cloud ({workspaceId})"
 msgstr ""
 
 #: src/lib/cron.ts
@@ -3494,6 +3570,10 @@ msgstr "טעינה אוטומטית של תמונות מהרשת"
 msgid "Loading activity…"
 msgstr "טוען פעילות…"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Loading Honcho status…"
+msgstr ""
+
 #: src/pages/PluginsOverlay.tsx
 msgid "Loading integrations…"
 msgstr "טוען אינטגרציות…"
@@ -3815,6 +3895,10 @@ msgstr "מודל"
 msgid "Model \"{modelId}\" was not listed."
 msgstr "המודל \"{modelId}\" לא הופיע ברשימה."
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Model connection"
+msgstr ""
+
 #: src/pages/shell/bot-panel.tsx
 msgid "Model connections"
 msgstr "חיבורים למודלים"
@@ -3946,6 +4030,10 @@ msgstr "ממתין לתשובה"
 #: src/lib/user-error.ts
 msgid "Needs an OAuth client ID"
 msgstr "נדרש מזהה לקוח OAuth"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Needs attention"
+msgstr ""
 
 #: src/pages/ActivityList.tsx
 msgid "Needs input"
@@ -4526,6 +4614,10 @@ msgstr ""
 msgid "POST to"
 msgstr "POST אל"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "PostgreSQL"
+msgstr ""
+
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Preferences"
 msgstr "העדפות"
@@ -4636,6 +4728,10 @@ msgstr ""
 msgid "Reasoning effort"
 msgstr "רמת חשיבה"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Reasoning model"
+msgstr ""
+
 #: src/pages/memory-providers/SerenitySettingsForm.tsx
 msgid "Recall and write"
 msgstr "שליפה וכתיבה"
@@ -4733,6 +4829,10 @@ msgstr ""
 #: src/pages/McpServersOverlay.tsx
 msgid "Redirect URI"
 msgstr "כתובת הפניה (Redirect URI)"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Redis cache"
+msgstr ""
 
 #: src/App.tsx
 #: src/components/ErrorBoundary.tsx
@@ -4960,6 +5060,10 @@ msgstr "שינוי גודל החלונית"
 msgid "Responses"
 msgstr ""
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Restart"
+msgstr ""
+
 #: src/components/DesktopUpdates.tsx
 msgid "Restart to update"
 msgstr "הפעלה מחדש לעדכון"
@@ -5080,6 +5184,7 @@ msgstr "פועל"
 
 #: src/components/SubagentCard.tsx
 #: src/pages/ActivityList.tsx
+#: src/pages/ManagedHonchoSettings.tsx
 #: src/pages/RoutineEditor.tsx
 msgid "Running"
 msgstr "פועל"
@@ -5267,6 +5372,12 @@ msgstr "בחירת בוט"
 #: src/pages/memory-providers/ConnectionModeFields.tsx
 msgid "Self-hosted"
 msgstr "באירוח עצמי"
+
+#. placeholder {0}: baseUrl ?? ""
+#. placeholder {0}: config.settings.baseUrl ?? ""
+#: src/pages/memory-providers/registry.ts
+msgid "Self-hosted ({0})"
+msgstr ""
 
 #: src/pages/shell/composer.tsx
 msgid "Send"
@@ -5659,6 +5770,10 @@ msgstr "הפסקת ההקראה"
 msgid "Stop teaching"
 msgstr "הפסקת הלימוד"
 
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Stopped"
+msgstr ""
+
 #. js-lingui-explicit-id
 #: src/lib/browser-notifications.ts
 msgid "Stopped."
@@ -5713,6 +5828,10 @@ msgstr "נדרש מנוי"
 #: src/lib/cron.ts
 msgid "Sunday"
 msgstr "יום ראשון"
+
+#: src/pages/memory-providers/registry.ts
+msgid "Supermemory Cloud"
+msgstr ""
 
 #: src/pages/model-settings/compatible-model-fields.tsx
 #: src/pages/Onboarding.tsx
@@ -6259,6 +6378,10 @@ msgstr "השתמש ב-{oauthEnvReference} עבור אסימון הגישה."
 #: src/pages/Onboarding.tsx
 msgid "Use a found model"
 msgstr "שימוש במודל שנמצא"
+
+#: src/pages/ManagedHonchoSettings.tsx
+msgid "Use an OpenAI-compatible embeddings service; chat providers may not support embeddings."
+msgstr ""
 
 #: src/lib/model-connection-preflight.ts
 msgid "Use Connect to verify the key."
