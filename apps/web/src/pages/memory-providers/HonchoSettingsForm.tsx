@@ -15,7 +15,7 @@ export function HonchoSettingsForm({ busy, onConnect }: MemoryProviderSettingsFo
   const apiKeyId = useId();
   const workspaceId = useId();
   const workspaceErrorId = useId();
-  const [mode, setMode] = useState<ConnectionMode>("cloud");
+  const [mode, setMode] = useState<ConnectionMode>("managed");
   const [baseUrl, setBaseUrl] = useState("");
   const userPeerId = useId();
   const userPeerErrorId = useId();
@@ -29,16 +29,18 @@ export function HonchoSettingsForm({ busy, onConnect }: MemoryProviderSettingsFo
   const userPeerReserved = isReservedPeerId(userPeer.trim());
   const userPeerValid = !showUserPeer || (userPeerFormatValid && !userPeerReserved);
   const ready =
-    apiKey.trim().length >= 8 &&
-    workspaceValid &&
-    userPeerValid &&
-    (mode === "cloud" || Boolean(baseUrl.trim()));
+    mode === "managed" ||
+    (apiKey.trim().length >= 8 &&
+      workspaceValid &&
+      userPeerValid &&
+      (mode === "cloud" || Boolean(baseUrl.trim())));
 
   async function connect() {
     if (!ready) return;
     const draft: MemoryProviderConnectionDraft = {
       settings: {
         ...(mode === "local" ? { mode, baseUrl: baseUrl.trim() } : {}),
+        ...(mode === "managed" ? { mode } : {}),
         ...(showUserPeer && userPeer.trim() ? { userPeerId: userPeer.trim() } : {}),
         ...(workspace.trim() ? { workspaceId: workspace.trim() } : {}),
       },
@@ -57,74 +59,80 @@ export function HonchoSettingsForm({ busy, onConnect }: MemoryProviderSettingsFo
         onBaseUrlChange={setBaseUrl}
       />
 
-      <Field className="mt-4">
-        <FieldLabel htmlFor={apiKeyId}>
-          <Trans>API key</Trans>
-        </FieldLabel>
-        <Input
-          id={apiKeyId}
-          value={apiKey}
-          disabled={busy}
-          onChange={(event) => setApiKey(event.target.value)}
-          placeholder={mode === "cloud" ? "hch-…" : undefined}
-          type="password"
-          autoComplete="new-password"
-          maxLength={4096}
-        />
-      </Field>
+      {mode !== "managed" ? (
+        <>
+          <Field className="mt-4">
+            <FieldLabel htmlFor={apiKeyId}>
+              <Trans>API key</Trans>
+            </FieldLabel>
+            <Input
+              id={apiKeyId}
+              value={apiKey}
+              disabled={busy}
+              onChange={(event) => setApiKey(event.target.value)}
+              placeholder={mode === "cloud" ? "hch-…" : undefined}
+              type="password"
+              autoComplete="new-password"
+              maxLength={4096}
+            />
+          </Field>
 
-      <Field className="mt-4" data-invalid={workspaceValid ? undefined : true}>
-        <FieldLabel htmlFor={workspaceId}>
-          <Trans>Workspace</Trans>
-        </FieldLabel>
-        <Input
-          id={workspaceId}
-          value={workspace}
-          disabled={busy}
-          aria-invalid={workspaceValid ? undefined : true}
-          aria-describedby={workspaceValid ? undefined : workspaceErrorId}
-          onChange={(event) => setWorkspace(event.target.value)}
-          placeholder="rakazo-<space>"
-          maxLength={512}
-          autoComplete="off"
-        />
-        {!workspaceValid ? (
-          <FieldError id={workspaceErrorId}>
-            <Trans>Use up to 512 letters, digits, _ or -.</Trans>
-          </FieldError>
-        ) : null}
-      </Field>
-
-      {showUserPeer ? (
-        <Field className="mt-4" data-invalid={userPeerValid ? undefined : true}>
-          <FieldLabel htmlFor={userPeerId}>
-            <Trans>User peer</Trans>
-          </FieldLabel>
-          <Input
-            id={userPeerId}
-            value={userPeer}
-            disabled={busy}
-            aria-invalid={userPeerValid ? undefined : true}
-            aria-describedby={
-              userPeerValid ? userPeerDescriptionId : `${userPeerDescriptionId} ${userPeerErrorId}`
-            }
-            onChange={(event) => setUserPeer(event.target.value)}
-            maxLength={512}
-            autoComplete="off"
-          />
-          <p id={userPeerDescriptionId} className="mt-2 text-[13px] text-muted-foreground">
-            <Trans>An existing Honcho peer to read from. Rakazo never writes to it.</Trans>
-          </p>
-          {!userPeerValid ? (
-            <FieldError id={userPeerErrorId}>
-              {userPeerFormatValid ? (
-                <Trans>rakazo-shared and IDs starting with bot- are reserved for Rakazo.</Trans>
-              ) : (
+          <Field className="mt-4" data-invalid={workspaceValid ? undefined : true}>
+            <FieldLabel htmlFor={workspaceId}>
+              <Trans>Workspace</Trans>
+            </FieldLabel>
+            <Input
+              id={workspaceId}
+              value={workspace}
+              disabled={busy}
+              aria-invalid={workspaceValid ? undefined : true}
+              aria-describedby={workspaceValid ? undefined : workspaceErrorId}
+              onChange={(event) => setWorkspace(event.target.value)}
+              placeholder="rakazo-<space>"
+              maxLength={512}
+              autoComplete="off"
+            />
+            {!workspaceValid ? (
+              <FieldError id={workspaceErrorId}>
                 <Trans>Use up to 512 letters, digits, _ or -.</Trans>
-              )}
-            </FieldError>
+              </FieldError>
+            ) : null}
+          </Field>
+
+          {showUserPeer ? (
+            <Field className="mt-4" data-invalid={userPeerValid ? undefined : true}>
+              <FieldLabel htmlFor={userPeerId}>
+                <Trans>User peer</Trans>
+              </FieldLabel>
+              <Input
+                id={userPeerId}
+                value={userPeer}
+                disabled={busy}
+                aria-invalid={userPeerValid ? undefined : true}
+                aria-describedby={
+                  userPeerValid
+                    ? userPeerDescriptionId
+                    : `${userPeerDescriptionId} ${userPeerErrorId}`
+                }
+                onChange={(event) => setUserPeer(event.target.value)}
+                maxLength={512}
+                autoComplete="off"
+              />
+              <p id={userPeerDescriptionId} className="mt-2 text-[13px] text-muted-foreground">
+                <Trans>An existing Honcho peer to read from. Rakazo never writes to it.</Trans>
+              </p>
+              {!userPeerValid ? (
+                <FieldError id={userPeerErrorId}>
+                  {userPeerFormatValid ? (
+                    <Trans>rakazo-shared and IDs starting with bot- are reserved for Rakazo.</Trans>
+                  ) : (
+                    <Trans>Use up to 512 letters, digits, _ or -.</Trans>
+                  )}
+                </FieldError>
+              ) : null}
+            </Field>
           ) : null}
-        </Field>
+        </>
       ) : null}
 
       <Button

@@ -1,5 +1,5 @@
 import { Trans, useLingui } from "@lingui/react/macro";
-import type { SpaceMemoryConfig } from "@rakazo/contracts";
+import type { ManagedHonchoStatus, SpaceMemoryConfig } from "@rakazo/contracts";
 import {
   Button,
   Dialog,
@@ -19,6 +19,7 @@ import { SETTINGS_CONTENT_WIDTH } from "../components/SettingsRows";
 import { useSpaceRpc } from "../lib/space-rpc";
 import { errorText } from "../lib/user-error";
 import { SpaceMemorySection } from "./KnowledgeSection";
+import { ManagedHonchoSettings } from "./ManagedHonchoSettings";
 import type { MemoryProviderConnectionDraft } from "./memory-providers/registry";
 import {
   defaultMemoryProviderSettings,
@@ -85,6 +86,11 @@ export function MemorySettingsOverlay({
   const [pending, setPending] = useState<"connect" | "disconnect" | "scope" | null>(null);
   const [addingProvider, setAddingProvider] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [managedStatus, setManagedStatus] = useState<ManagedHonchoStatus | undefined>();
+  const refreshManagedStatus = async () => setManagedStatus(await rpc.memory.managedStatus());
+  useEffect(() => {
+    void refreshManagedStatus().catch(() => undefined);
+  }, [config?.provider, config?.updatedAt]);
 
   useEffect(() => {
     if (config) {
@@ -120,6 +126,7 @@ export function MemorySettingsOverlay({
         defaultMemoryScope: defaultScope,
       });
       onConfigChange(next);
+      if (draft.settings.mode === "managed") await refreshManagedStatus();
       return true;
     } catch (err) {
       setError(errorText(err, t`Could not connect ${registration.name}`));
@@ -219,6 +226,13 @@ export function MemorySettingsOverlay({
                   <Trans>Disconnect</Trans>
                 )}
               </Button>
+              {config.provider === "honcho" && config.settings.mode === "managed" ? (
+                <ManagedHonchoSettings
+                  status={managedStatus}
+                  config={config}
+                  onChange={() => void refreshManagedStatus()}
+                />
+              ) : null}
             </section>
           ) : !addingProvider ? (
             <Button

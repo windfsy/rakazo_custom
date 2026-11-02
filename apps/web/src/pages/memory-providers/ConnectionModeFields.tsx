@@ -2,7 +2,7 @@ import { Trans } from "@lingui/react/macro";
 import { Field, FieldLabel, Input, Toggle } from "@rakazo/ui-web";
 import { useId } from "react";
 
-export type ConnectionMode = "cloud" | "local";
+export type ConnectionMode = "cloud" | "local" | "managed";
 
 /** Hosted service or a self-hosted instance at a base URL. */
 export function ConnectionModeFields({
@@ -26,8 +26,8 @@ export function ConnectionModeFields({
         <FieldLabel id={connectionLabelId}>
           <Trans>Connection</Trans>
         </FieldLabel>
-        <div className="grid grid-cols-2 gap-1 rounded-lg bg-muted p-1">
-          {(["cloud", "local"] as const).map((option) => (
+        <div className="grid grid-cols-3 gap-1 rounded-lg bg-muted p-1">
+          {(["managed", "cloud", "local"] as const).map((option) => (
             <Toggle
               key={option}
               pressed={mode === option}
@@ -35,7 +35,13 @@ export function ConnectionModeFields({
               onPressedChange={() => onModeChange(option)}
               className="text-[13px] aria-pressed:bg-background aria-pressed:shadow-sm"
             >
-              {option === "cloud" ? <Trans>Cloud</Trans> : <Trans>Self-hosted</Trans>}
+              {option === "cloud" ? (
+                <Trans>Cloud</Trans>
+              ) : option === "managed" ? (
+                <Trans>Built-in</Trans>
+              ) : (
+                <Trans>Self-hosted</Trans>
+              )}
             </Toggle>
           ))}
         </div>

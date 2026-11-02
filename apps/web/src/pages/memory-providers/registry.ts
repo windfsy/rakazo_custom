@@ -23,6 +23,18 @@ export interface MemoryProviderSettingsRegistration {
 
 export const MEMORY_PROVIDER_SETTINGS: readonly MemoryProviderSettingsRegistration[] = [
   {
+    id: "honcho",
+    name: "Honcho",
+    SettingsForm: HonchoSettingsForm,
+    connectedLabel: (config) => {
+      const { mode, baseUrl, workspaceId } = config.settings;
+      if (mode === "managed") return "Built-in Honcho";
+      if (mode === "local")
+        return [`Self-hosted (${baseUrl})`, workspaceId].filter(Boolean).join(", ");
+      return workspaceId ? `Honcho Cloud (${workspaceId})` : "Honcho Cloud";
+    },
+  },
+  {
     id: "supermemory",
     name: "Supermemory",
     SettingsForm: SupermemorySettingsForm,
@@ -40,17 +52,6 @@ export const MEMORY_PROVIDER_SETTINGS: readonly MemoryProviderSettingsRegistrati
       const endpoint = config.settings.endpoint ?? "Serenity";
       const mode = config.settings.allowWrites === "true" ? "read/write" : "recall only";
       return `${label || endpoint}, ${mode}`;
-    },
-  },
-  {
-    id: "honcho",
-    name: "Honcho",
-    SettingsForm: HonchoSettingsForm,
-    connectedLabel: (config) => {
-      const { mode, baseUrl, workspaceId } = config.settings;
-      if (mode === "local")
-        return [`Self-hosted (${baseUrl})`, workspaceId].filter(Boolean).join(", ");
-      return workspaceId ? `Honcho Cloud (${workspaceId})` : "Honcho Cloud";
     },
   },
 ];
