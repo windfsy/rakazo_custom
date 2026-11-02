@@ -172,6 +172,7 @@ export class SpaceMemoryProviderResolver implements MemoryProviderResolver {
   constructor(
     private readonly prisma: Pick<PrismaClient, "spaceMemoryConfig">,
     private readonly secrets: SecretStore,
+    private readonly managedHoncho?: { baseUrl: string; adminToken: string },
   ) {}
 
   async resolve(spaceId: string): Promise<ConfiguredMemoryProvider | null> {
@@ -181,6 +182,17 @@ export class SpaceMemoryProviderResolver implements MemoryProviderResolver {
     });
     if (!config) return null;
     const settings = toStringRecord(config.settings);
+    const managed = settings.mode === "managed";
+    if (managed) {
+      if (config.provider !== HONCHO_PROVIDER_ID || !this.managedHoncho) return null;
+      settings.baseUrl = this.managedHoncho.baseUrl;
+      return {
+        provider: createMemoryProvider(config.provider, settings, {
+          apiKey: this.managedHoncho.adminToken,
+        }),
+        defaultScope: config.defaultMemoryScope === "shared" ? "shared" : "isolated",
+      };
+    }
     if (memoryProviderRequiresPrivateEndpoint(config.provider, settings)) {
       // Saved configurations cannot bypass an operator's current network policy.
       if (process.env.MCP_ALLOW_PRIVATE_ENDPOINT !== "true") return null;
