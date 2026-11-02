@@ -1,9 +1,13 @@
+import asyncio
+import contextlib
 import json
 import logging
 import re
+import signal
 import time
 import uuid
 from collections.abc import Awaitable, Callable
+from typing import Any
 from contextlib import asynccontextmanager
 
 import psycopg
@@ -168,12 +172,47 @@ async def lifespan(_: FastAPI):
         except Exception as e:
             logger.error("Failed to start reconciler scheduler: %s", e)
 
+    # Rakazo: run the deriver queue loop inside this process so a managed
+    # deployment needs one container instead of a separate deriver process.
+    # The queue lives in Postgres, so behavior is identical; only the
+    # process boundary and its crash isolation go away.
+    deriver_task: asyncio.Task[None] | None = None
+    deriver_manager: Any = None
+    if settings.DERIVER.EMBEDDED and settings.DERIVER.ENABLED:
+        # Imported here to avoid a circular import: the deriver package
+        # pulls in src.config and src.db, which already import cleanly, but
+        # queue_manager transitively reaches routers-level modules.
+        from src.deriver.queue_manager import QueueManager
+
+        deriver_manager = QueueManager()
+        deriver_task = asyncio.create_task(
+            deriver_manager.initialize(), name="embedded-deriver"
+        )
+
     try:
         yield
     finally:
         # Import here to avoid circular import at module load time
         from src.vector_store import close_external_vector_store
 
+        if deriver_task is not None:
+            # Signal the queue loop to stop, then give it a bounded window to
+            # drain in-flight work and run cleanup() (which releases this
+            # process's ActiveQueueSession rows) before the cache and engine
+            # below are torn down.
+            assert deriver_manager is not None
+            await deriver_manager.shutdown(signal.SIGTERM)
+            try:
+                await asyncio.wait_for(deriver_task, timeout=30)
+            except TimeoutError:
+                logger.warning("Embedded deriver did not stop in time; cancelling")
+                deriver_task.cancel()
+                with contextlib.suppress(asyncio.CancelledError):
+                    await deriver_task
+            except asyncio.CancelledError:
+                raise
+            except Exception as e:
+                logger.error("Embedded deriver exited with error: %s", e)
         if reconciler_scheduler is not None:
             await reconciler_scheduler.shutdown()
         await deriver_metrics_poller.shutdown()

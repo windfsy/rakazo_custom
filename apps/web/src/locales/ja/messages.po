@@ -2566,10 +2566,6 @@ msgid "Deny"
 msgstr "拒否"
 
 #: src/pages/ManagedHonchoSettings.tsx
-msgid "Deriver"
-msgstr ""
-
-#: src/pages/ManagedHonchoSettings.tsx
 msgid "Deriver workers"
 msgstr ""
 

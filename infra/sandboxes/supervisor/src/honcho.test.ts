@@ -13,6 +13,8 @@ describe("managed Honcho service", () => {
     expect(env.AUTH_USE_AUTH).toBe("true");
     expect(env.AUTH_STATIC_ADMIN_TOKEN).toBe("a".repeat(32));
     expect(env.AUTH_JWT_SECRET).toBeUndefined();
+    // The API process runs the deriver queue loop; no second container.
+    expect(env.DERIVER_EMBEDDED).toBe("true");
     expect(env.VECTOR_STORE_TYPE).toBe("pgvector");
     expect(env.CACHE_NAMESPACE).toBe("rakazo");
     expect(env.LLM_OPENAI_API_KEY).toBe("test-key");

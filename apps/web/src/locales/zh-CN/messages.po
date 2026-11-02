@@ -2566,10 +2566,6 @@ msgid "Deny"
 msgstr "拒绝"
 
 #: src/pages/ManagedHonchoSettings.tsx
-msgid "Deriver"
-msgstr "提取器"
-
-#: src/pages/ManagedHonchoSettings.tsx
 msgid "Deriver workers"
 msgstr "提取器工作进程数"
 

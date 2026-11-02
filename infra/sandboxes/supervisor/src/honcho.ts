@@ -25,6 +25,10 @@ export function honchoEnvironment(input: HonchoConfiguration): Record<string, st
     // Honcho's static admin bearer (Rakazo-side addition); the JWT_SECRET
     // stays unset so the deployment presents exactly one credential.
     AUTH_STATIC_ADMIN_TOKEN: input.adminToken,
+    // Run the deriver queue loop inside the API process (Rakazo-side
+    // addition): one container serves both roles, and the queue itself is
+    // Postgres-backed either way.
+    DERIVER_EMBEDDED: "true",
     VECTOR_STORE_TYPE: "pgvector",
     TELEMETRY_ENABLED: "false",
     ...input.models,
@@ -185,6 +189,24 @@ export function createHonchoService(docker: Docker) {
     }
   }
 
+  /**
+   * Remove a deriver container left by a release that ran the deriver as a
+   * second container. It has `unless-stopped` restart semantics and would
+   * keep consuming the queue alongside the embedded loop, so every apply
+   * sweeps it (and its blue-green leftover) away; missing names are fine.
+   */
+  async function removeLegacyDeriver() {
+    for (const name of [`${managed.name}-deriver`, `${managed.name}-deriver-previous`]) {
+      const legacy = docker.getContainer(name);
+      try {
+        if (await running(legacy)) await legacy.stop({ t: 30 });
+        await legacy.remove({ force: false });
+      } catch (error) {
+        if ((error as { statusCode?: number }).statusCode !== 404) throw error;
+      }
+    }
+  }
+
   async function apply(input: HonchoConfiguration) {
     if (pending) return pending;
     pending = (async () => {
@@ -220,12 +242,12 @@ export function createHonchoService(docker: Docker) {
         if (result.StatusCode !== 0)
           throw new Error(`Honcho migration failed (${result.StatusCode})`);
       }
-      // The API and Deriver share a queue but not a lifecycle: replacing both
-      // at once halves the wait, and neither depends on the other's container.
-      await Promise.all([
-        replace(`${managed.name}-api`, input, []),
-        replace(`${managed.name}-deriver`, input, ["python", "-m", "src.deriver"]),
-      ]);
+      // One container plays both roles: the API serves traffic and its
+      // lifespan runs the deriver queue loop (DERIVER_EMBEDDED). Any deriver
+      // container from an earlier release is stopped first so it cannot
+      // consume from the queue alongside the embedded loop.
+      await removeLegacyDeriver();
+      await replace(`${managed.name}-api`, input, []);
       for (let attempt = 0; attempt < 60; attempt++) {
         try {
           const response = await fetch(`${apiUrl}/health`, {
@@ -245,8 +267,10 @@ export function createHonchoService(docker: Docker) {
   }
 
   async function status(input?: HonchoConfiguration) {
+    // The deriver is embedded in the API process (DERIVER_EMBEDDED), so the
+    // API container is the only managed component.
     const components = await Promise.all(
-      ["api", "deriver"].map(async (component) => {
+      ["api"].map(async (component) => {
         try {
           const info = await docker.getContainer(`${managed.name}-${component}`).inspect();
           return {

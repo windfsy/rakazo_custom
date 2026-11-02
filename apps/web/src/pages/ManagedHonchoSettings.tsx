@@ -98,14 +98,10 @@ export function ManagedHonchoSettings({
       </div>
       {status.error ? <p className="text-[13px] text-destructive">{status.error}</p> : null}
       <div className="grid grid-cols-2 gap-2 text-[13px] text-muted-foreground">
-        {(["api", "deriver"] as const).map((component) => (
-          <div key={component} className="contents">
-            <span>{component === "api" ? <Trans>API</Trans> : <Trans>Deriver</Trans>}</span>
-            <span>
-              {status.components[component] ? <Trans>Running</Trans> : <Trans>Stopped</Trans>}
-            </span>
-          </div>
-        ))}
+        <span>
+          <Trans>API</Trans>
+        </span>
+        <span>{status.components.api ? <Trans>Running</Trans> : <Trans>Stopped</Trans>}</span>
         <span>
           <Trans>PostgreSQL</Trans>
         </span>

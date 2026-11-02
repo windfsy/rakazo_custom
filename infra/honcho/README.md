@@ -36,6 +36,14 @@ Each modification is marked with a `# Rakazo:` comment at its site.
    embedding-client code paths and returns structured results, so a bad
    configuration surfaces as a diagnostic instead of a crash-looping
    container.
+5. **`src/config.py` / `src/deriver/queue_manager.py` / `src/main.py` —
+   `DERIVER_EMBEDDED`.** When set, the API process runs the deriver queue
+   loop as an asyncio task in its lifespan instead of needing a separate
+   `python -m src.deriver` process: one container serves both roles. The
+   embedded loop skips the standalone process's signal handlers, startup
+   jitter, and Sentry re-initialization; shutdown drains in-flight work and
+   releases its queue-session rows before the API tears the cache and
+   engine down.
 
 ## Build
 

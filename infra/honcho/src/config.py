@@ -940,6 +940,11 @@ class DeriverSettings(HonchoSettings):
 
     ENABLED: bool = True
 
+    # Rakazo: run the queue loop inside the API process instead of a separate
+    # `python -m src.deriver` process, so a managed deployment needs one
+    # container. Only the API entrypoint honors this; __main__ ignores it.
+    EMBEDDED: bool = False
+
     WORKERS: Annotated[int, Field(default=1, gt=0, le=100)] = 1
     POLLING_SLEEP_INTERVAL_SECONDS: Annotated[
         float, Field(default=1.0, gt=0.0, le=60.0)

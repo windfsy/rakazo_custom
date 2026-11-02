@@ -181,8 +181,9 @@ class QueueManager:
         else:
             self.reconciler_scheduler = existing_reconciler
 
-        # Initialize Sentry if enabled, using settings
-        if settings.SENTRY.ENABLED:
+        # Rakazo: when embedded in the API process, Sentry is already
+        # initialized by the API entrypoint; don't layer a second integration.
+        if settings.SENTRY.ENABLED and not settings.DERIVER.EMBEDDED:
             initialize_sentry(
                 integrations=[AsyncioIntegration(), SqlalchemyIntegration()]
             )
@@ -216,14 +217,17 @@ class QueueManager:
         """Setup signal handlers, initialize client, and start the main polling loop"""
         logger.debug(f"Initializing QueueManager with {self.workers} workers")
 
-        # Set up signal handlers
-        loop = asyncio.get_running_loop()
-        signals = (signal.SIGTERM, signal.SIGINT)
-        for sig in signals:
-            loop.add_signal_handler(
-                sig, lambda s=sig: asyncio.create_task(self.shutdown(s))
-            )
-        logger.debug("Signal handlers registered")
+        # Rakazo: when embedded in the API process, uvicorn owns the signal
+        # handlers and a single container has no lockstep problem, so skip
+        # both the handler registration and the startup jitter.
+        if not settings.DERIVER.EMBEDDED:
+            loop = asyncio.get_running_loop()
+            signals = (signal.SIGTERM, signal.SIGINT)
+            for sig in signals:
+                loop.add_signal_handler(
+                    sig, lambda s=sig: asyncio.create_task(self.shutdown(s))
+                )
+            logger.debug("Signal handlers registered")
 
         if settings.DERIVER.SCHEDULER == "deriver":
             try:
@@ -234,7 +238,10 @@ class QueueManager:
         # Run the polling loop directly in this task
         logger.debug("Starting polling loop directly")
         try:
-            if settings.DERIVER.SCHEDULER == "deriver":
+            if (
+                settings.DERIVER.SCHEDULER == "deriver"
+                and not settings.DERIVER.EMBEDDED
+            ):
                 await self._sleep_startup_jitter()
             await self.polling_loop()
         finally:

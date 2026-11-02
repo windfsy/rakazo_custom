@@ -389,6 +389,71 @@ class TestQueueProcessing:
 
         assert jitter.await_count == 1
 
+    # Rakazo: embedded mode runs inside the API process, so initialize must
+    # not register signal handlers (uvicorn owns them) nor sleep the startup
+    # jitter (a single container has no lockstep problem).
+    async def test_initialize_skips_signal_handlers_when_embedded(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setattr(settings.DERIVER, "SCHEDULER", "deriver")
+        monkeypatch.setattr(settings.DERIVER, "EMBEDDED", True)
+        queue_manager = QueueManager()
+
+        registered: list[Any] = []
+        with (
+            patch.object(queue_manager.reconciler_scheduler, "start", AsyncMock()),
+            patch.object(queue_manager, "_sleep_startup_jitter", AsyncMock()),
+            patch.object(queue_manager, "polling_loop", AsyncMock()),
+            patch.object(queue_manager, "cleanup", AsyncMock()),
+            patch(
+                "asyncio.get_running_loop",
+            ) as get_loop,
+        ):
+            get_loop.return_value.add_signal_handler.side_effect = (
+                lambda *args: registered.append(args)
+            )
+            await queue_manager.initialize()
+
+        assert registered == []
+
+    async def test_initialize_registers_signal_handlers_when_not_embedded(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setattr(settings.DERIVER, "SCHEDULER", "deriver")
+        monkeypatch.setattr(settings.DERIVER, "EMBEDDED", False)
+        queue_manager = QueueManager()
+
+        with (
+            patch.object(queue_manager.reconciler_scheduler, "start", AsyncMock()),
+            patch.object(queue_manager, "_sleep_startup_jitter", AsyncMock()),
+            patch.object(queue_manager, "polling_loop", AsyncMock()),
+            patch.object(queue_manager, "cleanup", AsyncMock()),
+            patch("asyncio.get_running_loop") as get_loop,
+        ):
+            get_loop.return_value.add_signal_handler = AsyncMock()
+            await queue_manager.initialize()
+
+        get_loop.return_value.add_signal_handler.assert_awaited()
+
+    async def test_initialize_skips_startup_jitter_when_embedded(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setattr(settings.DERIVER, "SCHEDULER", "deriver")
+        monkeypatch.setattr(settings.DERIVER, "EMBEDDED", True)
+        queue_manager = QueueManager()
+
+        with (
+            patch.object(queue_manager.reconciler_scheduler, "start", AsyncMock()),
+            patch.object(
+                queue_manager, "_sleep_startup_jitter", AsyncMock()
+            ) as jitter,
+            patch.object(queue_manager, "polling_loop", AsyncMock()),
+            patch.object(queue_manager, "cleanup", AsyncMock()),
+        ):
+            await queue_manager.initialize()
+
+        assert jitter.await_count == 0
+
     async def test_polling_loop_skips_stale_cleanup_when_api_owns_scheduling(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
