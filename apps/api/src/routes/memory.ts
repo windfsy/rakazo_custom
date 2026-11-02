@@ -4,6 +4,13 @@ import { isScratchpadStatus, listScratchpadItems, mapScratchpadItem } from "@rak
 import { isDeletableMemoryDocument } from "@rakazo/contracts";
 import { findSpaceMemoryConfig, IsolationError } from "@rakazo/db";
 import {
+  applyManagedHonchoForSpace,
+  enableManagedHoncho,
+  managedHonchoDeps,
+  readManagedHonchoState,
+  updateManagedHonchoSettings,
+} from "../honcho-managed.js";
+import {
   disconnectMemoryProvider,
   persistMemoryProviderConfig,
   serializeSpaceMemoryConfig,
@@ -129,6 +136,20 @@ export function memoryRoutes(ctx: RouterContext) {
       ),
       disconnectProvider: authed.memory.disconnectProvider.handler(async ({ context }) =>
         disconnectMemoryProvider(deps, context.actor),
+      ),
+      managedStatus: authed.memory.managedStatus.handler(async ({ context }) =>
+        readManagedHonchoState(managedHonchoDeps(deps), context.actor),
+      ),
+      enableManaged: authed.memory.enableManaged.handler(async ({ context }) => {
+        await enableManagedHoncho(deps, context.actor);
+        return readManagedHonchoState(managedHonchoDeps(deps), context.actor);
+      }),
+      updateManaged: authed.memory.updateManaged.handler(async ({ context, input }) => {
+        await updateManagedHonchoSettings(managedHonchoDeps(deps), context.actor, input);
+        return readManagedHonchoState(managedHonchoDeps(deps), context.actor);
+      }),
+      applyManaged: authed.memory.applyManaged.handler(async ({ context, input }) =>
+        applyManagedHonchoForSpace(managedHonchoDeps(deps), context.actor, input.restart),
       ),
     },
     scratchpad: {

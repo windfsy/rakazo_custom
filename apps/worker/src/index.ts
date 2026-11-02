@@ -221,7 +221,16 @@ async function main() {
     mcp,
   ]);
   integrationSettings.warmDirectories();
-  const memoryProviders = new SpaceMemoryProviderResolver(prisma, secrets);
+  const memoryProviders = new SpaceMemoryProviderResolver(
+    prisma,
+    secrets,
+    process.env.HONCHO_MANAGED === "true" && process.env.HONCHO_ADMIN_TOKEN
+      ? {
+          baseUrl: process.env.HONCHO_URL || "http://127.0.0.1:8000",
+          adminToken: process.env.HONCHO_ADMIN_TOKEN,
+        }
+      : undefined,
+  );
   const home = createAgentHomeStore(dataDir, prisma);
   void home.removeStaleStaging().catch((error) => logger.error("home staging cleanup", error));
   const artifacts = createArtifactStore(dataDir, prisma);

@@ -10,6 +10,7 @@ import {
 import type { Actor } from "@rakazo/contracts";
 import type { PrismaClient } from "@rakazo/db";
 import { findSpaceMemoryConfig, Prisma } from "@rakazo/db";
+import { enableManagedHoncho } from "./honcho-managed.js";
 import { withSerializableRetry } from "./serializable-retry.js";
 
 export interface MemoryProviderConfigDeps {
@@ -47,6 +48,20 @@ export async function persistMemoryProviderConfig(
   },
 ) {
   await requireSpaceOwner(deps.prisma, actor);
+  if (input.provider === "honcho" && input.settings.mode === "managed") {
+    if (process.env.HONCHO_MANAGED !== "true" || !process.env.HONCHO_ADMIN_TOKEN) {
+      throw new ORPCError("BAD_REQUEST", { message: "Built-in Honcho is not enabled." });
+    }
+    const existing = await findSpaceMemoryConfig(deps.prisma, actor.spaceId);
+    if (existing) await disconnectMemoryProvider(deps, actor);
+    await enableManagedHoncho(deps, actor);
+    const config = await findSpaceMemoryConfig(deps.prisma, actor.spaceId);
+    if (!config) throw new ORPCError("INTERNAL_SERVER_ERROR");
+    if (input.defaultMemoryScope !== config.defaultMemoryScope) {
+      return updateMemoryProviderDefaultScope(deps, actor, input.defaultMemoryScope);
+    }
+    return serializeSpaceMemoryConfig(config);
+  }
   let prepared: Awaited<ReturnType<typeof prepareMemoryProviderConnection>>;
   try {
     if (

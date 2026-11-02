@@ -21,6 +21,7 @@ import {
   setSpaceSettingOverride,
   spaceSettingOverrides,
 } from "@rakazo/db";
+import { ensureManagedHonchoConfig } from "../honcho-managed.js";
 import type { RouterDeps } from "../router.js";
 import { listRoutinesDto } from "../routines.js";
 import { deleteSpaceWithContent } from "../space-deletion.js";
@@ -83,6 +84,12 @@ export function spacesRoutes(ctx: RouterContext) {
             spaceId: space.id,
             target: { type: "space", id: space.id, label: space.name },
           });
+          if (process.env.HONCHO_MANAGED === "true") {
+            await ensureManagedHonchoConfig(deps, {
+              userId: context.actor.userId,
+              spaceId: space.id,
+            });
+          }
           return {
             id: space.id,
             name: space.name,

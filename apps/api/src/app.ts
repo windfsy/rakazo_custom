@@ -164,6 +164,7 @@ import { configuredEmailProvider } from "./email.js";
 import type { AppEnv } from "./env.js";
 import { loadEnv } from "./env.js";
 import { healthRoutes } from "./health.js";
+import { reconcileManagedHonchoForDeployment } from "./honcho-managed.js";
 import { mountLocalComputerHost } from "./local-settings.js";
 import { marketingEmailRoutes, sendWelcomeEmail } from "./marketing-email.js";
 import { moveMcpArgsIntoSecrets } from "./mcp-args-migration.js";
@@ -404,7 +405,16 @@ async function buildApp(overrides: CreateAppOverrides): Promise<AppHandles> {
     remoteConnectors,
     env.mcpAllowPrivateEndpoint,
   );
-  const memoryProviders = new SpaceMemoryProviderResolver(prisma, secrets);
+  const memoryProviders = new SpaceMemoryProviderResolver(
+    prisma,
+    secrets,
+    process.env.HONCHO_MANAGED === "true" && process.env.HONCHO_ADMIN_TOKEN
+      ? {
+          baseUrl: process.env.HONCHO_URL || "http://127.0.0.1:8000",
+          adminToken: process.env.HONCHO_ADMIN_TOKEN,
+        }
+      : undefined,
+  );
   const oauthLogins = new PiOAuthLogins(undefined, { prisma, secrets });
   const home = createAgentHomeStore(env.dataDir, prisma);
   void home.removeStaleStaging().catch((error) => getLogger().error("home staging cleanup", error));
@@ -815,6 +825,15 @@ async function buildApp(overrides: CreateAppOverrides): Promise<AppHandles> {
     clientInterceptors: [onError((error, { path, signal }) => handleRpcError(error, path, signal))],
   });
   const app = new Hono();
+  const honchoReconciliation = setInterval(() => {
+    void reconcileManagedHonchoForDeployment({
+      prisma,
+      secrets,
+      supervisorUrl: env.sandboxSupervisorUrl,
+      supervisorToken: env.sandboxSupervisorToken,
+    }).catch((error) => getLogger().warn("managed Honcho reconciliation failed", error));
+  }, 15_000);
+  honchoReconciliation.unref();
   app.use("*", requestLogging(logger));
   app.use("*", clientIpMiddleware(clientIp, env.clientIpHeader));
   app.use(
@@ -1410,6 +1429,7 @@ async function buildApp(overrides: CreateAppOverrides): Promise<AppHandles> {
       // on waitForComputerReady for the full boot-wait window during shared Postgres journeys.
       auth.disposeOidcDiscovery();
       shutdown.abort();
+      clearInterval(honchoReconciliation);
       // Aborted runs hand themselves back while realtime is still open to announce them.
       const runsStopped = runs?.stop();
       await userDeviceHub?.close();

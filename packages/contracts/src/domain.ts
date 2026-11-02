@@ -1588,6 +1588,19 @@ export const SpaceMemoryConfigSchema = z.object({
 });
 export type SpaceMemoryConfig = z.infer<typeof SpaceMemoryConfigSchema>;
 
+export const ManagedHonchoStatusSchema = z.object({
+  enabled: z.boolean(),
+  canManage: z.boolean().optional(),
+  status: z.string(),
+  version: z.string(),
+  components: z.record(z.string(), z.boolean()),
+  database: z.boolean().optional(),
+  cache: z.boolean().optional(),
+  settings: z.record(z.string(), z.string()).optional(),
+  error: z.string().nullable().optional(),
+});
+export type ManagedHonchoStatus = z.infer<typeof ManagedHonchoStatusSchema>;
+
 export const ModelCatalogEntrySchema = z.object({
   /** Omitted by older servers and ordinary chat connections. */
   protocol: z.enum(["chat", "decisions"]).optional(),

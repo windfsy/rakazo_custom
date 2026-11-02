@@ -31,6 +31,7 @@ import {
   saveModelPreference,
   writeModelRole,
 } from "@rakazo/db";
+import { markManagedHonchoForReconciliation } from "./honcho-managed.js";
 import { mayUsePrivateEndpoint } from "./mcp-servers.js";
 import { assertNoDanglingModelPins } from "./model-pins.js";
 import type { RouterDeps } from "./router.js";
@@ -289,6 +290,7 @@ export async function persistModelCredential(
     }),
   );
   (deps.providerCatalog ?? providerCatalogCache).invalidate(canonicalPiProviderId(input.provider));
+  if (process.env.HONCHO_MANAGED === "true") await markManagedHonchoForReconciliation(deps.prisma);
   return modelCredentialDto(cred, input.plaintext);
 }
 

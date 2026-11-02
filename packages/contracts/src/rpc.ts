@@ -85,6 +85,7 @@ import {
   GroupDetailSchema,
   GroupSchema,
   IntegrationCatalogResultSchema,
+  ManagedHonchoStatusSchema,
   McpServerConfigInput,
   McpServerSchema,
   MemoryDocumentSchema,
@@ -738,6 +739,24 @@ export const appContract = {
       .input(z.object({ defaultMemoryScope: MemoryScopeSchema }))
       .output(SpaceMemoryConfigSchema),
     disconnectProvider: oc.output(z.object({ ok: z.literal(true) })),
+    managedStatus: oc.output(ManagedHonchoStatusSchema),
+    enableManaged: oc.output(ManagedHonchoStatusSchema),
+    updateManaged: oc
+      .input(
+        z.object({
+          modelMode: z.enum(["main", "fixed"]).optional(),
+          credentialId: Id.optional(),
+          embeddingModel: z.string().max(200).optional(),
+          embeddingBaseUrl: z.string().max(2000).optional(),
+          embeddingApiKey: z.string().max(4096).optional(),
+          embeddingDimensions: z.number().int().min(1).max(65535).optional(),
+          deriverWorkers: z.number().int().min(1).max(32).optional(),
+        }),
+      )
+      .output(ManagedHonchoStatusSchema),
+    applyManaged: oc
+      .input(z.object({ restart: z.boolean().default(false) }))
+      .output(ManagedHonchoStatusSchema),
   },
   routines: {
     listForMentions: oc
