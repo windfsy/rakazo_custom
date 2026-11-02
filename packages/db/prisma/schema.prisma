@@ -1562,6 +1562,26 @@ model SpaceMemoryConfig {
   @@map("space_memory_configs")
 }
 
+model HonchoRuntimeState {
+  id               String    @id @default("default")
+  version          String
+  status           String    @default("needs_configuration")
+  configurationHash String?
+  secretId         String?   @unique
+  secret           Secret?   @relation(fields: [secretId], references: [id], onDelete: SetNull)
+  error            String?
+  components       Json      @default("{}")
+  configuration    Json      @default("{}")
+  embeddingSecretId String?  @unique
+  embeddingSecret Secret?    @relation("HonchoEmbeddingSecret", fields: [embeddingSecretId], references: [id], onDelete: SetNull)
+  leaseOwner       String?
+  leaseExpiresAt   DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@map("honcho_runtime_state")
+}
+
 model Secret {
   id                String             @id @default(cuid())
   userId            String
@@ -1573,6 +1593,8 @@ model Secret {
   createdAt         DateTime           @default(now())
   mcpServers        McpServer[]
   spaceMemoryConfig SpaceMemoryConfig?
+  honchoRuntimeState HonchoRuntimeState?
+  honchoEmbeddingState HonchoRuntimeState? @relation("HonchoEmbeddingSecret")
   agentSecret       AgentSecret?
 
   @@index([userId, spaceId])
