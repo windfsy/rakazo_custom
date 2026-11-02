@@ -1,0 +1,15 @@
+fly.toml
+.env
+.env.template
+docs/**
+tests/**
+.DS_Store
+supabase/**
+docker-compose.yml.example
+.github/**
+.vscode**
+.claude/**
+data/**
+.venv
+__pycache__
+*.pyc
