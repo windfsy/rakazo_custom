@@ -489,12 +489,18 @@ async def _query_documents_pgvector(
         )
 
     stmt = apply_filter(stmt, models.Document, filters)
-    stmt = stmt.order_by(models.Document.embedding.cosine_distance(embedding)).limit(
-        top_k
-    )
+    distance = models.Document.embedding.cosine_distance(embedding)
+    stmt = stmt.add_columns(distance)
+    stmt = stmt.order_by(distance).limit(top_k)
 
     result = await db.execute(stmt)
-    return list(result.scalars().all())
+    # Rakazo: carry the similarity distance on each row so the conclusions
+    # search endpoint can surface it. Other query_documents callers are
+    # unaffected: they read only the Document attributes.
+    rows = result.all()
+    for doc, doc_distance in rows:
+        doc.query_distance = doc_distance
+    return [row[0] for row in rows]
 
 
 async def query_documents(

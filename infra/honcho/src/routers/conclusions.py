@@ -55,7 +55,14 @@ async def create_conclusions(
         len(documents),
         workspace_id,
     )
-    return [schemas.Conclusion.model_validate(doc) for doc in documents]
+    # Rakazo: semantic search results carry their cosine distance so clients
+    # can rank or display similarity.
+    results = []
+    for doc in documents:
+        conclusion = schemas.Conclusion.model_validate(doc)
+        conclusion.distance = getattr(doc, "query_distance", None)
+        results.append(conclusion)
+    return results
 
 
 @router.post(
@@ -140,7 +147,14 @@ async def query_conclusions(
             max_distance=body.distance,
             top_k=body.top_k,
         )
-    return [schemas.Conclusion.model_validate(doc) for doc in documents]
+    # Rakazo: semantic search results carry their cosine distance so clients
+    # can rank or display similarity.
+    results = []
+    for doc in documents:
+        conclusion = schemas.Conclusion.model_validate(doc)
+        conclusion.distance = getattr(doc, "query_distance", None)
+        results.append(conclusion)
+    return results
 
 
 @router.get(

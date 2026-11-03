@@ -166,6 +166,12 @@ msgstr ""
 msgid "{0}, recall only"
 msgstr ""
 
+#. placeholder {0}: similarity(conclusion.distance)
+#. placeholder {1}: conclusion.level ?? ""
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "{0}% match · {1}"
+msgstr ""
+
 #: src/lib/billing.ts
 msgid "{amount} / {period}"
 msgstr "{amount} / {period}"

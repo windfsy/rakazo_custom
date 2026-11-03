@@ -742,6 +742,15 @@ class Conclusion(BaseModel):
         description="Number of times this conclusion has been independently derived.",
     )
     created_at: datetime.datetime
+    # Rakazo: cosine distance from the query vector, present only on semantic
+    # search results (smaller is more similar). Absent elsewhere.
+    distance: float | None = Field(
+        default=None,
+        description=(
+            "Cosine distance from the search query vector (0.0 identical, "
+            "smaller is more similar). Only semantic search results carry it."
+        ),
+    )
 
     @field_validator("source_ids", mode="before")
     @classmethod

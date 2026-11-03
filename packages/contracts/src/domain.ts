@@ -1609,6 +1609,8 @@ export const ManagedHonchoConclusionSchema = z.object({
   /** Derivation tier: explicit, deductive, inductive or contradiction; absent from older servers. */
   level: z.string().optional(),
   createdAt: z.string().optional(),
+  /** Cosine distance from the search query (0 identical); semantic search results only. */
+  distance: z.number().optional(),
 });
 export type ManagedHonchoConclusion = z.infer<typeof ManagedHonchoConclusionSchema>;
 

@@ -11,6 +11,11 @@ import { errorText } from "../lib/user-error";
 
 const NO_CONCLUSIONS: ManagedHonchoConclusion[] = [];
 
+/** Cosine distance (0 identical, smaller is closer) as a 0-100 similarity percentage. */
+function similarity(distance: number): string {
+  return Math.max(0, Math.round((1 - distance) * 100)).toString();
+}
+
 /** Browse and curate the conclusions the built-in Honcho service holds for this Space. */
 export function ManagedHonchoMemory({ status }: { status: ManagedHonchoStatus }) {
   const rpc = useSpaceRpc();
@@ -165,9 +170,11 @@ export function ManagedHonchoMemory({ status }: { status: ManagedHonchoStatus })
                 >
                   <div className="min-w-0">
                     <p className="text-[13px] break-words text-foreground">{conclusion.content}</p>
-                    {conclusion.level ? (
-                      <p className="text-[13px] text-muted-foreground">{conclusion.level}</p>
-                    ) : null}
+                    <p className="text-[13px] text-muted-foreground">
+                      {typeof conclusion.distance === "number"
+                        ? t`${similarity(conclusion.distance)}% match · ${conclusion.level ?? ""}`.trim()
+                        : conclusion.level}
+                    </p>
                   </div>
                   <Button
                     type="button"

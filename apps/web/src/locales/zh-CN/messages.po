@@ -166,6 +166,12 @@ msgstr "{0}，读写"
 msgid "{0}, recall only"
 msgstr "{0}，仅回忆"
 
+#. placeholder {0}: similarity(conclusion.distance)
+#. placeholder {1}: conclusion.level ?? ""
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "{0}% match · {1}"
+msgstr "{0}% 相似 · {1}"
+
 #: src/lib/billing.ts
 msgid "{amount} / {period}"
 msgstr "{amount} / {period}"

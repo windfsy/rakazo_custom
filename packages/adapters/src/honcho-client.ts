@@ -41,6 +41,8 @@ export interface HonchoStoredConclusion extends HonchoConclusion {
   level?: string;
   createdAt?: string;
   sessionId?: string | null;
+  /** Cosine distance from the search query (0 identical); semantic search only. */
+  distance?: number;
 }
 
 export function isHonchoConclusionId(value: unknown): value is string {
@@ -192,6 +194,7 @@ function parseConclusion(value: unknown): HonchoStoredConclusion | undefined {
     ...(typeof conclusion.level === "string" ? { level: conclusion.level } : {}),
     ...(typeof conclusion.created_at === "string" ? { createdAt: conclusion.created_at } : {}),
     ...(typeof conclusion.session_id === "string" ? { sessionId: conclusion.session_id } : {}),
+    ...(typeof conclusion.distance === "number" ? { distance: conclusion.distance } : {}),
   };
 }
 
