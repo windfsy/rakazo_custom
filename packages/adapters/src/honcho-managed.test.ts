@@ -55,9 +55,9 @@ describe("managed Honcho configuration", () => {
   });
 
   it("rejects embedding dimensions beyond the pgvector HNSW limit", () => {
-    expect(() =>
-      honchoEmbeddingEnvironment({ model: "embedding-3", dimensions: 2048 }),
-    ).toThrow(/2000/);
+    expect(() => honchoEmbeddingEnvironment({ model: "embedding-3", dimensions: 2048 })).toThrow(
+      /2000/,
+    );
     expect(HONCHO_EMBEDDING_MAX_DIMENSIONS).toBe(2000);
     expect(() =>
       honchoEmbeddingEnvironment({ model: "embedding-3", dimensions: 1536 }),

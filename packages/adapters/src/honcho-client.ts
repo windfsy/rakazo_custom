@@ -37,6 +37,10 @@ export interface HonchoConclusion {
 
 export interface HonchoStoredConclusion extends HonchoConclusion {
   id: string;
+  /** Derivation tier: explicit, deductive, inductive or contradiction. */
+  level?: string;
+  createdAt?: string;
+  sessionId?: string | null;
 }
 
 export function isHonchoConclusionId(value: unknown): value is string {
@@ -185,7 +189,63 @@ function parseConclusion(value: unknown): HonchoStoredConclusion | undefined {
     content: conclusion.content,
     observerId: conclusion.observer_id,
     observedId: conclusion.observed_id,
+    ...(typeof conclusion.level === "string" ? { level: conclusion.level } : {}),
+    ...(typeof conclusion.created_at === "string" ? { createdAt: conclusion.created_at } : {}),
+    ...(typeof conclusion.session_id === "string" ? { sessionId: conclusion.session_id } : {}),
   };
+}
+
+/** Page through every conclusion in a workspace, optionally filtered. */
+export async function listHonchoConclusions(
+  config: HonchoConnectionConfig,
+  workspaceId: string,
+  options: { filters?: Record<string, unknown>; size?: number; page?: number } = {},
+  signal?: AbortSignal,
+): Promise<HonchoResponse<HonchoStoredConclusion[]>> {
+  const size = Math.min(Math.max(options.size ?? 50, 1), 100);
+  const page = Math.max(options.page ?? 1, 1);
+  const result = await honchoRequest(
+    config,
+    `${workspacePath(workspaceId)}/conclusions/list?page=${page}&size=${size}`,
+    options.filters ? { filters: options.filters } : {},
+    { signal, readJson: true },
+  );
+  if (!result.ok) return result;
+  const items = (result.value as { items?: unknown[] } | null)?.items;
+  if (!Array.isArray(items)) return { ok: false, error: "Honcho returned an invalid page." };
+  const conclusions = items.map(parseConclusion);
+  if (conclusions.some((conclusion) => !conclusion)) {
+    return { ok: false, error: "Honcho returned invalid conclusions." };
+  }
+  return { ok: true, value: conclusions as HonchoStoredConclusion[] };
+}
+
+/** Peer ids present in the workspace, so a viewer can pick an observer/observed pair. */
+export async function listHonchoPeers(
+  config: HonchoConnectionConfig,
+  workspaceId: string,
+  options: { size?: number; page?: number } = {},
+  signal?: AbortSignal,
+): Promise<HonchoResponse<string[]>> {
+  const size = Math.min(Math.max(options.size ?? 100, 1), 100);
+  const page = Math.max(options.page ?? 1, 1);
+  const result = await honchoRequest(
+    config,
+    `${workspacePath(workspaceId)}/peers/list?page=${page}&size=${size}`,
+    {},
+    { signal, readJson: true },
+  );
+  if (!result.ok) return result;
+  const items = (result.value as { items?: unknown[] } | null)?.items;
+  if (!Array.isArray(items)) return { ok: false, error: "Honcho returned an invalid page." };
+  const ids = items
+    .map((item) => {
+      const peer = item as Record<string, unknown> | null;
+      const id = peer?.id ?? peer?.peer_id ?? peer?.name;
+      return typeof id === "string" ? id : undefined;
+    })
+    .filter((id): id is string => Boolean(id));
+  return { ok: true, value: ids };
 }
 
 /** Semantic search over the conclusions one peer holds about another. */

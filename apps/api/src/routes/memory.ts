@@ -5,7 +5,11 @@ import { isDeletableMemoryDocument } from "@rakazo/contracts";
 import { findSpaceMemoryConfig, IsolationError } from "@rakazo/db";
 import {
   applyManagedHonchoForSpace,
+  createManagedHonchoMemory,
+  deleteManagedHonchoMemory,
   enableManagedHoncho,
+  listManagedHonchoMemory,
+  listManagedHonchoMemoryPeers,
   managedHonchoDeps,
   readManagedHonchoState,
   updateManagedHonchoSettings,
@@ -150,6 +154,18 @@ export function memoryRoutes(ctx: RouterContext) {
       }),
       applyManaged: authed.memory.applyManaged.handler(async ({ context, input }) =>
         applyManagedHonchoForSpace(managedHonchoDeps(deps), context.actor, input.restart),
+      ),
+      managedMemoryPeers: authed.memory.managedMemoryPeers.handler(async ({ context }) =>
+        listManagedHonchoMemoryPeers(deps, context.actor),
+      ),
+      managedMemoryList: authed.memory.managedMemoryList.handler(async ({ context, input }) =>
+        listManagedHonchoMemory(deps, context.actor, input),
+      ),
+      managedMemoryCreate: authed.memory.managedMemoryCreate.handler(async ({ context, input }) =>
+        createManagedHonchoMemory(deps, context.actor, input),
+      ),
+      managedMemoryDelete: authed.memory.managedMemoryDelete.handler(async ({ context, input }) =>
+        deleteManagedHonchoMemory(deps, context.actor, input),
       ),
     },
     scratchpad: {

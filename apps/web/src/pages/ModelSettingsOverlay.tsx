@@ -33,6 +33,7 @@ import type { ModelRoleConnectIntent } from "./ModelRoleSettings";
 import { ModelRoleSettings } from "./ModelRoleSettings";
 import { CompatibleModelFields } from "./model-settings/compatible-model-fields";
 import { CompatibleKeyControls, ConnectionControls } from "./model-settings/connection-controls";
+import { HonchoModelSection } from "./model-settings/honcho-model-section";
 import { ConnectionNameField, ProvidersSection } from "./model-settings/providers-section";
 import type { ConnectableProvider } from "./model-settings/role-model-picker";
 import { SpaceBotsModelNotice } from "./model-settings/space-bots-model";
@@ -329,6 +330,7 @@ export function ModelSettingsOverlay({
             }
             panel={connectionAt === "approval" ? panelFor(true) : null}
           />
+          {scope === "account" ? <HonchoModelSection /> : null}
           {scope === "space" ? null : (
             <ProvidersSection
               credentials={credentials}

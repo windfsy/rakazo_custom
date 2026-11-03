@@ -2,9 +2,15 @@ import { randomUUID } from "node:crypto";
 import type { SecretStore } from "@rakazo/adapter-kit";
 import type { HonchoModelSelection } from "@rakazo/adapters";
 import {
+  createHonchoConclusions,
+  deleteHonchoConclusion,
   findConnectedModelCredential,
   honchoEmbeddingEnvironment,
   honchoValidationErrorMessage,
+  honchoWorkspaceId,
+  listHonchoConclusions,
+  listHonchoPeers,
+  queryHonchoConclusions,
   resolveHonchoModel,
   resolveMemberMainModel,
   validateManagedHonchoModels,
@@ -565,4 +571,133 @@ export async function reconcileManagedHonchoForDeployment(deps: ManagedHonchoDep
     email: "",
     isDeploymentOwner: true,
   });
+}
+
+/**
+ * The Honcho connection for browsing a Space's memory. The deployment's
+ * static admin token can read every workspace; callers still resolve the
+ * Space's own workspace so a member only ever sees their Space's conclusions.
+ */
+function managedHonchoConnection() {
+  if (!managedHonchoEnabled()) return null;
+  const adminToken = process.env.HONCHO_ADMIN_TOKEN;
+  if (!adminToken) return null;
+  return {
+    baseUrl: process.env.HONCHO_URL || "http://127.0.0.1:8000",
+    apiKey: adminToken,
+    // Conclusions never invoke the dialectic; the field is part of the
+    // client's connection type, not part of a browse call.
+    reasoningLevel: "medium" as const,
+  };
+}
+
+/** The Space's Honcho workspace, resolved from its memory-provider settings. */
+async function managedHonchoWorkspaceId(
+  deps: Pick<ManagedHonchoDeps, "prisma">,
+  spaceId: string,
+): Promise<string | null> {
+  const config = await runAsSystem("read memory config for Honcho browse", () =>
+    deps.prisma.spaceMemoryConfig.findUnique({
+      where: { spaceId },
+      select: { provider: true, settings: true },
+    }),
+  );
+  if (config?.provider !== "honcho") return null;
+  return honchoWorkspaceId(settingsJson(config.settings), spaceId);
+}
+
+function honchoBrowseError(error: unknown): never {
+  throw new Error(
+    error instanceof Error ? error.message.slice(0, 300) : "Honcho memory is unavailable",
+  );
+}
+
+export async function listManagedHonchoMemory(
+  deps: Pick<ManagedHonchoDeps, "prisma">,
+  actor: Actor,
+  input: {
+    query?: string;
+    observerId?: string;
+    observedId?: string;
+    page?: number;
+    size?: number;
+  },
+) {
+  const honcho = managedHonchoConnection();
+  const workspaceId = honcho ? await managedHonchoWorkspaceId(deps, actor.spaceId) : null;
+  if (!honcho || !workspaceId) {
+    return { items: [], page: input.page ?? 1, size: input.size ?? 50 };
+  }
+  const page = input.page ?? 1;
+  const size = input.size ?? 50;
+  if (input.query) {
+    if (!input.observerId || !input.observedId) {
+      throw new Error("Semantic memory search needs an observer and an observed peer.");
+    }
+    const result = await queryHonchoConclusions(honcho, workspaceId, {
+      query: input.query,
+      observerId: input.observerId,
+      observedId: input.observedId,
+      topK: size,
+    }).catch(honchoBrowseError);
+    if (!result.ok) honchoBrowseError(result.error);
+    return { items: result.value, page, size };
+  }
+  const result = await listHonchoConclusions(honcho, workspaceId, { page, size }).catch(
+    honchoBrowseError,
+  );
+  if (!result.ok) honchoBrowseError(result.error);
+  return { items: result.value, page, size };
+}
+
+export async function listManagedHonchoMemoryPeers(
+  deps: Pick<ManagedHonchoDeps, "prisma">,
+  actor: Actor,
+) {
+  const honcho = managedHonchoConnection();
+  const workspaceId = honcho ? await managedHonchoWorkspaceId(deps, actor.spaceId) : null;
+  if (!honcho || !workspaceId) return { items: [] };
+  const result = await listHonchoPeers(honcho, workspaceId).catch(honchoBrowseError);
+  if (!result.ok) honchoBrowseError(result.error);
+  return { items: result.value };
+}
+
+export async function createManagedHonchoMemory(
+  deps: Pick<ManagedHonchoDeps, "prisma">,
+  actor: Actor,
+  input: { content: string; observerId: string; observedId: string },
+) {
+  await requireDefaultSpaceOwner(deps.prisma, actor);
+  const honcho = managedHonchoConnection();
+  const workspaceId = honcho ? await managedHonchoWorkspaceId(deps, actor.spaceId) : null;
+  if (!honcho || !workspaceId) {
+    throw new Error("Built-in Honcho is not enabled.");
+  }
+  const result = await createHonchoConclusions(honcho, workspaceId, [
+    {
+      content: input.content,
+      observerId: input.observerId,
+      observedId: input.observedId,
+    },
+  ]).catch(honchoBrowseError);
+  if (!result.ok) honchoBrowseError(result.error);
+  return { ok: true as const };
+}
+
+export async function deleteManagedHonchoMemory(
+  deps: Pick<ManagedHonchoDeps, "prisma">,
+  actor: Actor,
+  input: { conclusionId: string },
+) {
+  await requireDefaultSpaceOwner(deps.prisma, actor);
+  const honcho = managedHonchoConnection();
+  const workspaceId = honcho ? await managedHonchoWorkspaceId(deps, actor.spaceId) : null;
+  if (!honcho || !workspaceId) {
+    throw new Error("Built-in Honcho is not enabled.");
+  }
+  const result = await deleteHonchoConclusion(honcho, workspaceId, input.conclusionId).catch(
+    honchoBrowseError,
+  );
+  if (!result.ok) honchoBrowseError(result.error);
+  return { ok: true as const };
 }

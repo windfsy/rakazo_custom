@@ -592,6 +592,10 @@ msgstr "Add item"
 msgid "Add MCP server"
 msgstr "Add MCP server"
 
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Add memory"
+msgstr "Add memory"
+
 #: src/pages/ScratchpadSection.tsx
 msgid "Add open work"
 msgstr "Add open work"
@@ -840,10 +844,12 @@ msgid "Apply"
 msgstr "Apply"
 
 #: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Apply configuration"
 msgstr "Apply configuration"
 
 #: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Applying…"
 msgstr "Applying…"
 
@@ -1131,6 +1137,10 @@ msgstr "Built-in"
 msgid "Built-in Honcho"
 msgstr "Built-in Honcho"
 
+#: src/pages/model-settings/honcho-model-section.tsx
+msgid "Built-in memory model"
+msgstr "Built-in memory model"
+
 #: src/pages/ManagedHonchoSettings.tsx
 msgid "Built-in service"
 msgstr "Built-in service"
@@ -1180,6 +1190,7 @@ msgstr "Can't read images"
 #: src/pages/AccountSettingsOverlay.tsx
 #: src/pages/Artifacts.tsx
 #: src/pages/KnowledgeSection.tsx
+#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/model-settings/connection-controls.tsx
 #: src/pages/model-settings/space-bots-model.tsx
@@ -1326,7 +1337,7 @@ msgstr "Checking…"
 msgid "Choose a bot shape, color, or upload an image"
 msgstr "Choose a bot shape, color, or upload an image"
 
-#: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Choose a connection"
 msgstr "Choose a connection"
 
@@ -2539,6 +2550,14 @@ msgstr "Delete section"
 msgid "Delete space"
 msgstr "Delete space"
 
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Delete this memory"
+msgstr "Delete this memory"
+
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Delete this memory? This cannot be undone."
+msgstr "Delete this memory? This cannot be undone."
+
 #: src/pages/SpaceSettingOverrides.tsx
 msgid "Delete this Space's credentials?"
 msgstr "Delete this Space's credentials?"
@@ -3053,11 +3072,11 @@ msgstr "Finished."
 msgid "Finishing MCP connection…"
 msgstr "Finishing MCP connection…"
 
-#: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Fixed connection"
 msgstr "Fixed connection"
 
-#: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Follow main model"
 msgstr "Follow main model"
 
@@ -3756,6 +3775,7 @@ msgid "Members ({0})"
 msgstr "Members ({0})"
 
 #: src/pages/KnowledgeSection.tsx
+#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/MemorySettingsOverlay.tsx
 #: src/pages/settings-nav.ts
 #: src/pages/shell/agent-import.tsx
@@ -3891,7 +3911,7 @@ msgstr "Model"
 msgid "Model \"{modelId}\" was not listed."
 msgstr "Model \"{modelId}\" was not listed."
 
-#: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Model connection"
 msgstr "Model connection"
 
@@ -3908,6 +3928,10 @@ msgstr "Model id"
 #: src/pages/model-settings/role-model-picker.tsx
 msgid "Model options"
 msgstr "Model options"
+
+#: src/pages/model-settings/honcho-model-section.tsx
+msgid "Model the built-in memory service reasons with."
+msgstr "Model the built-in memory service reasons with."
 
 #: src/pages/ModelSettingsOverlay.tsx
 #: src/pages/settings-nav.ts
@@ -4163,6 +4187,10 @@ msgstr "No matching models"
 msgid "No members yet"
 msgstr "No members yet"
 
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "No memory has been saved yet."
+msgstr "No memory has been saved yet."
+
 #: src/pages/PeerMessagesOverlay.tsx
 msgid "No messages with {peerBotName} yet."
 msgstr "No messages with {peerBotName} yet."
@@ -4268,6 +4296,10 @@ msgstr "Not used by Rakazo"
 msgid "Not working"
 msgstr "Not working"
 
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Nothing recorded for this pair yet."
+msgstr "Nothing recorded for this pair yet."
+
 #: src/pages/KnowledgeSection.tsx
 msgid "Nothing remembered yet"
 msgstr "Nothing remembered yet"
@@ -4303,6 +4335,14 @@ msgstr "OAuth connection failed"
 #: src/pages/PluginsOverlay.tsx
 msgid "OAuth expired"
 msgstr "OAuth expired"
+
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Observed"
+msgstr "Observed"
+
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Observer"
+msgstr "Observer"
 
 #: src/components/ComputerDeviceSettings.tsx
 msgid "Offline"
@@ -4724,7 +4764,7 @@ msgstr "Reason"
 msgid "Reasoning effort"
 msgstr "Reasoning effort"
 
-#: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Reasoning model"
 msgstr "Reasoning model"
 
@@ -5213,6 +5253,7 @@ msgstr "Saturday"
 #: src/pages/ExternalConversationSettings.tsx
 #: src/pages/GroupPanel.tsx
 #: src/pages/KnowledgeSection.tsx
+#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/model-settings/connection-controls.tsx
 #: src/pages/model-settings/providers-section.tsx
@@ -5294,6 +5335,7 @@ msgstr "Scopes (optional)"
 msgid "Screen not connected"
 msgstr "Screen not connected"
 
+#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/model-settings/compatible-model-fields.tsx
 #: src/pages/model-settings/model-picker.tsx
 #: src/pages/model-settings/providers-section.tsx
@@ -5327,6 +5369,10 @@ msgstr "Search by domain"
 #: src/components/integrations/IntegrationSetup.tsx
 msgid "Search integrations.sh"
 msgstr "Search integrations.sh"
+
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Search memory by meaning"
+msgstr "Search memory by meaning"
 
 #: src/pages/model-settings/compatible-model-fields.tsx
 #: src/pages/model-settings/model-picker.tsx
@@ -6552,6 +6598,10 @@ msgstr "Welcome to Rakazo"
 msgid "What about its memories?"
 msgstr "What about its memories?"
 
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "What bots remember about <0>{observedId}</0> as seen by <1>{observerId}</1>."
+msgstr "What bots remember about <0>{observedId}</0> as seen by <1>{observerId}</1>."
+
 #: src/pages/shell/dialogs.tsx
 msgid "What can this space use?"
 msgstr "What can this space use?"
@@ -6634,6 +6684,10 @@ msgstr "Works with your ChatGPT or Claude plan."
 #: src/pages/memory-providers/HonchoSettingsForm.tsx
 msgid "Workspace"
 msgstr "Workspace"
+
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Write what should be remembered"
+msgstr "Write what should be remembered"
 
 #: src/lib/billing.ts
 msgid "year"

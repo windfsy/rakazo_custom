@@ -230,10 +230,14 @@ export async function validateManagedHonchoModels(
 export function honchoValidationErrorMessage(result: HonchoModelValidationResult): string {
   const parts: string[] = [];
   if (result.reasoning && !result.reasoning.ok) {
-    parts.push(`Reasoning model check failed${result.reasoning.detail ? `: ${result.reasoning.detail}` : ""}`);
+    parts.push(
+      `Reasoning model check failed${result.reasoning.detail ? `: ${result.reasoning.detail}` : ""}`,
+    );
   }
   if (result.embedding && !result.embedding.ok) {
-    parts.push(`Embedding model check failed${result.embedding.detail ? `: ${result.embedding.detail}` : ""}`);
+    parts.push(
+      `Embedding model check failed${result.embedding.detail ? `: ${result.embedding.detail}` : ""}`,
+    );
   }
   return parts.join("; ");
 }

@@ -592,6 +592,10 @@ msgstr "Item toevoegen"
 msgid "Add MCP server"
 msgstr "MCP-server toevoegen"
 
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Add memory"
+msgstr ""
+
 #: src/pages/ScratchpadSection.tsx
 msgid "Add open work"
 msgstr "Open taak toevoegen"
@@ -840,10 +844,12 @@ msgid "Apply"
 msgstr "Toepassen"
 
 #: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Apply configuration"
 msgstr ""
 
 #: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Applying…"
 msgstr ""
 
@@ -1131,6 +1137,10 @@ msgstr "Ingebouwd"
 msgid "Built-in Honcho"
 msgstr ""
 
+#: src/pages/model-settings/honcho-model-section.tsx
+msgid "Built-in memory model"
+msgstr ""
+
 #: src/pages/ManagedHonchoSettings.tsx
 msgid "Built-in service"
 msgstr ""
@@ -1180,6 +1190,7 @@ msgstr "Kan afbeeldingen niet lezen"
 #: src/pages/AccountSettingsOverlay.tsx
 #: src/pages/Artifacts.tsx
 #: src/pages/KnowledgeSection.tsx
+#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/model-settings/connection-controls.tsx
 #: src/pages/model-settings/space-bots-model.tsx
@@ -1326,7 +1337,7 @@ msgstr "Bezig met controleren…"
 msgid "Choose a bot shape, color, or upload an image"
 msgstr "Kies een botvorm, kleur of upload een afbeelding"
 
-#: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Choose a connection"
 msgstr ""
 
@@ -2539,6 +2550,14 @@ msgstr "Sectie verwijderen"
 msgid "Delete space"
 msgstr "Space verwijderen"
 
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Delete this memory"
+msgstr ""
+
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Delete this memory? This cannot be undone."
+msgstr ""
+
 #: src/pages/SpaceSettingOverrides.tsx
 msgid "Delete this Space's credentials?"
 msgstr "De gegevens van deze Space verwijderen?"
@@ -3053,11 +3072,11 @@ msgstr "Voltooid."
 msgid "Finishing MCP connection…"
 msgstr "MCP-verbinding afronden…"
 
-#: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Fixed connection"
 msgstr ""
 
-#: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Follow main model"
 msgstr ""
 
@@ -3756,6 +3775,7 @@ msgid "Members ({0})"
 msgstr "Leden ({0})"
 
 #: src/pages/KnowledgeSection.tsx
+#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/MemorySettingsOverlay.tsx
 #: src/pages/settings-nav.ts
 #: src/pages/shell/agent-import.tsx
@@ -3891,7 +3911,7 @@ msgstr "Model"
 msgid "Model \"{modelId}\" was not listed."
 msgstr "Model \"{modelId}\" stond niet in de lijst."
 
-#: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Model connection"
 msgstr ""
 
@@ -3908,6 +3928,10 @@ msgstr "Model-id"
 #: src/pages/model-settings/role-model-picker.tsx
 msgid "Model options"
 msgstr "Modelopties"
+
+#: src/pages/model-settings/honcho-model-section.tsx
+msgid "Model the built-in memory service reasons with."
+msgstr ""
 
 #: src/pages/ModelSettingsOverlay.tsx
 #: src/pages/settings-nav.ts
@@ -4163,6 +4187,10 @@ msgstr "Geen overeenkomende modellen"
 msgid "No members yet"
 msgstr "Nog geen leden"
 
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "No memory has been saved yet."
+msgstr ""
+
 #: src/pages/PeerMessagesOverlay.tsx
 msgid "No messages with {peerBotName} yet."
 msgstr "Nog geen berichten met {peerBotName}."
@@ -4268,6 +4296,10 @@ msgstr "Niet gebruikt door Rakazo"
 msgid "Not working"
 msgstr "Werkt niet"
 
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Nothing recorded for this pair yet."
+msgstr ""
+
 #: src/pages/KnowledgeSection.tsx
 msgid "Nothing remembered yet"
 msgstr "Nog niets onthouden"
@@ -4303,6 +4335,14 @@ msgstr "OAuth-verbinding mislukt"
 #: src/pages/PluginsOverlay.tsx
 msgid "OAuth expired"
 msgstr "OAuth verlopen"
+
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Observed"
+msgstr ""
+
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Observer"
+msgstr ""
 
 #: src/components/ComputerDeviceSettings.tsx
 msgid "Offline"
@@ -4724,7 +4764,7 @@ msgstr ""
 msgid "Reasoning effort"
 msgstr "Redeneerinspanning"
 
-#: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Reasoning model"
 msgstr ""
 
@@ -5213,6 +5253,7 @@ msgstr "zaterdag"
 #: src/pages/ExternalConversationSettings.tsx
 #: src/pages/GroupPanel.tsx
 #: src/pages/KnowledgeSection.tsx
+#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/model-settings/connection-controls.tsx
 #: src/pages/model-settings/providers-section.tsx
@@ -5294,6 +5335,7 @@ msgstr "Scopes (optioneel)"
 msgid "Screen not connected"
 msgstr "Scherm niet verbonden"
 
+#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/model-settings/compatible-model-fields.tsx
 #: src/pages/model-settings/model-picker.tsx
 #: src/pages/model-settings/providers-section.tsx
@@ -5327,6 +5369,10 @@ msgstr "Zoeken op domein"
 #: src/components/integrations/IntegrationSetup.tsx
 msgid "Search integrations.sh"
 msgstr "integrations.sh doorzoeken"
+
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Search memory by meaning"
+msgstr ""
 
 #: src/pages/model-settings/compatible-model-fields.tsx
 #: src/pages/model-settings/model-picker.tsx
@@ -6552,6 +6598,10 @@ msgstr ""
 msgid "What about its memories?"
 msgstr "En zijn herinneringen?"
 
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "What bots remember about <0>{observedId}</0> as seen by <1>{observerId}</1>."
+msgstr ""
+
 #: src/pages/shell/dialogs.tsx
 msgid "What can this space use?"
 msgstr ""
@@ -6634,6 +6684,10 @@ msgstr "Werkt met je ChatGPT- of Claude-abonnement."
 #: src/pages/memory-providers/HonchoSettingsForm.tsx
 msgid "Workspace"
 msgstr "Werkruimte"
+
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Write what should be remembered"
+msgstr ""
 
 #: src/lib/billing.ts
 msgid "year"

@@ -1601,6 +1601,24 @@ export const ManagedHonchoStatusSchema = z.object({
 });
 export type ManagedHonchoStatus = z.infer<typeof ManagedHonchoStatusSchema>;
 
+export const ManagedHonchoConclusionSchema = z.object({
+  id: z.string(),
+  content: z.string(),
+  observerId: z.string(),
+  observedId: z.string(),
+  /** Derivation tier: explicit, deductive, inductive or contradiction; absent from older servers. */
+  level: z.string().optional(),
+  createdAt: z.string().optional(),
+});
+export type ManagedHonchoConclusion = z.infer<typeof ManagedHonchoConclusionSchema>;
+
+export const ManagedHonchoMemorySchema = z.object({
+  items: z.array(ManagedHonchoConclusionSchema),
+  page: z.number().int(),
+  size: z.number().int(),
+});
+export type ManagedHonchoMemory = z.infer<typeof ManagedHonchoMemorySchema>;
+
 export const ModelCatalogEntrySchema = z.object({
   /** Omitted by older servers and ordinary chat connections. */
   protocol: z.enum(["chat", "decisions"]).optional(),

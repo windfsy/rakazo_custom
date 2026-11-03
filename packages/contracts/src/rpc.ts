@@ -85,6 +85,7 @@ import {
   GroupDetailSchema,
   GroupSchema,
   IntegrationCatalogResultSchema,
+  ManagedHonchoMemorySchema,
   ManagedHonchoStatusSchema,
   McpServerConfigInput,
   McpServerSchema,
@@ -757,6 +758,30 @@ export const appContract = {
     applyManaged: oc
       .input(z.object({ restart: z.boolean().default(false) }))
       .output(ManagedHonchoStatusSchema),
+    managedMemoryPeers: oc.input(z.object({})).output(z.object({ items: z.array(z.string()) })),
+    managedMemoryList: oc
+      .input(
+        z.object({
+          query: z.string().max(10_000).optional(),
+          observerId: z.string().max(512).optional(),
+          observedId: z.string().max(512).optional(),
+          page: z.number().int().min(1).optional(),
+          size: z.number().int().min(1).max(100).optional(),
+        }),
+      )
+      .output(ManagedHonchoMemorySchema),
+    managedMemoryCreate: oc
+      .input(
+        z.object({
+          content: z.string().min(1).max(20_000),
+          observerId: z.string().min(1).max(512),
+          observedId: z.string().min(1).max(512),
+        }),
+      )
+      .output(z.object({ ok: z.literal(true) })),
+    managedMemoryDelete: oc
+      .input(z.object({ conclusionId: z.string().min(1).max(512) }))
+      .output(z.object({ ok: z.literal(true) })),
   },
   routines: {
     listForMentions: oc

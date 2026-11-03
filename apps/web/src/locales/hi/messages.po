@@ -592,6 +592,10 @@ msgstr "आइटम जोड़ें"
 msgid "Add MCP server"
 msgstr "MCP सर्वर जोड़ें"
 
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Add memory"
+msgstr ""
+
 #: src/pages/ScratchpadSection.tsx
 msgid "Add open work"
 msgstr "खुला कार्य जोड़ें"
@@ -840,10 +844,12 @@ msgid "Apply"
 msgstr "लागू करें"
 
 #: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Apply configuration"
 msgstr ""
 
 #: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Applying…"
 msgstr ""
 
@@ -1131,6 +1137,10 @@ msgstr "अंतर्निहित"
 msgid "Built-in Honcho"
 msgstr ""
 
+#: src/pages/model-settings/honcho-model-section.tsx
+msgid "Built-in memory model"
+msgstr ""
+
 #: src/pages/ManagedHonchoSettings.tsx
 msgid "Built-in service"
 msgstr ""
@@ -1180,6 +1190,7 @@ msgstr "तस्वीरें नहीं पढ़ सकता"
 #: src/pages/AccountSettingsOverlay.tsx
 #: src/pages/Artifacts.tsx
 #: src/pages/KnowledgeSection.tsx
+#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/model-settings/connection-controls.tsx
 #: src/pages/model-settings/space-bots-model.tsx
@@ -1326,7 +1337,7 @@ msgstr ""
 msgid "Choose a bot shape, color, or upload an image"
 msgstr "बॉट का आकार और रंग चुनें, या छवि अपलोड करें"
 
-#: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Choose a connection"
 msgstr ""
 
@@ -2539,6 +2550,14 @@ msgstr "अनुभाग हटाएँ"
 msgid "Delete space"
 msgstr ""
 
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Delete this memory"
+msgstr ""
+
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Delete this memory? This cannot be undone."
+msgstr ""
+
 #: src/pages/SpaceSettingOverrides.tsx
 msgid "Delete this Space's credentials?"
 msgstr "इस कार्यस्थान के क्रेडेंशियल डिलीट करें?"
@@ -3053,11 +3072,11 @@ msgstr "पूरा हुआ।"
 msgid "Finishing MCP connection…"
 msgstr "MCP कनेक्शन पूरा हो रहा है…"
 
-#: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Fixed connection"
 msgstr ""
 
-#: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Follow main model"
 msgstr ""
 
@@ -3756,6 +3775,7 @@ msgid "Members ({0})"
 msgstr ""
 
 #: src/pages/KnowledgeSection.tsx
+#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/MemorySettingsOverlay.tsx
 #: src/pages/settings-nav.ts
 #: src/pages/shell/agent-import.tsx
@@ -3891,7 +3911,7 @@ msgstr "मॉडल"
 msgid "Model \"{modelId}\" was not listed."
 msgstr "मॉडल \"{modelId}\" सूची में नहीं था।"
 
-#: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Model connection"
 msgstr ""
 
@@ -3908,6 +3928,10 @@ msgstr "मॉडल आईडी"
 #: src/pages/model-settings/role-model-picker.tsx
 msgid "Model options"
 msgstr "मॉडल विकल्प"
+
+#: src/pages/model-settings/honcho-model-section.tsx
+msgid "Model the built-in memory service reasons with."
+msgstr ""
 
 #: src/pages/ModelSettingsOverlay.tsx
 #: src/pages/settings-nav.ts
@@ -4163,6 +4187,10 @@ msgstr ""
 msgid "No members yet"
 msgstr ""
 
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "No memory has been saved yet."
+msgstr ""
+
 #: src/pages/PeerMessagesOverlay.tsx
 msgid "No messages with {peerBotName} yet."
 msgstr "{peerBotName} के साथ अभी कोई संदेश नहीं."
@@ -4268,6 +4296,10 @@ msgstr "Rakazo इसका उपयोग नहीं करता"
 msgid "Not working"
 msgstr "काम नहीं कर रहा"
 
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Nothing recorded for this pair yet."
+msgstr ""
+
 #: src/pages/KnowledgeSection.tsx
 msgid "Nothing remembered yet"
 msgstr "अभी तक कुछ याद नहीं किया गया"
@@ -4303,6 +4335,14 @@ msgstr "OAuth कनेक्शन विफल"
 #: src/pages/PluginsOverlay.tsx
 msgid "OAuth expired"
 msgstr "OAuth की समय-सीमा समाप्त हो गई"
+
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Observed"
+msgstr ""
+
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Observer"
+msgstr ""
 
 #: src/components/ComputerDeviceSettings.tsx
 msgid "Offline"
@@ -4724,7 +4764,7 @@ msgstr ""
 msgid "Reasoning effort"
 msgstr "रीज़निंग प्रयास"
 
-#: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Reasoning model"
 msgstr ""
 
@@ -5213,6 +5253,7 @@ msgstr "शनिवार"
 #: src/pages/ExternalConversationSettings.tsx
 #: src/pages/GroupPanel.tsx
 #: src/pages/KnowledgeSection.tsx
+#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/model-settings/connection-controls.tsx
 #: src/pages/model-settings/providers-section.tsx
@@ -5294,6 +5335,7 @@ msgstr "स्कोप (वैकल्पिक)"
 msgid "Screen not connected"
 msgstr "स्क्रीन कनेक्ट नहीं है"
 
+#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/model-settings/compatible-model-fields.tsx
 #: src/pages/model-settings/model-picker.tsx
 #: src/pages/model-settings/providers-section.tsx
@@ -5326,6 +5368,10 @@ msgstr ""
 
 #: src/components/integrations/IntegrationSetup.tsx
 msgid "Search integrations.sh"
+msgstr ""
+
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Search memory by meaning"
 msgstr ""
 
 #: src/pages/model-settings/compatible-model-fields.tsx
@@ -6552,6 +6598,10 @@ msgstr ""
 msgid "What about its memories?"
 msgstr "इसकी मेमोरी का क्या करें?"
 
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "What bots remember about <0>{observedId}</0> as seen by <1>{observerId}</1>."
+msgstr ""
+
 #: src/pages/shell/dialogs.tsx
 msgid "What can this space use?"
 msgstr ""
@@ -6633,6 +6683,10 @@ msgstr "आपके ChatGPT या Claude प्लान के साथ क�
 
 #: src/pages/memory-providers/HonchoSettingsForm.tsx
 msgid "Workspace"
+msgstr ""
+
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Write what should be remembered"
 msgstr ""
 
 #: src/lib/billing.ts

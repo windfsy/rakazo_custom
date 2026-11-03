@@ -592,6 +592,10 @@ msgstr "添加项目"
 msgid "Add MCP server"
 msgstr "添加 MCP 服务器"
 
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Add memory"
+msgstr "添加记忆"
+
 #: src/pages/ScratchpadSection.tsx
 msgid "Add open work"
 msgstr "添加待办事项"
@@ -840,10 +844,12 @@ msgid "Apply"
 msgstr "应用"
 
 #: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Apply configuration"
 msgstr "应用配置"
 
 #: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Applying…"
 msgstr "正在应用…"
 
@@ -1131,6 +1137,10 @@ msgstr "内置"
 msgid "Built-in Honcho"
 msgstr "内置 Honcho"
 
+#: src/pages/model-settings/honcho-model-section.tsx
+msgid "Built-in memory model"
+msgstr "内置记忆模型"
+
 #: src/pages/ManagedHonchoSettings.tsx
 msgid "Built-in service"
 msgstr "内置服务"
@@ -1180,6 +1190,7 @@ msgstr "无法读取图像"
 #: src/pages/AccountSettingsOverlay.tsx
 #: src/pages/Artifacts.tsx
 #: src/pages/KnowledgeSection.tsx
+#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/model-settings/connection-controls.tsx
 #: src/pages/model-settings/space-bots-model.tsx
@@ -1326,7 +1337,7 @@ msgstr "正在检查…"
 msgid "Choose a bot shape, color, or upload an image"
 msgstr "选择机器人形状和颜色，或上传图片"
 
-#: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Choose a connection"
 msgstr "选择连接"
 
@@ -2539,6 +2550,14 @@ msgstr "删除分组"
 msgid "Delete space"
 msgstr "删除工作区"
 
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Delete this memory"
+msgstr "删除这条记忆"
+
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Delete this memory? This cannot be undone."
+msgstr "删除这条记忆？此操作无法撤销。"
+
 #: src/pages/SpaceSettingOverrides.tsx
 msgid "Delete this Space's credentials?"
 msgstr "要删除此工作区的凭据吗？"
@@ -3053,11 +3072,11 @@ msgstr "已完成。"
 msgid "Finishing MCP connection…"
 msgstr "正在完成 MCP 连接…"
 
-#: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Fixed connection"
 msgstr "固定连接"
 
-#: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Follow main model"
 msgstr "跟随主模型"
 
@@ -3756,6 +3775,7 @@ msgid "Members ({0})"
 msgstr "成员（{0}）"
 
 #: src/pages/KnowledgeSection.tsx
+#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/MemorySettingsOverlay.tsx
 #: src/pages/settings-nav.ts
 #: src/pages/shell/agent-import.tsx
@@ -3891,7 +3911,7 @@ msgstr "模型"
 msgid "Model \"{modelId}\" was not listed."
 msgstr "模型“{modelId}”未列出。"
 
-#: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Model connection"
 msgstr "模型连接"
 
@@ -3908,6 +3928,10 @@ msgstr "模型 ID"
 #: src/pages/model-settings/role-model-picker.tsx
 msgid "Model options"
 msgstr "模型选项"
+
+#: src/pages/model-settings/honcho-model-section.tsx
+msgid "Model the built-in memory service reasons with."
+msgstr "内置记忆服务用于推理的模型。"
 
 #: src/pages/ModelSettingsOverlay.tsx
 #: src/pages/settings-nav.ts
@@ -4163,6 +4187,10 @@ msgstr "没有匹配的模型"
 msgid "No members yet"
 msgstr "还没有成员"
 
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "No memory has been saved yet."
+msgstr "还没有保存任何记忆。"
+
 #: src/pages/PeerMessagesOverlay.tsx
 msgid "No messages with {peerBotName} yet."
 msgstr "还没有与 {peerBotName} 的消息。"
@@ -4268,6 +4296,10 @@ msgstr "Rakazo 不使用"
 msgid "Not working"
 msgstr "无法正常工作"
 
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Nothing recorded for this pair yet."
+msgstr "这对观察者与被观察者还没有任何记录。"
+
 #: src/pages/KnowledgeSection.tsx
 msgid "Nothing remembered yet"
 msgstr "暂无记忆"
@@ -4303,6 +4335,14 @@ msgstr "OAuth 连接失败"
 #: src/pages/PluginsOverlay.tsx
 msgid "OAuth expired"
 msgstr "OAuth 已过期"
+
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Observed"
+msgstr "被观察者"
+
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Observer"
+msgstr "观察者"
 
 #: src/components/ComputerDeviceSettings.tsx
 msgid "Offline"
@@ -4724,7 +4764,7 @@ msgstr "原因"
 msgid "Reasoning effort"
 msgstr "推理强度"
 
-#: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/honcho-model-section.tsx
 msgid "Reasoning model"
 msgstr "推理模型"
 
@@ -5213,6 +5253,7 @@ msgstr "周六"
 #: src/pages/ExternalConversationSettings.tsx
 #: src/pages/GroupPanel.tsx
 #: src/pages/KnowledgeSection.tsx
+#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/model-settings/connection-controls.tsx
 #: src/pages/model-settings/providers-section.tsx
@@ -5294,6 +5335,7 @@ msgstr "范围（可选）"
 msgid "Screen not connected"
 msgstr "屏幕未连接"
 
+#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/model-settings/compatible-model-fields.tsx
 #: src/pages/model-settings/model-picker.tsx
 #: src/pages/model-settings/providers-section.tsx
@@ -5327,6 +5369,10 @@ msgstr "按域名搜索"
 #: src/components/integrations/IntegrationSetup.tsx
 msgid "Search integrations.sh"
 msgstr "搜索 integrations.sh"
+
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Search memory by meaning"
+msgstr "按语义搜索记忆"
 
 #: src/pages/model-settings/compatible-model-fields.tsx
 #: src/pages/model-settings/model-picker.tsx
@@ -6552,6 +6598,10 @@ msgstr "欢迎使用 Rakazo"
 msgid "What about its memories?"
 msgstr "它的记忆怎么处理？"
 
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "What bots remember about <0>{observedId}</0> as seen by <1>{observerId}</1>."
+msgstr "机器人以 <1>{observerId}</1> 的视角记住的关于 <0>{observedId}</0> 的内容。"
+
 #: src/pages/shell/dialogs.tsx
 msgid "What can this space use?"
 msgstr "这个工作区可以使用什么？"
@@ -6634,6 +6684,10 @@ msgstr "可使用你的 ChatGPT 或 Claude 套餐。"
 #: src/pages/memory-providers/HonchoSettingsForm.tsx
 msgid "Workspace"
 msgstr "工作区"
+
+#: src/pages/ManagedHonchoMemory.tsx
+msgid "Write what should be remembered"
+msgstr "写下需要记住的内容"
 
 #: src/lib/billing.ts
 msgid "year"
