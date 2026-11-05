@@ -105,6 +105,8 @@ import {
   ModelCredentialSchema,
   ModelCreditAmountSchema,
   ModelOAuthBeginSchema,
+  NativeMemoryFactListSchema,
+  NativeMemoryStateSchema,
   OPENAI_COMPATIBLE_PROVIDER_ID,
   PluginMarketplaceCatalogSchema,
   PluginPartSchema,
@@ -738,6 +740,42 @@ export const appContract = {
       .input(z.object({ defaultMemoryScope: MemoryScopeSchema }))
       .output(SpaceMemoryConfigSchema),
     disconnectProvider: oc.output(z.object({ ok: z.literal(true) })),
+    nativeState: oc.output(NativeMemoryStateSchema),
+    nativeUpdate: oc
+      .input(
+        z.object({
+          embeddingModel: z.string().min(1).max(200),
+          embeddingBaseUrl: z.string().url().max(2000),
+          embeddingApiKey: z.string().max(4096).optional(),
+          /** Omitted: use the dimension the model reports. */
+          embeddingDimensions: z.number().int().min(1).max(65_535).optional(),
+        }),
+      )
+      .output(NativeMemoryStateSchema),
+    nativeReembed: oc.output(z.object({ reembedded: z.number().int() })),
+    nativeFactObservers: oc.output(z.object({ items: z.array(z.string()) })),
+    nativeFactList: oc
+      .input(
+        z.object({
+          query: z.string().max(10_000).optional(),
+          observer: z.string().max(512).optional(),
+          page: z.number().int().min(1).optional(),
+          size: z.number().int().min(1).max(100).optional(),
+        }),
+      )
+      .output(NativeMemoryFactListSchema),
+    nativeFactCreate: oc
+      .input(
+        z.object({
+          content: z.string().min(1).max(20_000),
+          /** "shared" writes to the Space pool; a bot id writes that bot's view. */
+          observer: z.string().min(1).max(512),
+        }),
+      )
+      .output(z.object({ ok: z.literal(true) })),
+    nativeFactDelete: oc
+      .input(z.object({ factId: z.string().min(1).max(64) }))
+      .output(z.object({ ok: z.literal(true) })),
   },
   routines: {
     listForMentions: oc

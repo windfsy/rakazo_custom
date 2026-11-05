@@ -16,8 +16,10 @@ export function disposableDatabaseEnv(url: string) {
 export async function startPostgres(signal?: AbortSignal) {
   for (let attempt = 1; ; attempt += 1) {
     try {
+      // pgvector ships in the image: the native memory provider's migrations create
+      // the extension and vector columns in the shared test database.
       // A throwaway database needs no crash safety; parallel suites need more connections.
-      return await new PostgreSqlContainer("postgres:18-alpine")
+      return await new PostgreSqlContainer("pgvector/pgvector:pg18")
         .withCommand([
           "postgres",
           "-c",

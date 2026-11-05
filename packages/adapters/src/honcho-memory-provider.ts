@@ -80,7 +80,9 @@ function parseHonchoConnection(
   // Configurations saved before local mode carry no mode and always meant Honcho Cloud.
   // Match exactly, as honchoRequiresPrivateEndpoint does, so the owner gate sees the same mode.
   const mode = settings.mode ?? "cloud";
-  if (mode !== "cloud" && mode !== "local") throw new Error("mode must be cloud or local");
+  if (mode !== "cloud" && mode !== "local") {
+    throw new Error("mode must be cloud or local");
+  }
   const local = mode === "local";
   const baseUrl = local ? settings.baseUrl?.trim() : HONCHO_CLOUD_BASE_URL;
   if (!baseUrl) throw new Error("baseUrl is required");

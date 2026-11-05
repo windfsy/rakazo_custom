@@ -257,6 +257,12 @@ x-app-environment: &app-environment
 services:
   postgres:
     image: ${POSTGRES_IMAGE:-postgres:18}
+    # pgvector is required by the native memory provider; install once in the persistent data directory's image layer.
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+      args:
+        POSTGRES_IMAGE: ${POSTGRES_IMAGE:-postgres:18}
     # A Postgres 16 POSTGRES_IMAGE would ignore these mounts and open an empty database.
     entrypoint:
       - sh

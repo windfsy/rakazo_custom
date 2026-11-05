@@ -50,3 +50,6 @@ playwright-report-www
 # Wuying Web SDK vendor files; fetch with node scripts/wuying-web-sdk.mjs
 apps/web/public/wuying/WuyingWebSDK.js
 apps/web/public/wuying/sdk/
+
+# Local agent tooling state
+.zcode/

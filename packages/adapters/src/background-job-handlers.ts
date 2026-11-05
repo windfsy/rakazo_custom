@@ -1,5 +1,6 @@
 import type {
   AgentHomeStore,
+  AgentRunRequest,
   AgentRuntime,
   ArtifactStore,
   BackgroundJobExecution,
@@ -28,6 +29,10 @@ import { performComputerUpdate } from "./computer-update.js";
 import type { createRunExecutor } from "./executor.js";
 import type { ExpoPushProvider } from "./expo-push.js";
 import { compactHistory } from "./history-compaction.js";
+import { consolidateObserverMemories } from "./memory-native/consolidate.js";
+import { dreamObserverMemories } from "./memory-native/dream.js";
+import { extractThreadMemories } from "./memory-native/extract.js";
+import { resolveEmbeddingConnection } from "./memory-native/state.js";
 import type { MemoryProviderResolver } from "./memory-provider-factory.js";
 import { deliverMessagingOutbound, mirrorMessagingOutbound } from "./messaging-delivery.js";
 import { pollPurchase } from "./purchase-poll.js";
@@ -235,5 +240,63 @@ export function createBackgroundJobHandlers(deps: {
         payload.threadId,
       );
     }),
+    "memory.extract": asOwner(thread, async (payload) => {
+      await extractThreadMemories(
+        {
+          prisma: deps.prisma,
+          runtime: deps.runtime,
+          // The embedding endpoint is deployment-wide; a Space without the native
+          // provider configured simply has no connection to resolve.
+          embeddingFor: () =>
+            resolveEmbeddingConnection({ prisma: deps.prisma, secrets: deps.secretStore }),
+          resolveModel: async (scope) => {
+            if (deps.executor.resolveModel) return deps.executor.resolveModel(scope);
+            return {
+              provider: "scripted",
+              id: "scripted",
+              apiKey: undefined,
+            };
+          },
+        },
+        payload.threadId,
+      );
+    }),
+    // Both act on one observer's facts across a whole Space, which the payload names.
+    "memory.consolidate": async (payload) => {
+      await consolidateObserverMemories(
+        {
+          prisma: deps.prisma,
+          runtime: deps.runtime,
+          resolveModel: memoryResolveModel(deps),
+        },
+        payload,
+      );
+    },
+    "memory.dream": async (payload) => {
+      await dreamObserverMemories(
+        {
+          prisma: deps.prisma,
+          runtime: deps.runtime,
+          embeddingFor: () =>
+            resolveEmbeddingConnection({ prisma: deps.prisma, secrets: deps.secretStore }),
+          resolveModel: memoryResolveModel(deps),
+        },
+        payload,
+      );
+    },
+  };
+}
+
+type MemoryResolveModel = (scope: {
+  userId: string;
+  spaceId: string;
+  botId?: string;
+}) => Promise<AgentRunRequest["model"]>;
+
+/** Memory work prefers the Space's main model and falls back to the scripted runtime. */
+function memoryResolveModel(deps: { executor: { resolveModel?: MemoryResolveModel } }) {
+  return async (scope: { userId: string; spaceId: string; botId?: string }) => {
+    if (deps.executor.resolveModel) return deps.executor.resolveModel(scope);
+    return { provider: "scripted", id: "scripted", apiKey: undefined };
   };
 }

@@ -2,6 +2,7 @@ import type { AgentRuntimeEvent } from "@rakazo/adapter-kit";
 import {
   DEFAULT_CONTEXT_STRATEGY,
   historyCompactJob,
+  memoryExtractJob,
   ModelAccountError,
   ModelOutputError,
   runContinueJob,
@@ -833,6 +834,11 @@ export async function completeRun(ctx: RunContext) {
       )
     ) {
       await deps.jobs.enqueue(historyCompactJob(thread.id));
+    }
+    // Durable facts are extracted from what this run added. The job keys on the
+    // thread, so a burst of runs folds into one extraction pass over the new range.
+    if (updatedThread.nextMessageSeq > 0) {
+      await deps.jobs.enqueue(memoryExtractJob(thread.id));
     }
   } catch (error) {
     getLogger().error("history.compact enqueue failed", error);

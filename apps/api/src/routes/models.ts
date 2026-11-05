@@ -482,7 +482,7 @@ export function modelsRoutes(ctx: RouterContext) {
           if (compatible) {
             await assertCompatibleDefaultChange(deps, context.actor, modelId, thinking);
           }
-          return deps.prisma.$transaction(
+          await deps.prisma.$transaction(
             async (tx) => {
               const { preferences, candidates } = await loadModelState(tx);
               if (candidates.length === 0) {
@@ -565,6 +565,7 @@ export function modelsRoutes(ctx: RouterContext) {
             },
             { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
           );
+          return { ok: true as const };
         }).catch((error: unknown) => {
           if (error instanceof SecretStoreUnavailableError)
             throw new ORPCError("SERVICE_UNAVAILABLE", { cause: error });

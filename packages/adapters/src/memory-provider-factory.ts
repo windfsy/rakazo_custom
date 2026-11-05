@@ -1,6 +1,8 @@
 import type { DurableMemoryScope, SecretStore, SemanticMemoryProvider } from "@rakazo/adapter-kit";
 import type { PrismaClient } from "@rakazo/db";
 import { getLogger } from "@rakazo/logging";
+import { createNativeProvider, NATIVE_PROVIDER_ID } from "./memory-native/index.js";
+import type { MemoryRerankDeps } from "./memory-native/rerank.js";
 import {
   createHonchoProvider,
   HONCHO_PROVIDER_ID,
@@ -100,6 +102,18 @@ const MEMORY_PROVIDER_ADAPTERS: ReadonlyMap<string, MemoryProviderAdapter> = new
       create: createHonchoProvider,
     },
   ],
+  [
+    NATIVE_PROVIDER_ID,
+    {
+      requiresPrivateEndpoint: () => false,
+      prepare: async (settings: Record<string, string>) => ({ settings, credentials: {} }),
+      // The native provider is constructed from database access, not credentials:
+      // SpaceMemoryProviderResolver supplies the PrismaClient when it resolves.
+      create: () => {
+        throw new Error("The native provider is constructed by SpaceMemoryProviderResolver.");
+      },
+    },
+  ] satisfies [string, MemoryProviderAdapter],
 ]);
 
 function memoryProviderAdapter(provider: string): MemoryProviderAdapter {
@@ -170,8 +184,10 @@ function decodeCredentials(provider: string, plaintext: string): Record<string, 
 
 export class SpaceMemoryProviderResolver implements MemoryProviderResolver {
   constructor(
-    private readonly prisma: Pick<PrismaClient, "spaceMemoryConfig">,
+    private readonly prisma: Pick<PrismaClient, "spaceMemoryConfig"> & PrismaClient,
     private readonly secrets: SecretStore,
+    /** Supplied by the worker, where recall runs; the API browser keeps the fused order. */
+    private readonly nativeRerank?: MemoryRerankDeps,
   ) {}
 
   async resolve(spaceId: string): Promise<ConfiguredMemoryProvider | null> {
@@ -181,6 +197,16 @@ export class SpaceMemoryProviderResolver implements MemoryProviderResolver {
     });
     if (!config) return null;
     const settings = toStringRecord(config.settings);
+    if (config.provider === NATIVE_PROVIDER_ID) {
+      return {
+        provider: createNativeProvider({
+          prisma: this.prisma,
+          secrets: this.secrets,
+          ...(this.nativeRerank ? { rerank: this.nativeRerank } : {}),
+        }),
+        defaultScope: config.defaultMemoryScope === "shared" ? "shared" : "isolated",
+      };
+    }
     if (memoryProviderRequiresPrivateEndpoint(config.provider, settings)) {
       // Saved configurations cannot bypass an operator's current network policy.
       if (process.env.MCP_ALLOW_PRIVATE_ENDPOINT !== "true") return null;

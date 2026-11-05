@@ -9,6 +9,17 @@ import {
   serializeSpaceMemoryConfig,
   updateMemoryProviderDefaultScope,
 } from "../memory-provider-config.js";
+import {
+  createNativeFact,
+  deleteNativeFact,
+  listNativeFactObservers,
+  listNativeFacts,
+  NativeMemoryNotOwnerError,
+  nativeMemoryDeps,
+  readNativeState,
+  reembedNativeFacts,
+  updateNativeSettings,
+} from "../native-memory.js";
 import type { RouterContext } from "./context.js";
 
 export function memoryRoutes(ctx: RouterContext) {
@@ -129,6 +140,44 @@ export function memoryRoutes(ctx: RouterContext) {
       ),
       disconnectProvider: authed.memory.disconnectProvider.handler(async ({ context }) =>
         disconnectMemoryProvider(deps, context.actor),
+      ),
+      nativeState: authed.memory.nativeState.handler(async () =>
+        readNativeState(nativeMemoryDeps(deps)),
+      ),
+      nativeUpdate: authed.memory.nativeUpdate.handler(async ({ context, input }) => {
+        try {
+          return await updateNativeSettings(nativeMemoryDeps(deps), context.actor, input);
+        } catch (error) {
+          if (error instanceof NativeMemoryNotOwnerError) throw new ORPCError("FORBIDDEN");
+          // A bad embedding endpoint is a configuration mistake, not a server fault: the
+          // settings form shows the endpoint's own message instead of "Internal server error".
+          throw new ORPCError("BAD_REQUEST", {
+            message:
+              error instanceof Error ? error.message : "The embedding settings were refused.",
+          });
+        }
+      }),
+      nativeReembed: authed.memory.nativeReembed.handler(async ({ context }) => {
+        try {
+          return await reembedNativeFacts(nativeMemoryDeps(deps), context.actor);
+        } catch (error) {
+          if (error instanceof NativeMemoryNotOwnerError) throw new ORPCError("FORBIDDEN");
+          throw new ORPCError("BAD_REQUEST", {
+            message: error instanceof Error ? error.message : "Memory could not be rebuilt.",
+          });
+        }
+      }),
+      nativeFactObservers: authed.memory.nativeFactObservers.handler(async ({ context }) =>
+        listNativeFactObservers(deps, context.actor),
+      ),
+      nativeFactList: authed.memory.nativeFactList.handler(async ({ context, input }) =>
+        listNativeFacts(deps, context.actor, input),
+      ),
+      nativeFactCreate: authed.memory.nativeFactCreate.handler(async ({ context, input }) =>
+        createNativeFact(nativeMemoryDeps(deps), context.actor, input),
+      ),
+      nativeFactDelete: authed.memory.nativeFactDelete.handler(async ({ context, input }) =>
+        deleteNativeFact(deps, context.actor, input),
       ),
     },
     scratchpad: {

@@ -398,6 +398,8 @@ model Space {
   connections                 Connection[]
   capabilities                CapabilityInstall[]
   memoryDocuments             MemoryDocument[]
+  memoryFacts                 MemoryFact[]
+  memoryThreadProgress        MemoryThreadProgress[]
   agentHomes                  AgentHome[]
   browserProfiles             BrowserProfile[]
   artifacts                   Artifact[]
@@ -699,6 +701,7 @@ model Bot {
   scratchpadItems   ScratchpadItem[]
   taughtSkills      TaughtSkill[]
   memoryDocuments   MemoryDocument[]
+  memoryFacts      MemoryFact[]
   agentHome         AgentHome?
   browserProfile    BrowserProfile?
   artifacts         Artifact[]
@@ -817,6 +820,7 @@ model Thread {
   tasks                       Task[]
   runs                        Run[]
   routines                    Routine[]
+  memoryThreadProgress        MemoryThreadProgress?
 
   @@index([spaceId])
   @@index([spaceId, userId])
@@ -1317,6 +1321,64 @@ model MemoryRevision {
   @@map("memory_revisions")
 }
 
+/// One atomic semantic-memory fact. The `embedding` column (untyped pgvector) is
+/// managed through raw SQL in @rakazo/adapters; Prisma owns every other column,
+/// including the encrypted `content` and its blind-index `searchTokens`.
+model MemoryFact {
+  id              String             @id @default(cuid())
+  spaceId         String
+  space           Space              @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  userId          String
+  /// NULL is the Space's shared perspective; a bot id is that bot's own view.
+  botId           String?
+  bot             Bot?               @relation(fields: [botId], references: [id], onDelete: Cascade)
+  /// explicit (extracted), deductive, inductive (derived by dreaming).
+  level           String             @default("explicit")
+  status          String             @default("active")
+  supersededById  String?
+  /// When the fact's content is true of a moment rather than a standing truth.
+  occurredAt      DateTime?
+  content         String
+  searchTokens    Int[]
+  /// The embedding model that produced `embedding`, so a model change re-embeds exactly
+  /// the stale rows instead of trusting that vectors from two models are comparable.
+  embeddingModel  String?
+  metadata        Json               @default("{}")
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  factSources     MemoryFactSource[] @relation("DerivedFact")
+
+  @@index([spaceId, botId])
+  @@index([spaceId, status, level])
+  @@map("memory_facts")
+}
+
+/// Provenance edge: a derived fact was concluded from ordered source facts.
+model MemoryFactSource {
+  derivedId String
+  derived   MemoryFact @relation("DerivedFact", fields: [derivedId], references: [id], onDelete: Cascade)
+  sourceId  String
+  position  Int        @default(0)
+
+  @@id([derivedId, sourceId])
+  @@index([sourceId])
+  @@map("memory_fact_sources")
+}
+
+/// Ingestion cursor: which messages of a thread the extractor has consumed.
+model MemoryThreadProgress {
+  threadId         String   @id
+  thread           Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  spaceId          String
+  space            Space    @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  lastExtractedSeq Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([spaceId])
+  @@map("memory_thread_progress")
+}
+
 model AgentHome {
   id        String   @id @default(cuid())
   spaceId   String
@@ -1562,6 +1624,21 @@ model SpaceMemoryConfig {
   @@map("space_memory_configs")
 }
 
+model NativeMemoryState {
+  id                String    @id @default("default")
+  status            String    @default("needs_configuration")
+  error             String?
+  configuration     Json      @default("{}")
+  embeddingSecretId String?   @unique
+  embeddingSecret   Secret?   @relation("NativeMemoryEmbeddingSecret", fields: [embeddingSecretId], references: [id], onDelete: SetNull)
+  leaseOwner        String?
+  leaseExpiresAt    DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@map("native_memory_state")
+}
+
 model Secret {
   id                String             @id @default(cuid())
   userId            String
@@ -1573,6 +1650,7 @@ model Secret {
   createdAt         DateTime           @default(now())
   mcpServers        McpServer[]
   spaceMemoryConfig SpaceMemoryConfig?
+  nativeMemoryEmbeddingState NativeMemoryState? @relation("NativeMemoryEmbeddingSecret")
   agentSecret       AgentSecret?
 
   @@index([userId, spaceId])

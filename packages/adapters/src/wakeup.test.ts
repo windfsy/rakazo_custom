@@ -19,6 +19,9 @@ function handlers(): BackgroundJobHandlers {
     "cloud_agent.poll": vi.fn(async () => undefined),
     "purchase.poll": vi.fn(async () => undefined),
     "push.receipt": vi.fn(async () => undefined),
+    "memory.extract": vi.fn(async () => undefined),
+    "memory.consolidate": vi.fn(async () => undefined),
+    "memory.dream": vi.fn(async () => undefined),
   };
 }
 

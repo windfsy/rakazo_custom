@@ -23,6 +23,17 @@ const payloadSchemas = {
   "skill.teaching-expire": z.object({ skillId: z.string().min(1) }),
   "call.expire": z.object({ threadId: z.string().min(1), callId: z.string().min(1) }),
   "history.compact": z.object({ threadId: z.string().min(1) }),
+  "memory.extract": z.object({ threadId: z.string().min(1) }),
+  "memory.consolidate": z.object({
+    spaceId: z.string().min(1),
+    userId: z.string().min(1),
+    botId: z.string().min(1).nullable(),
+  }),
+  "memory.dream": z.object({
+    spaceId: z.string().min(1),
+    userId: z.string().min(1),
+    botId: z.string().min(1).nullable(),
+  }),
   "messaging.deliver": z.object({ runId: z.string().min(1).optional() }),
   "messaging.credential-cleanup": z.object({
     installationId: z.string().min(1),
@@ -175,6 +186,56 @@ export function historyCompactJob(threadId: string): BackgroundJob {
     payload: { threadId },
     replaceKey: historyCompactJobKey(threadId),
     maxAttempts: HISTORY_COMPACT_MAX_ATTEMPTS,
+  };
+}
+
+export function memoryExtractJobKey(threadId: string): string {
+  return `memory.extract:${threadId}`;
+}
+
+/** Each attempt is one bounded extraction completion; a few tries ride out provider errors. */
+export const MEMORY_EXTRACT_MAX_ATTEMPTS = 4;
+
+export function memoryExtractJob(threadId: string): BackgroundJob {
+  return {
+    name: "memory.extract",
+    payload: { threadId },
+    replaceKey: memoryExtractJobKey(threadId),
+    maxAttempts: MEMORY_EXTRACT_MAX_ATTEMPTS,
+  };
+}
+
+export function memoryConsolidateJobKey(spaceId: string, botId: string | null): string {
+  return `memory.consolidate:${spaceId}:${botId ?? "shared"}`;
+}
+
+export function memoryConsolidateJob(
+  spaceId: string,
+  userId: string,
+  botId: string | null,
+): BackgroundJob {
+  return {
+    name: "memory.consolidate",
+    payload: { spaceId, userId, botId },
+    replaceKey: memoryConsolidateJobKey(spaceId, botId),
+    maxAttempts: 3,
+  };
+}
+
+export function memoryDreamJobKey(spaceId: string, botId: string | null): string {
+  return `memory.dream:${spaceId}:${botId ?? "shared"}`;
+}
+
+export function memoryDreamJob(
+  spaceId: string,
+  userId: string,
+  botId: string | null,
+): BackgroundJob {
+  return {
+    name: "memory.dream",
+    payload: { spaceId, userId, botId },
+    replaceKey: memoryDreamJobKey(spaceId, botId),
+    maxAttempts: 3,
   };
 }
 

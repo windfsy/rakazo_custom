@@ -71,7 +71,10 @@ function makeDeps(
   );
   const deps = {
     prisma: prisma as unknown as PrismaClient,
-    secrets: { put: vi.fn().mockResolvedValue({ id: "secret-new", ciphertext: "cipher" }) },
+    secrets: {
+      put: vi.fn().mockResolvedValue({ id: "secret-new", ciphertext: "cipher" }),
+      load: vi.fn().mockResolvedValue("{}"),
+    },
   };
   return {
     deps,

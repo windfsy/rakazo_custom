@@ -25,6 +25,7 @@ import {
   MEMORY_PROVIDER_SETTINGS,
   memoryProviderSettings,
 } from "./memory-providers/registry";
+import { NativeMemorySettings } from "./NativeMemorySettings";
 
 function ScopePicker({
   value,
@@ -219,6 +220,7 @@ export function MemorySettingsOverlay({
                   <Trans>Disconnect</Trans>
                 )}
               </Button>
+              {config.provider === "native" ? <NativeMemorySettings /> : null}
             </section>
           ) : !addingProvider ? (
             <Button

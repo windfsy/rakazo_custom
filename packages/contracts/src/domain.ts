@@ -1588,6 +1588,38 @@ export const SpaceMemoryConfigSchema = z.object({
 });
 export type SpaceMemoryConfig = z.infer<typeof SpaceMemoryConfigSchema>;
 
+export const NativeMemoryStateSchema = z.object({
+  status: z.enum(["needs_configuration", "connected", "degraded"]),
+  settings: z.object({
+    embeddingModel: z.string().optional(),
+    embeddingBaseUrl: z.string().optional(),
+    embeddingDimensions: z.number().int().optional(),
+    /** Last characters of the stored key, so the field can show which key is set. */
+    embeddingApiKeyHint: z.string().optional(),
+  }),
+  error: z.string().nullable(),
+});
+export type NativeMemoryState = z.infer<typeof NativeMemoryStateSchema>;
+
+export const NativeMemoryFactSchema = z.object({
+  id: z.string(),
+  content: z.string(),
+  /** "shared" for the Space pool, otherwise the owning bot id. */
+  observer: z.string(),
+  level: z.enum(["explicit", "deductive", "inductive"]),
+  createdAt: z.string(),
+  /** Cosine distance from the search query (0 identical); semantic search results only. */
+  distance: z.number().optional(),
+});
+export type NativeMemoryFact = z.infer<typeof NativeMemoryFactSchema>;
+
+export const NativeMemoryFactListSchema = z.object({
+  items: z.array(NativeMemoryFactSchema),
+  page: z.number().int(),
+  size: z.number().int(),
+});
+export type NativeMemoryFactList = z.infer<typeof NativeMemoryFactListSchema>;
+
 export const ModelCatalogEntrySchema = z.object({
   /** Omitted by older servers and ordinary chat connections. */
   protocol: z.enum(["chat", "decisions"]).optional(),

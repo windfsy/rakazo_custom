@@ -38,7 +38,8 @@ const DEFAULT_PORTS = { web: 5173, api: 3100, supervisor: 7091 };
 const PORT_STEP = 10;
 const MANAGED = {
   container: "rakazo-dev-postgres",
-  image: "postgres:18",
+  // pgvector ships in the image: native memory's migrations create the extension.
+  image: "pgvector/pgvector:pg18",
   port: 54318,
   owner: "rakazo",
   runtime: "rakazo_dev",
@@ -156,6 +157,20 @@ async function startManagedPostgres() {
       await new Promise((resolve) => setTimeout(resolve, 500));
     }
   }
+  // pgvector needs a superuser, which the migration role is not: create it here as the
+  // container's owner login, before migrations run.
+  run("docker", [
+    "exec",
+    MANAGED.container,
+    "psql",
+    "-q",
+    "-U",
+    MANAGED.owner,
+    "-d",
+    MANAGED.database,
+    "-c",
+    "CREATE EXTENSION IF NOT EXISTS vector",
+  ]);
   const server = `127.0.0.1:${MANAGED.port}`;
   return {
     url: `postgres://${MANAGED.runtime}:${MANAGED.runtime}@${server}/${MANAGED.database}`,
@@ -286,6 +301,16 @@ async function branchDatabase(shared, sharedDataDir) {
       rmSync(path.dirname(dataDir), { recursive: true, force: true });
       throw new Error(`Could not copy ${sharedDataDir} for ${name}`, { cause: error });
     }
+    // pgvector needs a superuser, and the migration login may not be one. Try here, then
+    // let the migration say what to do: it reports a missing extension with the exact
+    // command, which is better than failing this step for databases that never use memory.
+    try {
+      await owner.query(
+        `DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'vector') THEN CREATE EXTENSION vector; END IF; END $$;`,
+      );
+    } catch (error) {
+      warnOncePgvector(error);
+    }
     await owner.query(
       `COMMENT ON DATABASE "${name}" IS ${owner.escapeLiteral(branchDatabaseComment(branch))}`,
     );
@@ -298,6 +323,19 @@ async function branchDatabase(shared, sharedDataDir) {
     await owner.end();
   }
   return branchConnection(shared, name, dataDir);
+}
+
+let warnedAboutPgvector = false;
+function warnOncePgvector(error) {
+  if (warnedAboutPgvector) return;
+  warnedAboutPgvector = true;
+  if (error?.code === "42501") {
+    log(
+      "Could not create the pgvector extension (the database login is not a superuser). Native memory needs it; create it once as a superuser, or run the compose stack whose owner login can.",
+    );
+    return;
+  }
+  log(`Could not prepare pgvector: ${error instanceof Error ? error.message : String(error)}`);
 }
 
 function branchConnection(shared, name, dataDir) {

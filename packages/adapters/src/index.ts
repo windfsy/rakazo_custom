@@ -78,7 +78,15 @@ export * from "./graphql-connectors.js";
 export * from "./group-handoff.js";
 export * from "./home.js";
 export * from "./home-object-store.js";
-export { HonchoMemoryProvider } from "./honcho-memory-provider.js";
+export {
+  createHonchoConclusions,
+  deleteHonchoConclusion,
+  type HonchoStoredConclusion,
+  listHonchoConclusions,
+  listHonchoPeers,
+  queryHonchoConclusions,
+} from "./honcho-client.js";
+export { HonchoMemoryProvider, honchoWorkspaceId } from "./honcho-memory-provider.js";
 export * from "./host-aware-sandbox.js";
 export * from "./http-decisions.js";
 export * from "./infisical-secret-store.js";
@@ -101,6 +109,7 @@ export * from "./mcp-transport.js";
 export * from "./media-generation-factory.js";
 export * from "./media-generation-provider.js";
 export * from "./memory-provider-factory.js";
+export * from "./memory-native/index.js";
 export * from "./messaging-composition.js";
 export * from "./messaging-context.js";
 export * from "./messaging-delivery.js";

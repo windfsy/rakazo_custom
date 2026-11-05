@@ -1,6 +1,8 @@
+import { t } from "@lingui/core/macro";
 import type { SpaceMemoryConfig } from "@rakazo/contracts";
 import type { ComponentType } from "react";
 import { HonchoSettingsForm } from "./HonchoSettingsForm";
+import { NativeSettingsForm } from "./NativeSettingsForm";
 import { SerenitySettingsForm } from "./SerenitySettingsForm";
 import { SupermemorySettingsForm } from "./SupermemorySettingsForm";
 
@@ -23,24 +25,11 @@ export interface MemoryProviderSettingsRegistration {
 
 export const MEMORY_PROVIDER_SETTINGS: readonly MemoryProviderSettingsRegistration[] = [
   {
-    id: "supermemory",
-    name: "Supermemory",
-    SettingsForm: SupermemorySettingsForm,
-    connectedLabel: (config) =>
-      config.settings.mode === "cloud"
-        ? "Supermemory Cloud"
-        : `Self-hosted (${config.settings.baseUrl})`,
-  },
-  {
-    id: "serenity",
-    name: "Serenity",
-    SettingsForm: SerenitySettingsForm,
-    connectedLabel: (config) => {
-      const label = config.settings.brainLabel?.trim();
-      const endpoint = config.settings.endpoint ?? "Serenity";
-      const mode = config.settings.allowWrites === "true" ? "read/write" : "recall only";
-      return `${label || endpoint}, ${mode}`;
-    },
+    id: "native",
+    // Descriptive rather than a brand name, so it follows the interface language.
+    name: t`Rakazo memory`,
+    SettingsForm: NativeSettingsForm,
+    connectedLabel: () => t`Built into this deployment`,
   },
   {
     id: "honcho",
@@ -49,8 +38,29 @@ export const MEMORY_PROVIDER_SETTINGS: readonly MemoryProviderSettingsRegistrati
     connectedLabel: (config) => {
       const { mode, baseUrl, workspaceId } = config.settings;
       if (mode === "local")
-        return [`Self-hosted (${baseUrl})`, workspaceId].filter(Boolean).join(", ");
-      return workspaceId ? `Honcho Cloud (${workspaceId})` : "Honcho Cloud";
+        return [t`Self-hosted (${baseUrl ?? ""})`, workspaceId].filter(Boolean).join(", ");
+      return workspaceId ? t`Honcho Cloud (${workspaceId})` : t`Honcho Cloud`;
+    },
+  },
+  {
+    id: "supermemory",
+    name: "Supermemory",
+    SettingsForm: SupermemorySettingsForm,
+    connectedLabel: (config) =>
+      config.settings.mode === "cloud"
+        ? t`Supermemory Cloud`
+        : t`Self-hosted (${config.settings.baseUrl ?? ""})`,
+  },
+  {
+    id: "serenity",
+    name: "Serenity",
+    SettingsForm: SerenitySettingsForm,
+    connectedLabel: (config) => {
+      const label = config.settings.brainLabel?.trim();
+      const endpoint = config.settings.endpoint ?? "Serenity";
+      return config.settings.allowWrites === "true"
+        ? t`${label || endpoint}, read/write`
+        : t`${label || endpoint}, recall only`;
     },
   },
 ];
