@@ -19,13 +19,13 @@ import { SETTINGS_CONTENT_WIDTH } from "../components/SettingsRows";
 import { useSpaceRpc } from "../lib/space-rpc";
 import { errorText } from "../lib/user-error";
 import { SpaceMemorySection } from "./KnowledgeSection";
-import { NativeMemorySettings } from "./NativeMemorySettings";
 import type { MemoryProviderConnectionDraft } from "./memory-providers/registry";
 import {
   defaultMemoryProviderSettings,
   MEMORY_PROVIDER_SETTINGS,
   memoryProviderSettings,
 } from "./memory-providers/registry";
+import { NativeMemorySettings } from "./NativeMemorySettings";
 
 function ScopePicker({
   value,
@@ -220,9 +220,7 @@ export function MemorySettingsOverlay({
                   <Trans>Disconnect</Trans>
                 )}
               </Button>
-              {config.provider === "native" ? (
-                <NativeMemorySettings config={config} onNativeConnect={() => undefined} />
-              ) : null}
+              {config.provider === "native" ? <NativeMemorySettings /> : null}
             </section>
           ) : !addingProvider ? (
             <Button

@@ -747,6 +747,8 @@ export const appContract = {
           embeddingModel: z.string().min(1).max(200),
           embeddingBaseUrl: z.string().url().max(2000),
           embeddingApiKey: z.string().max(4096).optional(),
+          /** Omitted: use the dimension the model reports. */
+          embeddingDimensions: z.number().int().min(1).max(65_535).optional(),
         }),
       )
       .output(NativeMemoryStateSchema),

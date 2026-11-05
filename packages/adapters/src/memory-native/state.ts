@@ -77,10 +77,14 @@ export async function updateNativeMemorySettings(
     throw new Error("The embedding base URL must be HTTP or HTTPS.");
   }
 
+  const requested = input.embeddingDimensions;
   const probe = await probeEmbeddingConnection({
     baseUrl,
     apiKey: input.embeddingApiKey?.trim() || "probe",
     model,
+    // An explicit dimension is a check on the endpoint, not an override of the model:
+    // the probe rejects a mismatch rather than storing a vector size it does not produce.
+    ...(requested ? { dimensions: requested } : {}),
   });
   if (!probe.ok) throw new Error(probe.error);
 

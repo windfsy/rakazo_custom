@@ -51,7 +51,12 @@ export async function readNativeState(deps: NativeMemoryDeps) {
 export async function updateNativeSettings(
   deps: NativeMemoryDeps,
   actor: Actor,
-  input: { embeddingModel: string; embeddingBaseUrl: string; embeddingApiKey?: string },
+  input: {
+    embeddingModel: string;
+    embeddingBaseUrl: string;
+    embeddingApiKey?: string;
+    embeddingDimensions?: number;
+  },
 ): Promise<NativeMemoryStateView> {
   if (!(await isDefaultSpaceOwner(deps.prisma, actor))) throw new NativeMemoryNotOwnerError();
   const { state, embeddingChanged } = await updateNativeMemorySettings(deps, actor, input);

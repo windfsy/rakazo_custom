@@ -1,6 +1,6 @@
 import { Trans, useLingui } from "@lingui/react/macro";
-import type { NativeMemoryFact, NativeMemoryState, SpaceMemoryConfig } from "@rakazo/contracts";
-import { Button, Field, FieldError, FieldLabel, Input, Spinner } from "@rakazo/ui-web";
+import type { NativeMemoryFact } from "@rakazo/contracts";
+import { Button, Field, FieldLabel, Input, Spinner } from "@rakazo/ui-web";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useSpaceQueries } from "../lib/query";
@@ -11,31 +11,15 @@ function similarity(distance: number): string {
   return `${Math.max(0, Math.round((1 - distance) * 100))}%`;
 }
 
-export function NativeMemorySettings({
-  config,
-  onNativeConnect,
-}: {
-  config: SpaceMemoryConfig;
-  onNativeConnect: () => void;
-}) {
+export function NativeMemorySettings() {
   const rpc = useSpaceRpc();
   const queries = useSpaceQueries();
   const { t } = useLingui();
-  const [model, setModel] = useState("");
-  const [baseUrl, setBaseUrl] = useState("");
-  const [apiKey, setApiKey] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
+  const [_error, setError] = useState<string | null>(null);
+  const [_busy, _setBusy] = useState(false);
 
   const stateQuery = useQuery(queries.memory.nativeState.queryOptions({ input: {} }));
   const state = stateQuery.data;
-
-  useEffect(() => {
-    if (!state) return;
-    setModel((current) => current || state.settings.embeddingModel || "");
-    setBaseUrl((current) => current || state.settings.embeddingBaseUrl || "");
-  }, [state]);
 
   const observersQuery = useQuery(queries.memory.nativeFactObservers.queryOptions({ input: {} }));
   const observers = observersQuery.data?.items ?? [];
@@ -58,41 +42,8 @@ export function NativeMemorySettings({
     }),
   );
 
-  async function save() {
-    setError(null);
-    setBusy(true);
-    try {
-      await rpc.memory.nativeUpdate({
-        embeddingModel: model.trim(),
-        embeddingBaseUrl: baseUrl.trim(),
-        ...(apiKey.trim() ? { embeddingApiKey: apiKey.trim() } : {}),
-      });
-      setApiKey("");
-      await stateQuery.refetch();
-    } catch (err) {
-      setError(errorText(err, t`Could not save the embedding settings`));
-    } finally {
-      setBusy(false);
-    }
-  }
-
   async function refreshFacts() {
     await factsQuery.refetch();
-  }
-
-  async function rebuild() {
-    setError(null);
-    setNotice(null);
-    setBusy(true);
-    try {
-      const { reembedded } = await rpc.memory.nativeReembed();
-      setNotice(t`Rebuilt ${reembedded} memories.`);
-      await Promise.all([stateQuery.refetch(), refreshFacts()]);
-    } catch (err) {
-      setError(errorText(err, t`Could not rebuild memories`));
-    } finally {
-      setBusy(false);
-    }
   }
 
   async function deleteFact(factId: string) {
@@ -105,8 +56,6 @@ export function NativeMemorySettings({
     }
   }
 
-  const ready = model.trim().length > 0 && /^https?:\/\//.test(baseUrl.trim());
-
   return (
     <div className="mt-5 space-y-5 border-t border-border pt-5">
       {state ? (
@@ -118,80 +67,10 @@ export function NativeMemorySettings({
           ) : state.status === "degraded" ? (
             <Trans>Needs attention: {state.error ?? "the embedding endpoint is unreachable"}</Trans>
           ) : (
-            <Trans>Configure the embedding endpoint to finish setting up memory.</Trans>
+            <Trans>Set up the embedding model in Models to start saving memories.</Trans>
           )}
         </p>
       ) : null}
-
-      <section className="space-y-4">
-        <Field>
-          <FieldLabel htmlFor="native-embedding-model">
-            <Trans>Embedding model</Trans>
-          </FieldLabel>
-          <Input
-            id="native-embedding-model"
-            value={model}
-            disabled={busy}
-            onChange={(event) => setModel(event.target.value)}
-            placeholder="text-embedding-3-small"
-            maxLength={200}
-            autoComplete="off"
-          />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="native-embedding-base-url">
-            <Trans>Embedding base URL</Trans>
-          </FieldLabel>
-          <Input
-            id="native-embedding-base-url"
-            value={baseUrl}
-            disabled={busy}
-            onChange={(event) => setBaseUrl(event.target.value)}
-            placeholder="https://api.openai.com/v1"
-            maxLength={2000}
-            autoComplete="off"
-          />
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="native-embedding-api-key">
-            <Trans>Embedding API key</Trans>
-          </FieldLabel>
-          <Input
-            id="native-embedding-api-key"
-            value={apiKey}
-            disabled={busy}
-            onChange={(event) => setApiKey(event.target.value)}
-            type="password"
-            autoComplete="new-password"
-            maxLength={4096}
-          />
-        </Field>
-        {error ? <FieldError>{error}</FieldError> : null}
-        {notice ? (
-          <p className="text-[13px] text-muted-foreground" role="status">
-            {notice}
-          </p>
-        ) : null}
-        <div className="flex flex-wrap gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            disabled={busy || !ready}
-            onClick={() => void save()}
-          >
-            {busy ? <Trans>Saving…</Trans> : <Trans>Save embedding settings</Trans>}
-          </Button>
-          <Button type="button" variant="ghost" disabled={busy} onClick={() => void rebuild()}>
-            <Trans>Rebuild memories</Trans>
-          </Button>
-        </div>
-        <p className="text-[13px] text-muted-foreground">
-          <Trans>
-            Rebuild after changing the embedding model: vectors from different models are not
-            comparable, so stored memories must be embedded again.
-          </Trans>
-        </p>
-      </section>
 
       <section className="space-y-3 border-t border-border pt-5">
         <h4 className="text-heading3 font-medium text-foreground">
