@@ -132,11 +132,14 @@ describePostgres("thread memory extraction (PostgreSQL)", () => {
     const facts = await runAsSystem("read extracted facts", () =>
       prisma.memoryFact.findMany({ where: { spaceId }, select: { content: true, botId: true } }),
     );
-    // Two facts × two perspectives (shared + bot).
-    expect(facts).toHaveLength(4);
-    expect(facts.filter((fact) => fact.botId === null)).toHaveLength(2);
-    expect(facts.filter((fact) => fact.botId === botId)).toHaveLength(2);
+    // One row per fact, in the perspective its scope names: this Space is isolated, so
+    // everything lands under the bot. Writing both perspectives stored each fact twice.
+    expect(facts).toHaveLength(2);
+    expect(facts.every((fact) => fact.botId === botId)).toBe(true);
     expect(facts.some((fact) => fact.content.includes("window seat"))).toBe(true);
+    // The same fact must never appear twice, or shared recall returns it twice.
+    const contents = facts.map((fact) => fact.content);
+    expect(new Set(contents).size).toBe(contents.length);
 
     const progress = await runAsSystem("read cursor", () =>
       prisma.memoryThreadProgress.findUnique({ where: { threadId } }),

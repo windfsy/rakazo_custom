@@ -123,11 +123,13 @@ export class NativeMemoryProvider implements SemanticMemoryProvider {
     try {
       const { embedding } = await client.embed(content);
       const { insertFacts } = await import("./store.js");
+      // The scope names the perspective, exactly as recall reads it: a shared-scope save
+      // joins the Space pool so other bots see it; an isolated one stays the bot's own.
       await insertFacts(this.deps.prisma, [
         {
           spaceId: _context.spaceId,
           userId: _context.userId,
-          botId: request.botId,
+          botId: request.scope === "shared" ? null : request.botId,
           level: "explicit",
           content,
           metadata: { source: "save_memory" },

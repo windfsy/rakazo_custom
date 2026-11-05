@@ -1,7 +1,7 @@
 import type { AgentRunRequest, AgentRuntime } from "@rakazo/adapter-kit";
 import type { MessageBlock } from "@rakazo/contracts";
 import type { PrismaClient } from "@rakazo/db";
-import { runAsSystem } from "@rakazo/db";
+import { effectiveMemoryScope, runAsSystem } from "@rakazo/db";
 import { getLogger } from "@rakazo/logging";
 import type { EmbeddingConnection } from "./embedding-client.js";
 import { EmbeddingClient } from "./embedding-client.js";
@@ -170,20 +170,25 @@ async function extract(
 
   // Ingestion writes the Space's shared view and the bot's own view side by side, so
   // isolated recall stays complete and shared recall sees the whole pool.
+  // One row per fact, in the perspective the bot's effective scope names. Writing both
+  // perspectives stored every fact twice and made shared recall return each fact twice.
+  const observer = await memoryObserverFor(deps.prisma, thread.botId, thread.spaceId);
   const rows = facts.flatMap((fact, index) => {
     const vector = embeddings[index]?.embedding;
     if (!vector) return [];
-    return [null, thread.botId].map((botId) => ({
-      spaceId: thread.spaceId,
-      userId: thread.userId,
-      botId,
-      level: "explicit" as const,
-      content: fact.content.slice(0, MAX_FACT_CHARS),
-      occurredAt: parseOccurredAt(fact.occurredAt),
-      metadata: { source: "conversation", threadId, seq: latestSeq },
-      embedding: vector,
-      embeddingModel: embedding.model,
-    }));
+    return [
+      {
+        spaceId: thread.spaceId,
+        userId: thread.userId,
+        botId: observer,
+        level: "explicit" as const,
+        content: fact.content.slice(0, MAX_FACT_CHARS),
+        occurredAt: parseOccurredAt(fact.occurredAt),
+        metadata: { source: "conversation", threadId, seq: latestSeq },
+        embedding: vector,
+        embeddingModel: embedding.model,
+      },
+    ];
   });
   await insertFacts(deps.prisma, rows);
   await advanceCursor(deps.prisma, threadId, thread.spaceId, latestSeq);
@@ -193,6 +198,29 @@ async function extract(
     upToSeq: latestSeq,
   });
   return { extracted: facts.length };
+}
+
+/**
+ * The observer a fact belongs to: `null` (the Space pool) for a shared-scope bot, the
+ * bot itself for an isolated one. This is what makes `recall` see each fact once.
+ */
+async function memoryObserverFor(
+  prisma: PrismaClient,
+  botId: string,
+  spaceId: string,
+): Promise<string | null> {
+  const [bot, config] = await Promise.all([
+    prisma.bot.findUnique({ where: { id: botId }, select: { memoryScope: true } }),
+    prisma.spaceMemoryConfig.findUnique({
+      where: { spaceId },
+      select: { defaultMemoryScope: true },
+    }),
+  ]);
+  const scope = effectiveMemoryScope(
+    bot?.memoryScope ?? null,
+    config?.defaultMemoryScope ?? "isolated",
+  );
+  return scope === "shared" ? null : botId;
 }
 
 function parseOccurredAt(value: string | undefined): Date | null {

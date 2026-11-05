@@ -336,12 +336,20 @@ export async function factsNeedingReembedding(
 
 /** Clears every stored vector; recall falls back to the blind index until they are rewritten. */
 export async function clearFactEmbeddings(prisma: PrismaClient): Promise<number> {
-  const rows = await prisma.$queryRaw<Array<{ count: bigint }>>`
-    WITH updated AS (
-      UPDATE "memory_facts" SET embedding = NULL WHERE embedding IS NOT NULL RETURNING 1
-    )
-    SELECT count(*) AS count FROM updated
-  `;
+  // A rebuild clears every Space's vectors, so it runs as the system principal.
+  const rows = await runAsSystem(
+    "native memory clear vectors",
+    () =>
+      prisma.$queryRaw<Array<{ count: bigint }>>`
+      WITH updated AS (
+        UPDATE "memory_facts"
+        SET embedding = NULL, "embeddingModel" = NULL
+        WHERE embedding IS NOT NULL
+        RETURNING 1
+      )
+      SELECT count(*) AS count FROM updated
+    `,
+  );
   return Number(rows[0]?.count ?? 0);
 }
 
