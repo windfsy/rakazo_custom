@@ -134,6 +134,7 @@ export async function dreamObserverMemories(
           content: fact.content,
           metadata: { source: "dream", sources: fact.sourceIds },
           embedding: vector,
+          embeddingModel: embedding.model,
         },
       ];
     });

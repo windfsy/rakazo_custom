@@ -1340,6 +1340,9 @@ model MemoryFact {
   occurredAt      DateTime?
   content         String
   searchTokens    Int[]
+  /// The embedding model that produced `embedding`, so a model change re-embeds exactly
+  /// the stale rows instead of trusting that vectors from two models are comparable.
+  embeddingModel  String?
   metadata        Json               @default("{}")
   createdAt       DateTime           @default(now())
   updatedAt       DateTime           @updatedAt

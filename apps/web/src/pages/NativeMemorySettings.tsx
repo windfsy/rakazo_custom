@@ -25,6 +25,7 @@ export function NativeMemorySettings({
   const [baseUrl, setBaseUrl] = useState("");
   const [apiKey, setApiKey] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const stateQuery = useQuery(queries.memory.nativeState.queryOptions({ input: {} }));
@@ -77,6 +78,21 @@ export function NativeMemorySettings({
 
   async function refreshFacts() {
     await factsQuery.refetch();
+  }
+
+  async function rebuild() {
+    setError(null);
+    setNotice(null);
+    setBusy(true);
+    try {
+      const { reembedded } = await rpc.memory.nativeReembed();
+      setNotice(t`Rebuilt ${reembedded} memories.`);
+      await Promise.all([stateQuery.refetch(), refreshFacts()]);
+    } catch (err) {
+      setError(errorText(err, t`Could not rebuild memories`));
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function deleteFact(factId: string) {
@@ -151,14 +167,30 @@ export function NativeMemorySettings({
           />
         </Field>
         {error ? <FieldError>{error}</FieldError> : null}
-        <Button
-          type="button"
-          variant="outline"
-          disabled={busy || !ready}
-          onClick={() => void save()}
-        >
-          {busy ? <Trans>Saving…</Trans> : <Trans>Save embedding settings</Trans>}
-        </Button>
+        {notice ? (
+          <p className="text-[13px] text-muted-foreground" role="status">
+            {notice}
+          </p>
+        ) : null}
+        <div className="flex flex-wrap gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            disabled={busy || !ready}
+            onClick={() => void save()}
+          >
+            {busy ? <Trans>Saving…</Trans> : <Trans>Save embedding settings</Trans>}
+          </Button>
+          <Button type="button" variant="ghost" disabled={busy} onClick={() => void rebuild()}>
+            <Trans>Rebuild memories</Trans>
+          </Button>
+        </div>
+        <p className="text-[13px] text-muted-foreground">
+          <Trans>
+            Rebuild after changing the embedding model: vectors from different models are not
+            comparable, so stored memories must be embedded again.
+          </Trans>
+        </p>
       </section>
 
       <section className="space-y-3 border-t border-border pt-5">

@@ -3,10 +3,12 @@ import {
   NATIVE_PROVIDER_ID,
   type NativeMemoryStateView,
   readNativeMemoryState,
+  resolveEmbeddingConnection,
   updateNativeMemorySettings,
 } from "@rakazo/adapters";
 import type { Actor } from "@rakazo/contracts";
 import type { PrismaClient } from "@rakazo/db";
+import { getLogger } from "@rakazo/logging";
 import { withSerializableRetry } from "./serializable-retry.js";
 
 export interface NativeMemoryDeps {
@@ -51,8 +53,45 @@ export async function updateNativeSettings(
   actor: Actor,
   input: { embeddingModel: string; embeddingBaseUrl: string; embeddingApiKey?: string },
 ): Promise<NativeMemoryStateView> {
-  await requireDefaultSpaceOwner(deps.prisma, actor);
-  return updateNativeMemorySettings(deps, actor, input);
+  if (!(await isDefaultSpaceOwner(deps.prisma, actor))) throw new NativeMemoryNotOwnerError();
+  const { state, embeddingChanged } = await updateNativeMemorySettings(deps, actor, input);
+  // Vectors from the previous model cannot be compared with new ones, so re-embed the
+  // stale rows now instead of leaving recall mixing two vector spaces.
+  if (embeddingChanged) {
+    const connection = await resolveEmbeddingConnection(deps);
+    if (connection) {
+      const { reembedStaleFacts } = await import("@rakazo/adapters");
+      await reembedStaleFacts(deps.prisma, connection).catch((error) => {
+        // Recall still works from the blind index; the next save records the new model.
+        getLogger().warn("native memory re-embed after settings change failed", { error });
+      });
+    }
+  }
+  return state;
+}
+
+/**
+ * Drops every stored vector and re-embeds the Space's facts with the configured model.
+ * The explicit repair for a model change that could not complete, or for rows written
+ * before any model was configured.
+ */
+export async function reembedNativeFacts(
+  deps: NativeMemoryDeps,
+  actor: Actor,
+): Promise<{ reembedded: number }> {
+  if (!(await isDefaultSpaceOwner(deps.prisma, actor))) throw new NativeMemoryNotOwnerError();
+  const connection = await resolveEmbeddingConnection(deps);
+  if (!connection) throw new Error("Configure the embedding endpoint before rebuilding memory.");
+  const { clearFactEmbeddings, reembedStaleFacts } = await import("@rakazo/adapters");
+  await clearFactEmbeddings(deps.prisma);
+  return reembedStaleFacts(deps.prisma, connection);
+}
+
+/** Only the personal Space owner configures the deployment-wide embedding endpoint. */
+export class NativeMemoryNotOwnerError extends Error {
+  constructor() {
+    super("Only the personal Space owner can manage the native memory service.");
+  }
 }
 
 /**
@@ -160,6 +199,7 @@ export async function createNativeFact(
       content: input.content,
       metadata: { source: "manual" },
       embedding,
+      embeddingModel: client.model,
     },
   ]);
   return { ok: true as const };

@@ -182,6 +182,7 @@ async function extract(
       occurredAt: parseOccurredAt(fact.occurredAt),
       metadata: { source: "conversation", threadId, seq: latestSeq },
       embedding: vector,
+      embeddingModel: embedding.model,
     }));
   });
   await insertFacts(deps.prisma, rows);

@@ -3,8 +3,12 @@ import { assertAllowedOpenAiCompatibleUrl } from "../openai-compatible-url.js";
 import { createOpenAiCompatibleFetch } from "../pi-openai-compatible-provider.js";
 
 const EMBED_TIMEOUT_MS = 30_000;
-/** pgvector's HNSW expression index tops out at 2000 dimensions; recall stays well under it. */
-export const MAX_EMBEDDING_DIMENSIONS = 2000;
+/**
+ * A sanity bound, not a pgvector limit: the embedding column is an untyped `vector` with
+ * no index, so any model dimension fits. Reject only values so large they would mean the
+ * endpoint returned something other than an embedding.
+ */
+export const MAX_EMBEDDING_DIMENSIONS = 65_535;
 /** One request's input strings; batched to keep a single embedding call small. */
 const MAX_BATCH_INPUTS = 64;
 /** OpenAI-compatible endpoints reject inputs beyond this many tokens; truncate before sending. */
@@ -56,6 +60,11 @@ function truncateUtf8(value: string, maxChars: number): string {
  */
 export class EmbeddingClient {
   private readonly fetchImpl: typeof globalThis.fetch;
+
+  /** The model these vectors came from; stored beside each fact it embeds. */
+  get model(): string {
+    return this.connection.model;
+  }
 
   constructor(
     private readonly connection: EmbeddingConnection,

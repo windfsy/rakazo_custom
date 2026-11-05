@@ -68,6 +68,7 @@ describePostgres("native memory facts (PostgreSQL)", () => {
         level: "explicit" as const,
         content,
         embedding: embeddingOf(content),
+        embeddingModel: "test-model",
         metadata: { index },
       })),
     );

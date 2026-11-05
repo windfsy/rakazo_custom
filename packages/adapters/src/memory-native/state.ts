@@ -24,6 +24,12 @@ export interface NativeMemoryStateView {
   error: string | null;
 }
 
+export interface NativeMemorySettingsResult {
+  state: NativeMemoryStateView;
+  /** True when the embedding model or endpoint changed, so stored vectors are stale. */
+  embeddingChanged: boolean;
+}
+
 function settingsOf(configuration: unknown): NativeMemorySettings {
   const record = (configuration ?? {}) as Record<string, unknown>;
   return {
@@ -56,7 +62,7 @@ export async function updateNativeMemorySettings(
   deps: { prisma: PrismaClient; secrets: Pick<SecretStore, "put"> },
   actor: { userId: string; spaceId: string },
   input: NativeMemorySettings & { embeddingApiKey?: string },
-): Promise<NativeMemoryStateView> {
+): Promise<NativeMemorySettingsResult> {
   const model = input.embeddingModel?.trim();
   const baseUrl = input.embeddingBaseUrl?.trim();
   if (!model) throw new Error("An embedding model is required.");
@@ -85,9 +91,15 @@ export async function updateNativeMemorySettings(
     userId: actor.userId,
     signal: new AbortController().signal,
   };
+  let embeddingChanged = false;
   await runAsSystem("native memory settings update", () =>
     deps.prisma.$transaction(async (tx) => {
       const existing = await tx.nativeMemoryState.findUnique({ where: { id: "default" } });
+      const before = existing ? settingsOf(existing.configuration) : {};
+      // A different model or endpoint means the stored vectors are no longer comparable.
+      embeddingChanged =
+        Boolean(existing) &&
+        (before.embeddingModel !== model || before.embeddingBaseUrl !== baseUrl);
       let embeddingSecretId: string | undefined;
       if (input.embeddingApiKey?.trim()) {
         const stored = await deps.secrets.put(input.embeddingApiKey.trim(), context);
@@ -128,7 +140,7 @@ export async function updateNativeMemorySettings(
       });
     }),
   );
-  return readNativeMemoryState(deps.prisma);
+  return { state: await readNativeMemoryState(deps.prisma), embeddingChanged };
 }
 
 /** Loads the embedding connection for recall/ingestion; null until configured. */

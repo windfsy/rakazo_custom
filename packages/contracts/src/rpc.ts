@@ -105,6 +105,8 @@ import {
   ModelCredentialSchema,
   ModelCreditAmountSchema,
   ModelOAuthBeginSchema,
+  NativeMemoryFactListSchema,
+  NativeMemoryStateSchema,
   OPENAI_COMPATIBLE_PROVIDER_ID,
   PluginMarketplaceCatalogSchema,
   PluginPartSchema,
@@ -125,8 +127,6 @@ import {
   SignupSurveySchema,
   SkillPlaybookSchema,
   SpaceAvailabilitySchema,
-  NativeMemoryFactListSchema,
-  NativeMemoryStateSchema,
   SpaceMemoryConfigSchema,
   SpaceNavigationSchema,
   SpaceSchema,
@@ -750,6 +750,7 @@ export const appContract = {
         }),
       )
       .output(NativeMemoryStateSchema),
+    nativeReembed: oc.output(z.object({ reembedded: z.number().int() })),
     nativeFactObservers: oc.output(z.object({ items: z.array(z.string()) })),
     nativeFactList: oc
       .input(

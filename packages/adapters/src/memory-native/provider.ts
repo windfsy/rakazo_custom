@@ -132,6 +132,7 @@ export class NativeMemoryProvider implements SemanticMemoryProvider {
           content,
           metadata: { source: "save_memory" },
           embedding,
+          embeddingModel: client.model,
         },
       ]);
       return { ok: true, value: undefined };

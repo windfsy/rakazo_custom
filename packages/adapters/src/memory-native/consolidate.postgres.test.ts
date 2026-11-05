@@ -83,6 +83,7 @@ describePostgres("native memory consolidation and dreaming (PostgreSQL)", () => 
         level: "explicit" as const,
         content,
         embedding: [0.1, 0.2],
+        embeddingModel: "test-model",
       })),
     );
   }

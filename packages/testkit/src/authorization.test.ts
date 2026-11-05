@@ -361,6 +361,7 @@ describeWithDatabase("API authorization and resource isolation", () => {
       ["memory/disconnectProvider"],
       ["memory/nativeState", {}],
       ["memory/nativeUpdate", { embeddingModel: "m", embeddingBaseUrl: "https://e.test" }],
+      ["memory/nativeReembed", {}],
       ["memory/nativeFactObservers", {}],
       ["memory/nativeFactList", {}],
       ["memory/nativeFactCreate", { content: "Nope", observer: "shared" }],

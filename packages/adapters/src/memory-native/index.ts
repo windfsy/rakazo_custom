@@ -13,7 +13,11 @@ export {
   factProvenance,
   observersDueForDream,
 } from "./dream.js";
-export type { EmbeddingConnection, EmbeddingResult } from "./embedding-client.js";
+export type {
+  EmbeddingConnection,
+  EmbeddingConnection as ReembedConnection,
+  EmbeddingResult,
+} from "./embedding-client.js";
 export {
   EmbeddingClient,
   embeddingToVectorLiteral,
@@ -34,6 +38,7 @@ export {
   createNativeProvider,
   NativeMemoryProvider,
 } from "./provider.js";
+export { reembedStaleFacts } from "./reembed.js";
 export type {
   NativeMemorySettings,
   NativeMemoryStateView,
@@ -48,8 +53,10 @@ export {
 } from "./state.js";
 export type { NativeFact, NativeFactInput } from "./store.js";
 export {
+  clearFactEmbeddings,
   deleteFact,
   expireFacts,
+  factsNeedingReembedding,
   getFact,
   insertFacts,
   listFactObservers,
@@ -58,5 +65,6 @@ export {
   recallObservers,
   reciprocalRankFusion,
   searchFacts,
+  setFactEmbedding,
   supersedeFacts,
 } from "./store.js";

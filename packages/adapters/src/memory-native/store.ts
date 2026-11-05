@@ -22,6 +22,8 @@ export interface NativeFactInput {
   occurredAt?: Date | null;
   metadata?: Record<string, unknown>;
   embedding: number[];
+  /** The model that produced `embedding`; a later change re-embeds these rows. */
+  embeddingModel: string;
 }
 
 export interface NativeFact {
@@ -75,6 +77,7 @@ export async function insertFacts(
             content: fact.content,
             occurredAt: fact.occurredAt ?? null,
             metadata: (fact.metadata ?? {}) as Prisma.InputJsonValue,
+            embeddingModel: fact.embeddingModel,
           },
           select: { id: true },
         });
@@ -306,4 +309,52 @@ export async function countActiveFacts(
     ...(observer === null ? { botId: null } : { botId: observer }),
   };
   return prisma.memoryFact.count({ where });
+}
+
+/**
+ * Facts whose vector did not come from `model`, so a model change re-embeds exactly the
+ * stale rows. Rows with no recorded model predate the column and are stale too.
+ */
+export async function factsNeedingReembedding(
+  prisma: PrismaClient,
+  input: { model: string; limit: number; afterId?: string },
+): Promise<Array<{ id: string; content: string }>> {
+  // A rebuild scans every Space, so it runs as the system principal.
+  return runAsSystem("native memory reembed scan", async () => {
+    const stale = await prisma.$queryRaw<Array<{ id: string; content: string }>>(Prisma.sql`
+      SELECT id, content, "spaceId", "userId" FROM "memory_facts"
+      WHERE status = 'active'
+        AND ("embeddingModel" IS NULL OR "embeddingModel" <> ${input.model})
+        ${input.afterId ? Prisma.sql`AND id > ${input.afterId}` : Prisma.empty}
+      ORDER BY id ASC
+      LIMIT ${input.limit}
+    `);
+    // Content is encrypted at rest; decrypt before it is sent to the embedding endpoint.
+    return requireEncryption(prisma).openRows("MemoryFact", stale);
+  });
+}
+
+/** Clears every stored vector; recall falls back to the blind index until they are rewritten. */
+export async function clearFactEmbeddings(prisma: PrismaClient): Promise<number> {
+  const rows = await prisma.$queryRaw<Array<{ count: bigint }>>`
+    WITH updated AS (
+      UPDATE "memory_facts" SET embedding = NULL WHERE embedding IS NOT NULL RETURNING 1
+    )
+    SELECT count(*) AS count FROM updated
+  `;
+  return Number(rows[0]?.count ?? 0);
+}
+
+/** Rewrites one fact's vector and records the model that produced it. */
+export async function setFactEmbedding(
+  prisma: PrismaClient,
+  id: string,
+  embedding: number[],
+  embeddingModel: string,
+): Promise<void> {
+  await prisma.$executeRaw`
+    UPDATE "memory_facts"
+    SET embedding = ${embeddingLiteral(embedding)}::vector, "embeddingModel" = ${embeddingModel}
+    WHERE id = ${id}
+  `;
 }
