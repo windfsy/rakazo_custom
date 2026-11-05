@@ -158,6 +158,10 @@ test("settings shell is two-pane and deep-links Models Memory Voice Usage", asyn
   const memory = settings.getByTestId("memory-settings");
   await memory.getByRole("button", { name: "Connect memory provider", exact: true }).click();
   await expect(memory.getByLabel("Provider")).toBeVisible();
+  // The built-in provider is first, so a fresh panel shows it with no endpoint to fill in.
+  await memory.getByLabel("Provider").selectOption("native");
+  await expect(memory.getByRole("button", { name: "Connect", exact: true })).toBeVisible();
+  await captureScreenshot(page, testInfo, "settings-shell-memory-native");
   await memory.getByLabel("Provider").selectOption("serenity");
   await expect(memory.getByLabel("MCP endpoint")).toBeVisible();
   await expect(memory.getByLabel("Bearer token")).toBeVisible();
