@@ -15,10 +15,6 @@ A missing `data/` or `RAKAZO_BACKUP_SKIP_HOMES=1` produces an empty archive that
 as omitted homes. Database or archive errors fail the backup. Discard the output directory of
 any failed run.
 
-## Built-in Honcho data
-
-The built-in Honcho service keeps its workspace, peers, conclusions and work queue in the separate `honcho` PostgreSQL database, not in Rakazo's Prisma database. Include it in every backup, for example with `pg_dump -Fc -U "$POSTGRES_USER" honcho > honcho.dump`, and keep `HONCHO_ADMIN_TOKEN` in the protected configuration backup. Restore that database before running its Alembic migrations or restarting the Honcho container. PostgreSQL backups must include the pgvector extension; Redis contains only disposable caches and does not need a backup. The ordinary Rakazo-only dump does not include Honcho memory.
-
 ## Restore
 
 For backups created by `scripts/backup.sh`, use an empty `rakazo` database in the development

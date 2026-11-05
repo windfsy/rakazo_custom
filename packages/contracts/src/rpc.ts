@@ -85,8 +85,6 @@ import {
   GroupDetailSchema,
   GroupSchema,
   IntegrationCatalogResultSchema,
-  ManagedHonchoMemorySchema,
-  ManagedHonchoStatusSchema,
   McpServerConfigInput,
   McpServerSchema,
   MemoryDocumentSchema,
@@ -127,6 +125,8 @@ import {
   SignupSurveySchema,
   SkillPlaybookSchema,
   SpaceAvailabilitySchema,
+  NativeMemoryFactListSchema,
+  NativeMemoryStateSchema,
   SpaceMemoryConfigSchema,
   SpaceNavigationSchema,
   SpaceSchema,
@@ -740,47 +740,38 @@ export const appContract = {
       .input(z.object({ defaultMemoryScope: MemoryScopeSchema }))
       .output(SpaceMemoryConfigSchema),
     disconnectProvider: oc.output(z.object({ ok: z.literal(true) })),
-    managedStatus: oc.output(ManagedHonchoStatusSchema),
-    enableManaged: oc.output(ManagedHonchoStatusSchema),
-    updateManaged: oc
+    nativeState: oc.output(NativeMemoryStateSchema),
+    nativeUpdate: oc
       .input(
         z.object({
-          modelMode: z.enum(["main", "fixed"]).optional(),
-          credentialId: Id.optional(),
-          embeddingModel: z.string().max(200).optional(),
-          embeddingBaseUrl: z.string().max(2000).optional(),
+          embeddingModel: z.string().min(1).max(200),
+          embeddingBaseUrl: z.string().url().max(2000),
           embeddingApiKey: z.string().max(4096).optional(),
-          embeddingDimensions: z.number().int().min(1).max(65535).optional(),
-          deriverWorkers: z.number().int().min(1).max(32).optional(),
         }),
       )
-      .output(ManagedHonchoStatusSchema),
-    applyManaged: oc
-      .input(z.object({ restart: z.boolean().default(false) }))
-      .output(ManagedHonchoStatusSchema),
-    managedMemoryPeers: oc.input(z.object({})).output(z.object({ items: z.array(z.string()) })),
-    managedMemoryList: oc
+      .output(NativeMemoryStateSchema),
+    nativeFactObservers: oc.output(z.object({ items: z.array(z.string()) })),
+    nativeFactList: oc
       .input(
         z.object({
           query: z.string().max(10_000).optional(),
-          observerId: z.string().max(512).optional(),
-          observedId: z.string().max(512).optional(),
+          observer: z.string().max(512).optional(),
           page: z.number().int().min(1).optional(),
           size: z.number().int().min(1).max(100).optional(),
         }),
       )
-      .output(ManagedHonchoMemorySchema),
-    managedMemoryCreate: oc
+      .output(NativeMemoryFactListSchema),
+    nativeFactCreate: oc
       .input(
         z.object({
           content: z.string().min(1).max(20_000),
-          observerId: z.string().min(1).max(512),
-          observedId: z.string().min(1).max(512),
+          /** "shared" writes to the Space pool; a bot id writes that bot's view. */
+          observer: z.string().min(1).max(512),
         }),
       )
       .output(z.object({ ok: z.literal(true) })),
-    managedMemoryDelete: oc
-      .input(z.object({ conclusionId: z.string().min(1).max(512) }))
+    nativeFactDelete: oc
+      .input(z.object({ factId: z.string().min(1).max(64) }))
       .output(z.object({ ok: z.literal(true) })),
   },
   routines: {

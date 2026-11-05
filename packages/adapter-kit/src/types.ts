@@ -756,6 +756,12 @@ export interface BackgroundJobPayloads {
   /** The bot's call rang out: mark it missed if nobody answered. */
   "call.expire": { threadId: string; callId: string };
   "history.compact": { threadId: string };
+  /** Extract durable facts from a thread's new messages into native memory. */
+  "memory.extract": { threadId: string };
+  /** Fold one observer's stored facts together: supersede outdated, expire past. */
+  "memory.consolidate": { spaceId: string; userId: string; botId: string | null };
+  /** Derive deductive and inductive conclusions from one observer's facts. */
+  "memory.dream": { spaceId: string; userId: string; botId: string | null };
   "messaging.deliver": { runId?: string };
   "messaging.credential-cleanup": { installationId: string; ref: string };
   /** Reconcile durable remote-agent intent; scope is loaded from the database. */

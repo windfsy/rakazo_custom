@@ -4,19 +4,19 @@ import {
   classifyMemoryProviderSettings,
   MemoryProviderPrivateEndpointRequiredError,
   memoryProviderRequiresPrivateEndpoint,
+  NATIVE_PROVIDER_ID,
   prepareMemoryProviderConnection,
   toStringRecord,
 } from "@rakazo/adapters";
 import type { Actor } from "@rakazo/contracts";
 import type { PrismaClient } from "@rakazo/db";
 import { findSpaceMemoryConfig, Prisma } from "@rakazo/db";
-import { enableManagedHoncho } from "./honcho-managed.js";
 import { withSerializableRetry } from "./serializable-retry.js";
 
 export interface MemoryProviderConfigDeps {
   prisma: PrismaClient;
   env?: { mcpAllowPrivateEndpoint?: boolean };
-  secrets: Pick<SecretStore, "put">;
+  secrets: Pick<SecretStore, "put" | "load">;
   /** Test seam: override DNS/trust classification without probing. */
   classifySettings?: (
     provider: string,
@@ -26,6 +26,11 @@ export interface MemoryProviderConfigDeps {
   prepareConnection?: (
     input: Parameters<typeof prepareMemoryProviderConnection>[0],
   ) => ReturnType<typeof prepareMemoryProviderConnection>;
+  /** Test seam: override the built-in provider's enable path. */
+  enableNative?: (
+    deps: { prisma: PrismaClient; secrets: Pick<SecretStore, "put" | "load"> },
+    actor: Actor,
+  ) => Promise<void>;
 }
 
 async function requireSpaceOwner(prisma: PrismaClient, actor: Actor): Promise<void> {
@@ -48,13 +53,12 @@ export async function persistMemoryProviderConfig(
   },
 ) {
   await requireSpaceOwner(deps.prisma, actor);
-  if (input.provider === "honcho" && input.settings.mode === "managed") {
-    if (process.env.HONCHO_MANAGED !== "true" || !process.env.HONCHO_ADMIN_TOKEN) {
-      throw new ORPCError("BAD_REQUEST", { message: "Built-in Honcho is not enabled." });
-    }
-    const existing = await findSpaceMemoryConfig(deps.prisma, actor.spaceId);
-    if (existing) await disconnectMemoryProvider(deps, actor);
-    await enableManagedHoncho(deps, actor);
+  if (input.provider === NATIVE_PROVIDER_ID) {
+    // The built-in provider needs no endpoint or credentials; enabling it creates
+    // the Space's provider config directly.
+    const enable =
+      deps.enableNative ?? ((d: { prisma: PrismaClient; secrets: Pick<SecretStore, "put" | "load"> }, a: Actor) => import("./native-memory.js").then((m) => m.enableNativeMemory(d, a)));
+    await enable(deps, actor);
     const config = await findSpaceMemoryConfig(deps.prisma, actor.spaceId);
     if (!config) throw new ORPCError("INTERNAL_SERVER_ERROR");
     if (input.defaultMemoryScope !== config.defaultMemoryScope) {

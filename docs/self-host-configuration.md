@@ -108,12 +108,6 @@ this, set `DATABASE_MIGRATION_URL` to the owner and `DATABASE_URL` to a new logi
 
 Run `pg_dump` as the owner. The app login would only dump rows it is allowed to see.
 
-## Built-in Honcho
-
-`HONCHO_MANAGED=true` enables the supervisor-managed Honcho service in a single container: the API process also runs the Deriver's queue loop. The Honcho source is vendored into `infra/honcho/` (see its README for the pinned upstream commit and local modifications); build it with `pnpm honcho:build`. The supervisor applies Alembic migrations and aligns the pgvector schema with the configured embedding dimensions on configuration changes. `HONCHO_URL` is the loopback or internal service URL, and `HONCHO_ADMIN_TOKEN` must be an independent random secret of at least 32 characters; it is sent directly as Honcho's static admin bearer token.
-
-The source Compose stack runs Redis and initializes the separate `honcho` database and pgvector extension. Set `HONCHO_DB_CONNECTION_URI` only on the API (for lifecycle coordination) and supervisor (for the Honcho processes); do not give its owner credentials to the worker. `HONCHO_CACHE_URL` selects a dedicated Redis logical database and namespace. The published/production Compose stacks leave managed mode off until these dependencies and a Honcho image are explicitly configured. See [Memory](./memory.md) for model and embedding settings.
-
 ## Database connections
 
 The API keeps a pool of 4 Postgres connections and the worker a pool of 8. `DB_POOL_MAX` sets both

@@ -4,16 +4,14 @@ import { isScratchpadStatus, listScratchpadItems, mapScratchpadItem } from "@rak
 import { isDeletableMemoryDocument } from "@rakazo/contracts";
 import { findSpaceMemoryConfig, IsolationError } from "@rakazo/db";
 import {
-  applyManagedHonchoForSpace,
-  createManagedHonchoMemory,
-  deleteManagedHonchoMemory,
-  enableManagedHoncho,
-  listManagedHonchoMemory,
-  listManagedHonchoMemoryPeers,
-  managedHonchoDeps,
-  readManagedHonchoState,
-  updateManagedHonchoSettings,
-} from "../honcho-managed.js";
+  createNativeFact,
+  deleteNativeFact,
+  listNativeFactObservers,
+  listNativeFacts,
+  nativeMemoryDeps,
+  readNativeState,
+  updateNativeSettings,
+} from "../native-memory.js";
 import {
   disconnectMemoryProvider,
   persistMemoryProviderConfig,
@@ -141,31 +139,23 @@ export function memoryRoutes(ctx: RouterContext) {
       disconnectProvider: authed.memory.disconnectProvider.handler(async ({ context }) =>
         disconnectMemoryProvider(deps, context.actor),
       ),
-      managedStatus: authed.memory.managedStatus.handler(async ({ context }) =>
-        readManagedHonchoState(managedHonchoDeps(deps), context.actor),
+      nativeState: authed.memory.nativeState.handler(async () =>
+        readNativeState(nativeMemoryDeps(deps)),
       ),
-      enableManaged: authed.memory.enableManaged.handler(async ({ context }) => {
-        await enableManagedHoncho(deps, context.actor);
-        return readManagedHonchoState(managedHonchoDeps(deps), context.actor);
-      }),
-      updateManaged: authed.memory.updateManaged.handler(async ({ context, input }) => {
-        await updateManagedHonchoSettings(managedHonchoDeps(deps), context.actor, input);
-        return readManagedHonchoState(managedHonchoDeps(deps), context.actor);
-      }),
-      applyManaged: authed.memory.applyManaged.handler(async ({ context, input }) =>
-        applyManagedHonchoForSpace(managedHonchoDeps(deps), context.actor, input.restart),
+      nativeUpdate: authed.memory.nativeUpdate.handler(async ({ context, input }) =>
+        updateNativeSettings(nativeMemoryDeps(deps), context.actor, input),
       ),
-      managedMemoryPeers: authed.memory.managedMemoryPeers.handler(async ({ context }) =>
-        listManagedHonchoMemoryPeers(deps, context.actor),
+      nativeFactObservers: authed.memory.nativeFactObservers.handler(async ({ context }) =>
+        listNativeFactObservers(deps, context.actor),
       ),
-      managedMemoryList: authed.memory.managedMemoryList.handler(async ({ context, input }) =>
-        listManagedHonchoMemory(deps, context.actor, input),
+      nativeFactList: authed.memory.nativeFactList.handler(async ({ context, input }) =>
+        listNativeFacts(deps, context.actor, input),
       ),
-      managedMemoryCreate: authed.memory.managedMemoryCreate.handler(async ({ context, input }) =>
-        createManagedHonchoMemory(deps, context.actor, input),
+      nativeFactCreate: authed.memory.nativeFactCreate.handler(async ({ context, input }) =>
+        createNativeFact(nativeMemoryDeps(deps), context.actor, input),
       ),
-      managedMemoryDelete: authed.memory.managedMemoryDelete.handler(async ({ context, input }) =>
-        deleteManagedHonchoMemory(deps, context.actor, input),
+      nativeFactDelete: authed.memory.nativeFactDelete.handler(async ({ context, input }) =>
+        deleteNativeFact(deps, context.actor, input),
       ),
     },
     scratchpad: {

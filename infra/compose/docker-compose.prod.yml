@@ -17,9 +17,6 @@ x-app-environment: &app-environment
   NODE_ENV: production
   # The app's own login, subject to row-level security (docs/self-host-configuration.md#database-roles).
   DATABASE_URL: postgres://rakazo_app:${POSTGRES_APP_PASSWORD:?Set POSTGRES_APP_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:-rakazo}
-  HONCHO_MANAGED: ${HONCHO_MANAGED:-false}
-  HONCHO_URL: ${HONCHO_URL:-http://rakazo-honcho-api:8000}
-  HONCHO_ADMIN_TOKEN: ${HONCHO_ADMIN_TOKEN:-}
   REALTIME_DATABASE_URL:
   DB_POOL_MAX:
   DATA_DIR: /data
@@ -427,8 +424,6 @@ services:
       <<: *app-environment
       # Sign-in, sessions, billing and inbound webhooks: API only.
       API_HOST: "0.0.0.0"
-      HONCHO_DB_CONNECTION_URI: ${HONCHO_DB_CONNECTION_URI:-}
-      HONCHO_CACHE_URL: ${HONCHO_CACHE_URL:-}
       API_PORT:
       BETTER_AUTH_SECRET:
       BETTER_AUTH_URL:

@@ -16,6 +16,7 @@ import type { EvalJudge } from "../evals/judge.js";
 import { createEvalJudge } from "../evals/judge.js";
 import type { CacheDecisionMeasurement, EvalPricing, MeasuredCall } from "../evals/measurement.js";
 import { measureCalls, SpendBudget, validatePricing } from "../evals/measurement.js";
+import { MEMORY_JUDGE_VERSION } from "../evals/memory.js";
 import { emptyTrial, redact, summarize, validateControls } from "../evals/report.js";
 import {
   SILENCE_EVAL_CASES,
@@ -69,6 +70,53 @@ async function main() {
       workingDiffHash: workingDiffHash(),
       readConnection,
     });
+  // The memory suite grades prompt quality only; the pipelines themselves are covered
+  // by deterministic postgres tests, so a run calibrates the judge and then, when a
+  // subject connection is supplied, extracts the fixture cases live.
+  if (values.suite === "memory") {
+    loadRootEnv();
+    const rawConnection: unknown = values["judge-connection"]
+      ? readConnection(values["judge-connection"])
+      : {
+          provider: values.provider,
+          modelId: values.model ?? process.env.PI_DEFAULT_MODEL,
+          apiKey: values["api-key-env"] ? process.env[values["api-key-env"]] : undefined,
+          baseUrl: values["base-url"],
+        };
+    const parsedConnection = ModelConnectInputSchema.safeParse(rawConnection);
+    if (!parsedConnection.success || !parsedConnection.data.modelId?.trim())
+      throw new Error(
+        "A valid judge connection is required: --judge-connection with models/connect JSON, or --provider --model --api-key-env.",
+      );
+    const { PiAgentRuntime } = await import("../../../adapters/src/pi-runtime.ts");
+    const runtime = new PiAgentRuntime({
+      sessionRoot: mkdtempSync(path.join(tmpdir(), "memory-eval-")),
+    });
+    const judge = createEvalJudge(runtime, {
+      ...parsedConnection.data,
+      id: parsedConnection.data.modelId!,
+      allowPrivateEndpoint: true,
+      maxImagesPerPrompt: parsedConnection.data.maxImagesPerPrompt ?? undefined,
+      maxTokens: parsedConnection.data.maxTokens ?? 2048,
+    });
+    const { calibrateMemoryJudge } = await import("../evals/memory-judge.js");
+    const result = await calibrateMemoryJudge(judge);
+    const report = {
+      suite: "memory",
+      version: MEMORY_JUDGE_VERSION,
+      codeRevision: codeRevision(),
+      calibration: result.results,
+      ...(result.ok ? {} : { error: result.error }),
+    };
+    mkdirSync(path.dirname(values.output!), { recursive: true });
+    writeFileSync(
+      values.output!,
+      `${JSON.stringify(report, null, 2)}
+`,
+    );
+    if (!result.ok) throw new Error(result.error);
+    return;
+  }
   const suites = {
     product: { cases: EVAL_CASES, fixtureVersion: "product-v1" },
     history: { cases: HISTORY_EVAL_CASES, fixtureVersion: HISTORY_FIXTURE_VERSION },

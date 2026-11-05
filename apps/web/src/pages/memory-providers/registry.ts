@@ -2,6 +2,7 @@ import { t } from "@lingui/core/macro";
 import type { SpaceMemoryConfig } from "@rakazo/contracts";
 import type { ComponentType } from "react";
 import { HonchoSettingsForm } from "./HonchoSettingsForm";
+import { NativeSettingsForm } from "./NativeSettingsForm";
 import { SerenitySettingsForm } from "./SerenitySettingsForm";
 import { SupermemorySettingsForm } from "./SupermemorySettingsForm";
 
@@ -24,12 +25,17 @@ export interface MemoryProviderSettingsRegistration {
 
 export const MEMORY_PROVIDER_SETTINGS: readonly MemoryProviderSettingsRegistration[] = [
   {
+    id: "native",
+    name: "Rakazo memory",
+    SettingsForm: NativeSettingsForm,
+    connectedLabel: () => t`Built into this deployment`,
+  },
+  {
     id: "honcho",
     name: "Honcho",
     SettingsForm: HonchoSettingsForm,
     connectedLabel: (config) => {
       const { mode, baseUrl, workspaceId } = config.settings;
-      if (mode === "managed") return t`Built-in Honcho`;
       if (mode === "local")
         return [t`Self-hosted (${baseUrl ?? ""})`, workspaceId].filter(Boolean).join(", ");
       return workspaceId ? t`Honcho Cloud (${workspaceId})` : t`Honcho Cloud`;

@@ -42,7 +42,6 @@ import {
   updateModelRole,
   writeModelRole,
 } from "@rakazo/db";
-import { markManagedHonchoForReconciliation } from "../honcho-managed.js";
 import { mayUsePrivateEndpoint } from "../mcp-servers.js";
 import { firstModelConnectAnalytics } from "../model-connect-analytics.js";
 import {
@@ -169,7 +168,6 @@ export function modelsRoutes(ctx: RouterContext) {
           ...(primary ? [primary] : []),
           ...(backups ?? []),
         ]);
-        if (role === "main") await markManagedHonchoForReconciliation(deps.prisma);
         return withDeploymentDefault(
           role,
           await updateModelRole(
@@ -567,8 +565,6 @@ export function modelsRoutes(ctx: RouterContext) {
             },
             { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
           );
-          if (process.env.HONCHO_MANAGED === "true")
-            await markManagedHonchoForReconciliation(deps.prisma);
           return { ok: true as const };
         }).catch((error: unknown) => {
           if (error instanceof SecretStoreUnavailableError)

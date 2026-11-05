@@ -55,7 +55,7 @@ const MAX_DELETIONS_PER_FORGET = 200;
  * Fails closed: any mode other than an absent one or "cloud" needs the owner.
  */
 export function honchoRequiresPrivateEndpoint(settings: Record<string, string>): boolean {
-  return settings.mode !== undefined && settings.mode !== "cloud" && settings.mode !== "managed";
+  return settings.mode !== undefined && settings.mode !== "cloud";
 }
 
 /** Spaces do not share memory implicitly, so each Space gets its own Honcho workspace by default. */
@@ -80,10 +80,10 @@ function parseHonchoConnection(
   // Configurations saved before local mode carry no mode and always meant Honcho Cloud.
   // Match exactly, as honchoRequiresPrivateEndpoint does, so the owner gate sees the same mode.
   const mode = settings.mode ?? "cloud";
-  if (mode !== "cloud" && mode !== "local" && mode !== "managed") {
-    throw new Error("mode must be cloud, local or managed");
+  if (mode !== "cloud" && mode !== "local") {
+    throw new Error("mode must be cloud or local");
   }
-  const local = mode === "local" || mode === "managed";
+  const local = mode === "local";
   const baseUrl = local ? settings.baseUrl?.trim() : HONCHO_CLOUD_BASE_URL;
   if (!baseUrl) throw new Error("baseUrl is required");
   if (local) {
@@ -217,7 +217,7 @@ export class HonchoMemoryProvider implements SemanticMemoryProvider {
     private readonly connection: HonchoConnectionConfig,
     private readonly settings: Record<string, string>,
   ) {
-    if (settings.mode === "local" || settings.mode === "managed") {
+    if (settings.mode === "local") {
       this.localHost = new LocalServiceHost(connection.baseUrl, connection.resolveHostname);
     }
   }

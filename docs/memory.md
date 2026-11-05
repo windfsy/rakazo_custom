@@ -26,19 +26,10 @@ Find it in **Settings → Memory**.
 Optionally, connect a memory service so bots can also recall facts by meaning, not just by reading
 their notes. In **Settings → Memory**, choose **Connect memory provider**:
 
+- **Rakazo memory**: built into this deployment; no external service.
 - **Supermemory**: its cloud service, or your own instance.
 - **Serenity**: choose **Recall and write**, or **Recall only** to keep it read-only.
-- **Honcho**: the built-in service, Honcho Cloud, or an existing self-hosted instance.
-
-## Built-in Honcho
-
-With `HONCHO_MANAGED=true`, the personal Space owner can enable Honcho from **Settings → Memory**. New Spaces created by that owner select it automatically. Existing provider connections are never replaced.
-
-The supervisor runs Honcho and its Alembic migrations in a single container: the API serves traffic and its process runs the Deriver's queue loop (`DERIVER_EMBEDDED`, a Rakazo-side addition). Honcho has a separate database in the shared PostgreSQL instance, with pgvector enabled, and uses Redis database 1 for caching. Its work queue is in PostgreSQL. The API binds to loopback by default and nothing else is exposed. `HONCHO_ADMIN_TOKEN` must be a separate random value of at least 32 characters; it is Honcho's static admin bearer (Rakazo-side addition). Rakazo sends it as the deployment credential; users never receive it.
-
-Reasoning follows the personal Space's main model, or a fixed Rakazo model connection; it is applied through Honcho's `LLM_UNIFIED_MODEL_CONFIG` (a Rakazo-side addition) instead of per-feature fan-out. Configure embeddings independently: the model, OpenAI-compatible base URL, API key and dimensions (pgvector's HNSW limit is 2000). A chat connection does not necessarily provide embeddings; for example, Opencode Go does not expose an `/embeddings` endpoint. The running Honcho validates both endpoints through its real client code paths (`/admin/validate_models`, a Rakazo-side addition) before the service is marked ready. OAuth connections are not silently reused.
-
-Only the personal Space owner can change the shared service's model, embeddings, Deriver concurrency or restart it. Other Spaces retain isolated workspaces and can choose the existing isolated/shared memory scope without seeing service credentials. Service failures leave `MEMORY.md` and chat available; the background coordinator retries pending changes using a PostgreSQL lease.
+- **Honcho**: Honcho Cloud, or an existing self-hosted instance.
 
 Once connected, **Default scope** decides what bots share in the provider:
 
@@ -47,6 +38,26 @@ Once connected, **Default scope** decides what bots share in the provider:
 
 Each bot's settings also gain a **Memory scope** under **Advanced**, so one bot can differ from the
 default.
+
+## Built-in memory
+
+Rakazo memory keeps facts in this deployment's own database. Each fact's text is encrypted at
+rest, indexed for exact-word search without decrypting, and stored with an embedding for semantic
+recall. A bot's run recalls by two paths — nearest embeddings and the blind index — merges both
+rankings, and asks the Space's main model to reorder the shortlist. If that reorder fails, the
+merged order is used, so recall never blocks a run.
+
+Only facts are remembered; conversation history and compaction summaries stay in Rakazo's own
+thread storage. The personal Space owner configures one **embedding endpoint** for the deployment
+under **Settings → Memory → Rakazo memory**: an OpenAI-compatible base URL, model, and API key.
+Facts are written by the bot's `save_memory` tool, from conversation ingestion, and by repeating
+and contradicting themselves being folded together in the background.
+
+Extraction, consolidation and dreaming write free-form facts, so their quality is judged by
+meaning: `pnpm test:evals:memory` calibrates a versioned rubric against reviewed examples
+(`packages/testkit/src/evals/memory.ts`) before it grades a run. It needs a judge model
+connection and is never part of the default test run; deterministic pipeline behaviour is
+covered by the package's own Postgres tests.
 
 ## Open work
 

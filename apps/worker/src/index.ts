@@ -28,6 +28,7 @@ import {
   createConnectorStack,
   createDeadJobPruner,
   createIdleComputerSweeper,
+  createMemoryMaintenance,
   createJobReconciler,
   createMessagingContextLoader,
   createModelCreditReconciler,
@@ -221,16 +222,15 @@ async function main() {
     mcp,
   ]);
   integrationSettings.warmDirectories();
-  const memoryProviders = new SpaceMemoryProviderResolver(
-    prisma,
-    secrets,
-    process.env.HONCHO_MANAGED === "true" && process.env.HONCHO_ADMIN_TOKEN
-      ? {
-          baseUrl: process.env.HONCHO_URL || "http://127.0.0.1:8000",
-          adminToken: process.env.HONCHO_ADMIN_TOKEN,
-        }
-      : undefined,
-  );
+  const memoryProviders = new SpaceMemoryProviderResolver(prisma, secrets, {
+    runtime,
+    // The executor is built below (it takes memoryProviders), so resolve lazily:
+    // recall only runs later, inside a run.
+    resolveModel: async (scope) => {
+      if (!executor.resolveModel) return { provider: "scripted", id: "scripted" };
+      return executor.resolveModel(scope);
+    },
+  });
   const home = createAgentHomeStore(dataDir, prisma);
   void home.removeStaleStaging().catch((error) => logger.error("home staging cleanup", error));
   const artifacts = createArtifactStore(dataDir, prisma);
@@ -377,6 +377,7 @@ async function main() {
     reconcileAuditLog: createAuditLogReconciler(prisma, auditLogConfig()),
     reconcileHomeStorage: homeStorageSweeper(home),
     reconcileIdleComputers: createIdleComputerSweeper({ prisma, jobs }),
+    reconcileMemoryMaintenance: createMemoryMaintenance({ prisma, jobs }),
     reconcileDeadJobs: inMemoryJobs ? undefined : createDeadJobPruner(pool),
   });
   let stopHealth: (() => Promise<void>) | undefined;

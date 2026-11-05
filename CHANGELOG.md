@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Built-in **Rakazo memory**: bots remember facts in this deployment's own database, with encrypted content, blind-index search, and an embedding endpoint the personal Space owner configures. Recall fuses semantic and exact-word results and reorders them with the Space's main model, falling back to the merged order if that call fails ([memory](docs/memory.md#built-in-memory)).
 - Self-hosted deployments can run several Photon projects, each giving a person its own iMessage number, so different bots are reachable over iMessage, using `PHOTON_PROJECT_ID_<NAME>` and `PHOTON_PROJECT_SECRET_<NAME>` pairs ([integrations](docs/self-host-integrations.md)).
 - iMessage through [Photon](https://photon.codes): set `PHOTON_PROJECT_ID` and `PHOTON_PROJECT_SECRET` to link a bot to an iMessage number, with no public URL needed ([integrations](docs/self-host-integrations.md)).
 - A server running on macOS offers a keyless **macOS** voice provider that reads replies with the voices installed on that Mac. Speech is rendered into a clip, so it plays and stops on the listener's device like any other voice ([macOS voices](docs/self-host-models.md#macos-voices)).

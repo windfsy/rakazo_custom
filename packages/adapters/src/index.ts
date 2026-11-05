@@ -86,7 +86,6 @@ export {
   listHonchoPeers,
   queryHonchoConclusions,
 } from "./honcho-client.js";
-export * from "./honcho-managed.js";
 export { HonchoMemoryProvider, honchoWorkspaceId } from "./honcho-memory-provider.js";
 export * from "./host-aware-sandbox.js";
 export * from "./http-decisions.js";
@@ -110,6 +109,7 @@ export * from "./mcp-transport.js";
 export * from "./media-generation-factory.js";
 export * from "./media-generation-provider.js";
 export * from "./memory-provider-factory.js";
+export * from "./memory-native/index.js";
 export * from "./messaging-composition.js";
 export * from "./messaging-context.js";
 export * from "./messaging-delivery.js";

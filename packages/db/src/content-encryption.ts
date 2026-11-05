@@ -68,6 +68,14 @@ export const ENCRYPTED_MODELS: Record<string, ModelSpec> = {
     space: { column: "spaceId" },
     ownerRelation: "user",
   },
+  /** Semantic-memory fact text; searchable through its blind-index tokens. */
+  MemoryFact: {
+    table: "memory_facts",
+    fields: { content: {} },
+    space: { column: "spaceId" },
+    ownerRelation: "user",
+    searchTokens: true,
+  },
   MemoryRevision: {
     table: "memory_revisions",
     fields: { content: {} },

@@ -1588,38 +1588,35 @@ export const SpaceMemoryConfigSchema = z.object({
 });
 export type SpaceMemoryConfig = z.infer<typeof SpaceMemoryConfigSchema>;
 
-export const ManagedHonchoStatusSchema = z.object({
-  enabled: z.boolean(),
-  canManage: z.boolean().optional(),
-  status: z.string(),
-  version: z.string(),
-  components: z.record(z.string(), z.boolean()),
-  database: z.boolean().optional(),
-  cache: z.boolean().optional(),
-  settings: z.record(z.string(), z.string()).optional(),
-  error: z.string().nullable().optional(),
+export const NativeMemoryStateSchema = z.object({
+  status: z.enum(["needs_configuration", "connected", "degraded"]),
+  settings: z.object({
+    embeddingModel: z.string().optional(),
+    embeddingBaseUrl: z.string().optional(),
+    embeddingDimensions: z.number().int().optional(),
+  }),
+  error: z.string().nullable(),
 });
-export type ManagedHonchoStatus = z.infer<typeof ManagedHonchoStatusSchema>;
+export type NativeMemoryState = z.infer<typeof NativeMemoryStateSchema>;
 
-export const ManagedHonchoConclusionSchema = z.object({
+export const NativeMemoryFactSchema = z.object({
   id: z.string(),
   content: z.string(),
-  observerId: z.string(),
-  observedId: z.string(),
-  /** Derivation tier: explicit, deductive, inductive or contradiction; absent from older servers. */
-  level: z.string().optional(),
-  createdAt: z.string().optional(),
+  /** "shared" for the Space pool, otherwise the owning bot id. */
+  observer: z.string(),
+  level: z.enum(["explicit", "deductive", "inductive"]),
+  createdAt: z.string(),
   /** Cosine distance from the search query (0 identical); semantic search results only. */
   distance: z.number().optional(),
 });
-export type ManagedHonchoConclusion = z.infer<typeof ManagedHonchoConclusionSchema>;
+export type NativeMemoryFact = z.infer<typeof NativeMemoryFactSchema>;
 
-export const ManagedHonchoMemorySchema = z.object({
-  items: z.array(ManagedHonchoConclusionSchema),
+export const NativeMemoryFactListSchema = z.object({
+  items: z.array(NativeMemoryFactSchema),
   page: z.number().int(),
   size: z.number().int(),
 });
-export type ManagedHonchoMemory = z.infer<typeof ManagedHonchoMemorySchema>;
+export type NativeMemoryFactList = z.infer<typeof NativeMemoryFactListSchema>;
 
 export const ModelCatalogEntrySchema = z.object({
   /** Omitted by older servers and ordinary chat connections. */

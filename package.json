@@ -18,7 +18,6 @@
     "db:generate": "pnpm --filter @rakazo/db generate",
     "db:migrate": "pnpm --filter @rakazo/api db:migrate",
     "sandbox:build": "docker build -t rakazo/computer:local infra/sandboxes/computer",
-    "honcho:build": "docker build -t rakazo/honcho:local ${HONCHO_BUILD_ARGS:-} infra/honcho",
     "sandbox:boat-snapshot": "tsx packages/adapters/src/cli/build-boat-snapshot.ts",
     "sandbox:boxd-snapshot": "tsx packages/adapters/src/cli/build-boxd-snapshot.ts",
     "sandbox:novita-template": "tsx packages/adapters/src/cli/build-novita-template.ts",
@@ -39,7 +38,8 @@
     "perf:desktop": "tsx packages/testkit/src/cli/desktop-performance.ts",
     "perf:compare": "tsx packages/testkit/src/cli/compare-performance.ts",
     "compose:up": "docker compose --env-file .env -f infra/compose/docker-compose.yml up --build",
-    "compose:down": "docker compose --env-file .env -f infra/compose/docker-compose.yml down -v"
+    "compose:down": "docker compose --env-file .env -f infra/compose/docker-compose.yml down -v",
+    "test:evals:memory": "tsx packages/testkit/src/cli/evals.ts --suite memory --output test-report/evals/memory.json"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",

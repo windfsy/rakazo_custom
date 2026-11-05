@@ -63,7 +63,6 @@ import {
 } from "./computer-spec.js";
 import { EgressNotEnforced, verifyRestrictedEgress } from "./egress-probe.js";
 import { assertComputerHomeWritable } from "./home-ownership.js";
-import { createHonchoService, honchoConfigurationSchema, honchoError } from "./honcho.js";
 import type { ScreenAssignment } from "./supervisor-logic.js";
 import {
   assertRequestIdentity,
@@ -200,55 +199,6 @@ export function resolveDockerSocketPath(
 }
 
 app.get("/health", (c) => c.json({ ok: true, image: COMPUTER_IMAGE }));
-
-const honcho = createHonchoService(docker);
-app.use("/honcho/*", async (c, next) => {
-  if (!hasValidBearerToken(c.req.header("authorization"), supervisorToken)) {
-    return c.json({ error: "unauthorized" }, 401);
-  }
-  await next();
-});
-app.post("/honcho/status", async (c) => {
-  const input = z
-    .object({
-      databaseUrl: z.string().min(1),
-      cacheUrl: z.string().min(1),
-      expectedConfigurationHash: z.string().length(64).nullable().optional(),
-    })
-    .parse(await c.req.json().catch(() => undefined));
-  return c.json(
-    await honcho.status(
-      input.expectedConfigurationHash
-        ? {
-            databaseUrl: input.databaseUrl,
-            cacheUrl: input.cacheUrl,
-            adminToken: "status-only-not-used-for-container-creation",
-            models: {},
-            deriverWorkers: 1,
-            configurationHash: input.expectedConfigurationHash,
-          }
-        : undefined,
-    ),
-  );
-});
-app.post("/honcho/apply", async (c) => {
-  try {
-    const input = honchoConfigurationSchema.parse(await c.req.json());
-    await honcho.apply(input);
-    return c.json(await honcho.status(input));
-  } catch (error) {
-    return c.json({ error: await honchoError(error) }, 500);
-  }
-});
-app.post("/honcho/restart", async (c) => {
-  try {
-    const input = honchoConfigurationSchema.parse(await c.req.json());
-    await honcho.restart(input);
-    return c.json(await honcho.status(input));
-  } catch (error) {
-    return c.json({ error: await honchoError(error) }, 500);
-  }
-});
 
 app.use("/computers", async (c, next) => {
   if (!hasValidBearerToken(c.req.header("authorization"), supervisorToken)) {
