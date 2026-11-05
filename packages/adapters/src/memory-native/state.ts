@@ -63,7 +63,10 @@ function settingsOf(configuration: unknown): NativeMemorySettings {
 export async function readNativeMemoryState(
   prisma: Pick<PrismaClient, "nativeMemoryState">,
 ): Promise<NativeMemoryStateView> {
-  const state = await prisma.nativeMemoryState.findUnique({ where: { id: "default" } });
+  // Deployment-wide row; only the system bypass policy can see it.
+  const state = await runAsSystem("native memory state", () =>
+    prisma.nativeMemoryState.findUnique({ where: { id: "default" } }),
+  );
   if (!state) {
     return { status: "needs_configuration", settings: {}, error: null };
   }
@@ -175,10 +178,14 @@ export async function resolveEmbeddingConnection(deps: {
   prisma: PrismaClient;
   secrets: Pick<SecretStore, "load">;
 }): Promise<EmbeddingConnection | null> {
-  const state = await deps.prisma.nativeMemoryState.findUnique({
-    where: { id: "default" },
-    include: { embeddingSecret: true },
-  });
+  // This row is deployment-wide, and its only RLS policy is the system bypass, so it is
+  // invisible to a tenant-scoped connection: read it as the system principal.
+  const state = await runAsSystem("native memory embedding state", () =>
+    deps.prisma.nativeMemoryState.findUnique({
+      where: { id: "default" },
+      include: { embeddingSecret: true },
+    }),
+  );
   if (state?.status !== "connected") return null;
   const settings = settingsOf(state.configuration);
   if (!settings.embeddingModel || !settings.embeddingBaseUrl) return null;
