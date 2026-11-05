@@ -16,6 +16,20 @@ export interface NativeMemorySettings {
   embeddingBaseUrl?: string;
   /** The model's own dimension, recorded from the probe; recall sends it back. */
   embeddingDimensions?: number;
+  /**
+   * The last few characters of the stored key, so a member can tell which key is
+   * configured without the field being blank. Never the whole key.
+   */
+  embeddingApiKeyHint?: string;
+}
+
+/**
+ * What a hint shows: enough to recognize the key, not enough to use it. A short key
+ * would be nearly all revealed by a tail, so those show only the ellipsis.
+ */
+export function apiKeyHint(apiKey: string): string {
+  const trimmed = apiKey.trim();
+  return trimmed.length < 16 ? "…" : `…${trimmed.slice(-6)}`;
 }
 
 export interface NativeMemoryStateView {
@@ -39,6 +53,9 @@ function settingsOf(configuration: unknown): NativeMemorySettings {
       : {}),
     ...(typeof record.embeddingDimensions === "number"
       ? { embeddingDimensions: record.embeddingDimensions }
+      : {}),
+    ...(typeof record.embeddingApiKeyHint === "string"
+      ? { embeddingApiKeyHint: record.embeddingApiKeyHint }
       : {}),
   };
 }
@@ -125,6 +142,12 @@ export async function updateNativeMemorySettings(
         embeddingModel: model,
         embeddingBaseUrl: baseUrl,
         embeddingDimensions: probe.dimensions,
+        // Keep the previous hint when the key is unchanged, so the field is not blank.
+        ...(input.embeddingApiKey?.trim()
+          ? { embeddingApiKeyHint: apiKeyHint(input.embeddingApiKey) }
+          : existing
+            ? { embeddingApiKeyHint: settingsOf(existing.configuration).embeddingApiKeyHint }
+            : {}),
       };
       await tx.nativeMemoryState.upsert({
         where: { id: "default" },

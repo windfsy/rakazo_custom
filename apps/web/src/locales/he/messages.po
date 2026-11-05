@@ -166,12 +166,6 @@ msgstr ""
 msgid "{0}, recall only"
 msgstr ""
 
-#. placeholder {0}: similarity(conclusion.distance)
-#. placeholder {1}: conclusion.level ?? ""
-#: src/pages/ManagedHonchoMemory.tsx
-msgid "{0}% match · {1}"
-msgstr ""
-
 #: src/lib/billing.ts
 msgid "{amount} / {period}"
 msgstr "{amount} / {period}"
@@ -598,10 +592,6 @@ msgstr "הוספת פריט"
 msgid "Add MCP server"
 msgstr "הוספת שרת MCP"
 
-#: src/pages/ManagedHonchoMemory.tsx
-msgid "Add memory"
-msgstr ""
-
 #: src/pages/ScratchpadSection.tsx
 msgid "Add open work"
 msgstr "הוספת עבודה פתוחה"
@@ -811,15 +801,12 @@ msgstr ""
 msgid "Any model, with your own key"
 msgstr "כל מודל, עם מפתח משלך"
 
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "API"
-msgstr ""
-
 #: src/components/AskCard.tsx
 #: src/lib/localized-provider-hint.ts
 #: src/pages/memory-providers/HonchoSettingsForm.tsx
 #: src/pages/model-settings/compatible-key-field.tsx
 #: src/pages/model-settings/connection-controls.tsx
+#: src/pages/model-settings/memory-embedding-section.tsx
 #: src/pages/Onboarding.tsx
 #: src/pages/VoiceSettingsOverlay.tsx
 msgid "API key"
@@ -848,16 +835,6 @@ msgstr ""
 #: src/components/AskCard.tsx
 msgid "Apply"
 msgstr "החלה"
-
-#: src/pages/ManagedHonchoSettings.tsx
-#: src/pages/model-settings/honcho-model-section.tsx
-msgid "Apply configuration"
-msgstr ""
-
-#: src/pages/ManagedHonchoSettings.tsx
-#: src/pages/model-settings/honcho-model-section.tsx
-msgid "Applying…"
-msgstr ""
 
 #: src/components/teach/SkillDraftCard.tsx
 msgid "Approval boundaries"
@@ -1027,6 +1004,7 @@ msgid "Back to sign in"
 msgstr "חזרה להתחברות"
 
 #: src/pages/memory-providers/ConnectionModeFields.tsx
+#: src/pages/model-settings/memory-embedding-section.tsx
 msgid "Base URL"
 msgstr "Base URL"
 
@@ -1133,23 +1111,14 @@ msgstr ""
 msgid "Browse MCP servers"
 msgstr "עיון בשרתי MCP"
 
+#: src/pages/memory-providers/registry.ts
+msgid "Built into this deployment"
+msgstr ""
+
 #: src/pages/KnowledgeSection.tsx
-#: src/pages/memory-providers/ConnectionModeFields.tsx
 #: src/pages/shell/agent-import.tsx
 msgid "Built-in"
 msgstr "מובנה"
-
-#: src/pages/memory-providers/registry.ts
-msgid "Built-in Honcho"
-msgstr ""
-
-#: src/pages/model-settings/honcho-model-section.tsx
-msgid "Built-in memory model"
-msgstr ""
-
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "Built-in service"
-msgstr ""
 
 #: src/pages/shell/chat-header.tsx
 msgid "Call"
@@ -1196,7 +1165,6 @@ msgstr "לא ניתן לקרוא תמונות"
 #: src/pages/AccountSettingsOverlay.tsx
 #: src/pages/Artifacts.tsx
 #: src/pages/KnowledgeSection.tsx
-#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/model-settings/connection-controls.tsx
 #: src/pages/model-settings/space-bots-model.tsx
@@ -1342,10 +1310,6 @@ msgstr "בודק…"
 #: src/pages/shell/avatar-studio-popover.tsx
 msgid "Choose a bot shape, color, or upload an image"
 msgstr "בחירת צורה או צבע לבוט, או העלאת תמונה"
-
-#: src/pages/model-settings/honcho-model-section.tsx
-msgid "Choose a connection"
-msgstr ""
 
 #: src/pages/ModelSettingsOverlay.tsx
 #: src/pages/shell/composer-error.tsx
@@ -1618,6 +1582,7 @@ msgstr "יש לוודא שאפשר להגיע לכתובת ה-URL מסשן הד�
 #: src/components/integrations/IntegrationSetup.tsx
 #: src/components/integrations/plugin-marketplace.tsx
 #: src/pages/memory-providers/HonchoSettingsForm.tsx
+#: src/pages/memory-providers/NativeSettingsForm.tsx
 #: src/pages/memory-providers/SerenitySettingsForm.tsx
 #: src/pages/memory-providers/SupermemorySettingsForm.tsx
 #: src/pages/MessagingSettingsPanel.tsx
@@ -1682,7 +1647,6 @@ msgstr "חבר מפתח API משלך במודלים או בחר בקרדיטים
 #: src/components/ComputerDeviceSettings.tsx
 #: src/components/integrations/IntegrationSetup.tsx
 #: src/components/integrations/plugin-marketplace.tsx
-#: src/pages/ManagedHonchoSettings.tsx
 #: src/pages/McpOAuthCallback.tsx
 #: src/pages/MemorySettingsOverlay.tsx
 #: src/pages/PluginsOverlay.tsx
@@ -1696,9 +1660,15 @@ msgstr "מחובר"
 msgid "Connected {0}."
 msgstr "{0} מחובר."
 
+#. placeholder {0}: state.settings.embeddingModel ? ` · ${state.settings.embeddingModel}` : ""
+#: src/pages/NativeMemorySettings.tsx
+msgid "Connected{0}"
+msgstr ""
+
 #: src/components/integrations/plugin-marketplace.tsx
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/memory-providers/HonchoSettingsForm.tsx
+#: src/pages/memory-providers/NativeSettingsForm.tsx
 #: src/pages/memory-providers/SerenitySettingsForm.tsx
 #: src/pages/memory-providers/SupermemorySettingsForm.tsx
 #: src/pages/shell/message-cards.tsx
@@ -1949,6 +1919,10 @@ msgstr "לא ניתן למחוק את המיומנות"
 msgid "Could not delete space"
 msgstr "לא ניתן למחוק את המרחב"
 
+#: src/pages/NativeMemorySettings.tsx
+msgid "Could not delete the memory"
+msgstr ""
+
 #: src/pages/Artifacts.tsx
 msgid "Could not delete this artifact."
 msgstr "לא ניתן למחוק את התוצר הזה."
@@ -2113,6 +2087,10 @@ msgstr "אין גישה לשרת"
 msgid "Could not read these files"
 msgstr "לא ניתן לקרוא את הקבצים האלה"
 
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "Could not rebuild memories"
+msgstr ""
+
 #: src/pages/PluginSubmissionsPanel.tsx
 msgid "Could not reject plugin"
 msgstr ""
@@ -2226,6 +2204,10 @@ msgstr "לא ניתן לשמור את הקול"
 #: src/components/VaultSettings.tsx
 msgid "Could not save the credential"
 msgstr "לא ניתן לשמור את פרטי הגישה"
+
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "Could not save the embedding settings"
+msgstr ""
 
 #: src/pages/shell/message-cards.tsx
 msgid "Could not save this choice"
@@ -2505,6 +2487,7 @@ msgstr "היקף ברירת מחדל"
 #: src/pages/BotContextMenu.tsx
 #: src/pages/KnowledgeSection.tsx
 #: src/pages/McpServersOverlay.tsx
+#: src/pages/NativeMemorySettings.tsx
 #: src/pages/RoutineEditor.tsx
 #: src/pages/shell/archived-chats.tsx
 #: src/pages/shell/dialogs.tsx
@@ -2547,6 +2530,10 @@ msgstr "מחיקת הקבוצה"
 msgid "Delete memories too"
 msgstr "מחיקת הזיכרונות גם כן"
 
+#: src/pages/NativeMemorySettings.tsx
+msgid "Delete memory"
+msgstr ""
+
 #: src/pages/shell/sidebar-roster.tsx
 msgid "Delete section"
 msgstr "מחיקת המקטע"
@@ -2555,14 +2542,6 @@ msgstr "מחיקת המקטע"
 #: src/pages/SpaceSettingsPanel.tsx
 msgid "Delete space"
 msgstr "מחיקת המרחב"
-
-#: src/pages/ManagedHonchoMemory.tsx
-msgid "Delete this memory"
-msgstr ""
-
-#: src/pages/ManagedHonchoMemory.tsx
-msgid "Delete this memory? This cannot be undone."
-msgstr ""
 
 #: src/pages/SpaceSettingOverrides.tsx
 msgid "Delete this Space's credentials?"
@@ -2589,10 +2568,6 @@ msgstr "נדחה"
 #: src/components/AskCard.tsx
 msgid "Deny"
 msgstr "דחייה"
-
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "Deriver workers"
-msgstr ""
 
 #: src/pages/Board.tsx
 #: src/pages/shell/agent-import.tsx
@@ -2632,7 +2607,7 @@ msgstr ""
 msgid "Dictation failed."
 msgstr ""
 
-#: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/memory-embedding-section.tsx
 msgid "Dimensions"
 msgstr ""
 
@@ -2810,16 +2785,8 @@ msgstr ""
 msgid "Email verification required"
 msgstr "נדרש אימות אימייל"
 
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "Embedding API key"
-msgstr ""
-
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "Embedding base URL"
-msgstr ""
-
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "Embedding model"
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "Embedding settings saved."
 msgstr ""
 
 #. placeholder {0}: humanizeTool(toolName)
@@ -2983,6 +2950,10 @@ msgstr "גבוה מאוד"
 msgid "Extra high"
 msgstr "גבוה מאוד"
 
+#: src/pages/memory-providers/NativeSettingsForm.tsx
+msgid "Facts live in this deployment's database, encrypted, and recall uses the embedding endpoint below."
+msgstr ""
+
 #: src/components/CloudAgentCard.tsx
 msgid "failed"
 msgstr "נכשל"
@@ -3078,14 +3049,6 @@ msgstr "הסתיים."
 msgid "Finishing MCP connection…"
 msgstr "משלים את חיבור ה-MCP…"
 
-#: src/pages/model-settings/honcho-model-section.tsx
-msgid "Fixed connection"
-msgstr ""
-
-#: src/pages/model-settings/honcho-model-section.tsx
-msgid "Follow main model"
-msgstr ""
-
 #: src/pages/Auth.tsx
 msgid "Forgot password?"
 msgstr "שכחת סיסמה?"
@@ -3123,6 +3086,10 @@ msgstr "מ-{0}"
 #: src/components/integrations/skills-dialog.tsx
 #: src/pages/PluginsOverlay.tsx
 msgid "From GitHub"
+msgstr ""
+
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "From the model"
 msgstr ""
 
 #: src/pages/WindowChrome.tsx
@@ -3525,6 +3492,14 @@ msgstr "מאוחר יותר"
 msgid "Leave"
 msgstr "יציאה"
 
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "Leave empty to keep the stored key."
+msgstr ""
+
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "Leave empty to use the size the model reports. Saving checks it against the endpoint."
+msgstr ""
+
 #: src/components/ComputerDeviceSettings.tsx
 msgid "Let bots use this computer"
 msgstr ""
@@ -3591,13 +3566,13 @@ msgstr "טעינה אוטומטית של תמונות מהרשת"
 msgid "Loading activity…"
 msgstr "טוען פעילות…"
 
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "Loading Honcho status…"
-msgstr ""
-
 #: src/pages/PluginsOverlay.tsx
 msgid "Loading integrations…"
 msgstr "טוען אינטגרציות…"
+
+#: src/pages/NativeMemorySettings.tsx
+msgid "Loading memories…"
+msgstr ""
 
 #: src/pages/MemorySettingsOverlay.tsx
 msgid "Loading memory settings…"
@@ -3723,6 +3698,10 @@ msgstr "טבלת Markdown"
 msgid "Marketing"
 msgstr ""
 
+#: src/pages/NativeMemorySettings.tsx
+msgid "match"
+msgstr ""
+
 #: src/pages/model-settings/compatible-model-fields.tsx
 #: src/pages/Onboarding.tsx
 msgid "Max"
@@ -3780,8 +3759,11 @@ msgstr "חבר"
 msgid "Members ({0})"
 msgstr ""
 
+#: src/pages/NativeMemorySettings.tsx
+msgid "Memories"
+msgstr ""
+
 #: src/pages/KnowledgeSection.tsx
-#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/MemorySettingsOverlay.tsx
 #: src/pages/settings-nav.ts
 #: src/pages/shell/agent-import.tsx
@@ -3791,6 +3773,10 @@ msgstr "זיכרון"
 #: src/pages/shell/agent-import.tsx
 msgid "Memory {position}"
 msgstr "זיכרון {position}"
+
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "Memory embeddings"
+msgstr ""
 
 #: src/pages/shell/agent-import.tsx
 msgid "Memory for {title}"
@@ -3905,6 +3891,7 @@ msgstr "מצב"
 
 #: src/pages/AccountSettingsOverlay.tsx
 #: src/pages/model-settings/compatible-model-fields.tsx
+#: src/pages/model-settings/memory-embedding-section.tsx
 #: src/pages/model-settings/model-picker.tsx
 #: src/pages/Onboarding.tsx
 #: src/pages/RoutineEditor.tsx
@@ -3916,10 +3903,6 @@ msgstr "מודל"
 #: src/lib/model-connection-preflight.ts
 msgid "Model \"{modelId}\" was not listed."
 msgstr "המודל \"{modelId}\" לא הופיע ברשימה."
-
-#: src/pages/model-settings/honcho-model-section.tsx
-msgid "Model connection"
-msgstr ""
 
 #: src/pages/shell/bot-panel.tsx
 msgid "Model connections"
@@ -3934,10 +3917,6 @@ msgstr "מזהה מודל"
 #: src/pages/model-settings/role-model-picker.tsx
 msgid "Model options"
 msgstr "אפשרויות מודל"
-
-#: src/pages/model-settings/honcho-model-section.tsx
-msgid "Model the built-in memory service reasons with."
-msgstr ""
 
 #: src/pages/ModelSettingsOverlay.tsx
 #: src/pages/settings-nav.ts
@@ -4057,8 +4036,9 @@ msgstr "ממתין לתשובה"
 msgid "Needs an OAuth client ID"
 msgstr "נדרש מזהה לקוח OAuth"
 
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "Needs attention"
+#. placeholder {0}: state.error ?? "the embedding endpoint is unreachable"
+#: src/pages/NativeMemorySettings.tsx
+msgid "Needs attention: {0}"
 msgstr ""
 
 #: src/pages/ActivityList.tsx
@@ -4193,8 +4173,12 @@ msgstr "אין מודלים תואמים"
 msgid "No members yet"
 msgstr ""
 
-#: src/pages/ManagedHonchoMemory.tsx
-msgid "No memory has been saved yet."
+#: src/pages/NativeMemorySettings.tsx
+msgid "No memories yet"
+msgstr ""
+
+#: src/pages/NativeMemorySettings.tsx
+msgid "No memories yet."
 msgstr ""
 
 #: src/pages/PeerMessagesOverlay.tsx
@@ -4302,10 +4286,6 @@ msgstr "לא בשימוש ב-Rakazo"
 msgid "Not working"
 msgstr "לא עובד"
 
-#: src/pages/ManagedHonchoMemory.tsx
-msgid "Nothing recorded for this pair yet."
-msgstr ""
-
 #: src/pages/KnowledgeSection.tsx
 msgid "Nothing remembered yet"
 msgstr "עדיין אין זיכרונות"
@@ -4342,11 +4322,7 @@ msgstr "חיבור OAuth נכשל"
 msgid "OAuth expired"
 msgstr "תוקף OAuth פג"
 
-#: src/pages/ManagedHonchoMemory.tsx
-msgid "Observed"
-msgstr ""
-
-#: src/pages/ManagedHonchoMemory.tsx
+#: src/pages/NativeMemorySettings.tsx
 msgid "Observer"
 msgstr ""
 
@@ -4656,10 +4632,6 @@ msgstr ""
 msgid "POST to"
 msgstr "POST אל"
 
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "PostgreSQL"
-msgstr ""
-
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Preferences"
 msgstr "העדפות"
@@ -4741,6 +4713,10 @@ msgstr "Rakazo"
 msgid "Rakazo credits"
 msgstr ""
 
+#: src/pages/memory-providers/registry.ts
+msgid "Rakazo memory"
+msgstr ""
+
 #: src/pages/memory-providers/HonchoSettingsForm.tsx
 msgid "rakazo-shared and IDs starting with bot- are reserved for Rakazo."
 msgstr ""
@@ -4770,8 +4746,16 @@ msgstr ""
 msgid "Reasoning effort"
 msgstr "רמת חשיבה"
 
-#: src/pages/model-settings/honcho-model-section.tsx
-msgid "Reasoning model"
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "Rebuild after changing the model or its dimensions: vectors from different models are not comparable, so stored memories must be embedded again."
+msgstr ""
+
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "Rebuild memories"
+msgstr ""
+
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "Rebuilt {reembedded} memories."
 msgstr ""
 
 #: src/pages/memory-providers/SerenitySettingsForm.tsx
@@ -4871,10 +4855,6 @@ msgstr ""
 #: src/pages/McpServersOverlay.tsx
 msgid "Redirect URI"
 msgstr "כתובת הפניה (Redirect URI)"
-
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "Redis cache"
-msgstr ""
 
 #: src/App.tsx
 #: src/components/ErrorBoundary.tsx
@@ -5102,10 +5082,6 @@ msgstr "שינוי גודל החלונית"
 msgid "Responses"
 msgstr ""
 
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "Restart"
-msgstr ""
-
 #: src/components/DesktopUpdates.tsx
 msgid "Restart to update"
 msgstr "הפעלה מחדש לעדכון"
@@ -5226,7 +5202,6 @@ msgstr "פועל"
 
 #: src/components/SubagentCard.tsx
 #: src/pages/ActivityList.tsx
-#: src/pages/ManagedHonchoSettings.tsx
 #: src/pages/RoutineEditor.tsx
 msgid "Running"
 msgstr "פועל"
@@ -5259,9 +5234,9 @@ msgstr "שבת"
 #: src/pages/ExternalConversationSettings.tsx
 #: src/pages/GroupPanel.tsx
 #: src/pages/KnowledgeSection.tsx
-#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/model-settings/connection-controls.tsx
+#: src/pages/model-settings/memory-embedding-section.tsx
 #: src/pages/model-settings/providers-section.tsx
 #: src/pages/ModelSettingsOverlay.tsx
 #: src/pages/RoutineEditor.tsx
@@ -5318,6 +5293,7 @@ msgstr "שומר..."
 #: src/pages/GroupPanel.tsx
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/model-settings/connection-controls.tsx
+#: src/pages/model-settings/memory-embedding-section.tsx
 #: src/pages/model-settings/providers-section.tsx
 #: src/pages/ModelSettingsOverlay.tsx
 #: src/pages/RoutineEditor.tsx
@@ -5341,11 +5317,11 @@ msgstr "היקפים (אופציונלי)"
 msgid "Screen not connected"
 msgstr "המסך אינו מחובר"
 
-#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/model-settings/compatible-model-fields.tsx
 #: src/pages/model-settings/model-picker.tsx
 #: src/pages/model-settings/providers-section.tsx
 #: src/pages/model-settings/role-model-picker.tsx
+#: src/pages/NativeMemorySettings.tsx
 #: src/pages/PluginsOverlay.tsx
 #: src/pages/shell/bot-picker.tsx
 #: src/pages/shell/chat-model-picker.tsx
@@ -5376,8 +5352,8 @@ msgstr "חיפוש לפי דומיין"
 msgid "Search integrations.sh"
 msgstr "חיפוש ב-integrations.sh"
 
-#: src/pages/ManagedHonchoMemory.tsx
-msgid "Search memory by meaning"
+#: src/pages/NativeMemorySettings.tsx
+msgid "Search memories"
 msgstr ""
 
 #: src/pages/model-settings/compatible-model-fields.tsx
@@ -5495,6 +5471,10 @@ msgstr "שם השרת"
 msgid "Server URL"
 msgstr "URL של השרת"
 
+#: src/pages/NativeMemorySettings.tsx
+msgid "Set up the embedding model in Models to start saving memories."
+msgstr ""
+
 #: src/components/call/CallCard.tsx
 #: src/components/SidebarFooter.tsx
 #: src/pages/MessagingSettingsPanel.tsx
@@ -5537,6 +5517,7 @@ msgid "Shape {0}"
 msgstr ""
 
 #: src/pages/MemorySettingsOverlay.tsx
+#: src/pages/NativeMemorySettings.tsx
 #: src/pages/shell/bot-panel.tsx
 msgid "Shared"
 msgstr "משותף"
@@ -5818,10 +5799,6 @@ msgstr "הפסקת ההקראה"
 msgid "Stop teaching"
 msgstr "הפסקת הלימוד"
 
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "Stopped"
-msgstr ""
-
 #. js-lingui-explicit-id
 #: src/lib/browser-notifications.ts
 msgid "Stopped."
@@ -5834,6 +5811,11 @@ msgstr ""
 #: src/pages/McpServersOverlay.tsx
 msgid "Stored encrypted"
 msgstr "נשמר מוצפן"
+
+#. placeholder {0}: state.settings.embeddingApiKeyHint
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "Stored key {0}"
+msgstr ""
 
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Stream replies"
@@ -5972,6 +5954,14 @@ msgstr ""
 #: src/lib/model-connection-preflight.ts
 msgid "The connection timed out."
 msgstr "תם הזמן הקצוב לחיבור."
+
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "The embedding model memories are stored and recalled with."
+msgstr ""
+
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "The key is stored encrypted and never shown again."
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/lib/run-error.ts
@@ -6427,8 +6417,8 @@ msgstr "השתמש ב-{oauthEnvReference} עבור אסימון הגישה."
 msgid "Use a found model"
 msgstr "שימוש במודל שנמצא"
 
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "Use an OpenAI-compatible embeddings service; chat providers may not support embeddings."
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "Use a whole number between 1 and 65535."
 msgstr ""
 
 #: src/lib/model-connection-preflight.ts
@@ -6604,10 +6594,6 @@ msgstr ""
 msgid "What about its memories?"
 msgstr "ומה עם הזיכרונות שלו?"
 
-#: src/pages/ManagedHonchoMemory.tsx
-msgid "What bots remember about <0>{observedId}</0> as seen by <1>{observerId}</1>."
-msgstr ""
-
 #: src/pages/shell/dialogs.tsx
 msgid "What can this space use?"
 msgstr ""
@@ -6689,10 +6675,6 @@ msgstr "עובד עם המינוי שלך ל-ChatGPT או ל-Claude."
 
 #: src/pages/memory-providers/HonchoSettingsForm.tsx
 msgid "Workspace"
-msgstr ""
-
-#: src/pages/ManagedHonchoMemory.tsx
-msgid "Write what should be remembered"
 msgstr ""
 
 #: src/lib/billing.ts

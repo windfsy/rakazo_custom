@@ -1594,6 +1594,8 @@ export const NativeMemoryStateSchema = z.object({
     embeddingModel: z.string().optional(),
     embeddingBaseUrl: z.string().optional(),
     embeddingDimensions: z.number().int().optional(),
+    /** Last characters of the stored key, so the field can show which key is set. */
+    embeddingApiKeyHint: z.string().optional(),
   }),
   error: z.string().nullable(),
 });

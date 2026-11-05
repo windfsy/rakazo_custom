@@ -167,12 +167,6 @@ msgstr "{0}，讀寫"
 msgid "{0}, recall only"
 msgstr "{0}，僅回憶"
 
-#. placeholder {0}: similarity(conclusion.distance)
-#. placeholder {1}: conclusion.level ?? ""
-#: src/pages/ManagedHonchoMemory.tsx
-msgid "{0}% match · {1}"
-msgstr "{0}% 相似 · {1}"
-
 #: src/lib/billing.ts
 msgid "{amount} / {period}"
 msgstr "{amount} / {period}"
@@ -599,10 +593,6 @@ msgstr "新增項目"
 msgid "Add MCP server"
 msgstr "新增 MCP 伺服器"
 
-#: src/pages/ManagedHonchoMemory.tsx
-msgid "Add memory"
-msgstr "新增記憶"
-
 #: src/pages/ScratchpadSection.tsx
 msgid "Add open work"
 msgstr "新增待辦事項"
@@ -812,15 +802,12 @@ msgstr ""
 msgid "Any model, with your own key"
 msgstr "使用自己的金鑰連接任何模型"
 
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "API"
-msgstr "API"
-
 #: src/components/AskCard.tsx
 #: src/lib/localized-provider-hint.ts
 #: src/pages/memory-providers/HonchoSettingsForm.tsx
 #: src/pages/model-settings/compatible-key-field.tsx
 #: src/pages/model-settings/connection-controls.tsx
+#: src/pages/model-settings/memory-embedding-section.tsx
 #: src/pages/Onboarding.tsx
 #: src/pages/VoiceSettingsOverlay.tsx
 msgid "API key"
@@ -849,16 +836,6 @@ msgstr ""
 #: src/components/AskCard.tsx
 msgid "Apply"
 msgstr "套用"
-
-#: src/pages/ManagedHonchoSettings.tsx
-#: src/pages/model-settings/honcho-model-section.tsx
-msgid "Apply configuration"
-msgstr "套用設定"
-
-#: src/pages/ManagedHonchoSettings.tsx
-#: src/pages/model-settings/honcho-model-section.tsx
-msgid "Applying…"
-msgstr "正在套用…"
 
 #: src/components/teach/SkillDraftCard.tsx
 msgid "Approval boundaries"
@@ -1028,6 +1005,7 @@ msgid "Back to sign in"
 msgstr "返回登入"
 
 #: src/pages/memory-providers/ConnectionModeFields.tsx
+#: src/pages/model-settings/memory-embedding-section.tsx
 msgid "Base URL"
 msgstr "基底網址"
 
@@ -1134,23 +1112,14 @@ msgstr ""
 msgid "Browse MCP servers"
 msgstr "瀏覽 MCP 伺服器"
 
+#: src/pages/memory-providers/registry.ts
+msgid "Built into this deployment"
+msgstr ""
+
 #: src/pages/KnowledgeSection.tsx
-#: src/pages/memory-providers/ConnectionModeFields.tsx
 #: src/pages/shell/agent-import.tsx
 msgid "Built-in"
 msgstr "內建"
-
-#: src/pages/memory-providers/registry.ts
-msgid "Built-in Honcho"
-msgstr "內建 Honcho"
-
-#: src/pages/model-settings/honcho-model-section.tsx
-msgid "Built-in memory model"
-msgstr "內建記憶模型"
-
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "Built-in service"
-msgstr "內建服務"
 
 #: src/pages/shell/chat-header.tsx
 msgid "Call"
@@ -1197,7 +1166,6 @@ msgstr "無法讀取影像"
 #: src/pages/AccountSettingsOverlay.tsx
 #: src/pages/Artifacts.tsx
 #: src/pages/KnowledgeSection.tsx
-#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/model-settings/connection-controls.tsx
 #: src/pages/model-settings/space-bots-model.tsx
@@ -1343,10 +1311,6 @@ msgstr "正在檢查…"
 #: src/pages/shell/avatar-studio-popover.tsx
 msgid "Choose a bot shape, color, or upload an image"
 msgstr "選擇機器人形狀和顏色，或上傳圖片"
-
-#: src/pages/model-settings/honcho-model-section.tsx
-msgid "Choose a connection"
-msgstr "選擇連線"
 
 #: src/pages/ModelSettingsOverlay.tsx
 #: src/pages/shell/composer-error.tsx
@@ -1619,6 +1583,7 @@ msgstr "請確認此瀏覽器工作階段可以存取該 URL，然後重新測�
 #: src/components/integrations/IntegrationSetup.tsx
 #: src/components/integrations/plugin-marketplace.tsx
 #: src/pages/memory-providers/HonchoSettingsForm.tsx
+#: src/pages/memory-providers/NativeSettingsForm.tsx
 #: src/pages/memory-providers/SerenitySettingsForm.tsx
 #: src/pages/memory-providers/SupermemorySettingsForm.tsx
 #: src/pages/MessagingSettingsPanel.tsx
@@ -1683,7 +1648,6 @@ msgstr "請在「模型」中連接你自己的 API 金鑰，或在「帳務」�
 #: src/components/ComputerDeviceSettings.tsx
 #: src/components/integrations/IntegrationSetup.tsx
 #: src/components/integrations/plugin-marketplace.tsx
-#: src/pages/ManagedHonchoSettings.tsx
 #: src/pages/McpOAuthCallback.tsx
 #: src/pages/MemorySettingsOverlay.tsx
 #: src/pages/PluginsOverlay.tsx
@@ -1697,9 +1661,15 @@ msgstr "已連線"
 msgid "Connected {0}."
 msgstr "已連線 {0}。"
 
+#. placeholder {0}: state.settings.embeddingModel ? ` · ${state.settings.embeddingModel}` : ""
+#: src/pages/NativeMemorySettings.tsx
+msgid "Connected{0}"
+msgstr ""
+
 #: src/components/integrations/plugin-marketplace.tsx
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/memory-providers/HonchoSettingsForm.tsx
+#: src/pages/memory-providers/NativeSettingsForm.tsx
 #: src/pages/memory-providers/SerenitySettingsForm.tsx
 #: src/pages/memory-providers/SupermemorySettingsForm.tsx
 #: src/pages/shell/message-cards.tsx
@@ -1950,6 +1920,10 @@ msgstr "無法刪除技能"
 msgid "Could not delete space"
 msgstr "無法刪除空間"
 
+#: src/pages/NativeMemorySettings.tsx
+msgid "Could not delete the memory"
+msgstr ""
+
 #: src/pages/Artifacts.tsx
 msgid "Could not delete this artifact."
 msgstr "無法刪除此成品。"
@@ -2114,6 +2088,10 @@ msgstr "無法連線伺服器"
 msgid "Could not read these files"
 msgstr "無法讀取這些檔案"
 
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "Could not rebuild memories"
+msgstr ""
+
 #: src/pages/PluginSubmissionsPanel.tsx
 msgid "Could not reject plugin"
 msgstr ""
@@ -2227,6 +2205,10 @@ msgstr "無法儲存該語音"
 #: src/components/VaultSettings.tsx
 msgid "Could not save the credential"
 msgstr "無法儲存憑證"
+
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "Could not save the embedding settings"
+msgstr ""
 
 #: src/pages/shell/message-cards.tsx
 msgid "Could not save this choice"
@@ -2506,6 +2488,7 @@ msgstr "預設範圍"
 #: src/pages/BotContextMenu.tsx
 #: src/pages/KnowledgeSection.tsx
 #: src/pages/McpServersOverlay.tsx
+#: src/pages/NativeMemorySettings.tsx
 #: src/pages/RoutineEditor.tsx
 #: src/pages/shell/archived-chats.tsx
 #: src/pages/shell/dialogs.tsx
@@ -2548,6 +2531,10 @@ msgstr "刪除群組"
 msgid "Delete memories too"
 msgstr "同時刪除記憶"
 
+#: src/pages/NativeMemorySettings.tsx
+msgid "Delete memory"
+msgstr ""
+
 #: src/pages/shell/sidebar-roster.tsx
 msgid "Delete section"
 msgstr "刪除分組"
@@ -2556,14 +2543,6 @@ msgstr "刪除分組"
 #: src/pages/SpaceSettingsPanel.tsx
 msgid "Delete space"
 msgstr "刪除空間"
-
-#: src/pages/ManagedHonchoMemory.tsx
-msgid "Delete this memory"
-msgstr "刪除這條記憶"
-
-#: src/pages/ManagedHonchoMemory.tsx
-msgid "Delete this memory? This cannot be undone."
-msgstr "刪除這條記憶？此操作無法復原。"
 
 #: src/pages/SpaceSettingOverrides.tsx
 msgid "Delete this Space's credentials?"
@@ -2590,10 +2569,6 @@ msgstr "已拒絕"
 #: src/components/AskCard.tsx
 msgid "Deny"
 msgstr "拒絕"
-
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "Deriver workers"
-msgstr "提取器工作行程數"
 
 #: src/pages/Board.tsx
 #: src/pages/shell/agent-import.tsx
@@ -2633,7 +2608,7 @@ msgstr ""
 msgid "Dictation failed."
 msgstr ""
 
-#: src/pages/ManagedHonchoSettings.tsx
+#: src/pages/model-settings/memory-embedding-section.tsx
 msgid "Dimensions"
 msgstr "維度"
 
@@ -2811,17 +2786,9 @@ msgstr ""
 msgid "Email verification required"
 msgstr "需要驗證電子信箱"
 
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "Embedding API key"
-msgstr "嵌入模型 API 金鑰"
-
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "Embedding base URL"
-msgstr "嵌入模型 Base URL"
-
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "Embedding model"
-msgstr "嵌入模型"
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "Embedding settings saved."
+msgstr ""
 
 #. placeholder {0}: humanizeTool(toolName)
 #: src/pages/shell/bot-panel.tsx
@@ -2984,6 +2951,10 @@ msgstr "極高"
 msgid "Extra high"
 msgstr "極高"
 
+#: src/pages/memory-providers/NativeSettingsForm.tsx
+msgid "Facts live in this deployment's database, encrypted, and recall uses the embedding endpoint below."
+msgstr ""
+
 #: src/components/CloudAgentCard.tsx
 msgid "failed"
 msgstr "失敗"
@@ -3079,14 +3050,6 @@ msgstr "已完成。"
 msgid "Finishing MCP connection…"
 msgstr "正在完成 MCP 連線…"
 
-#: src/pages/model-settings/honcho-model-section.tsx
-msgid "Fixed connection"
-msgstr "固定連線"
-
-#: src/pages/model-settings/honcho-model-section.tsx
-msgid "Follow main model"
-msgstr "跟隨主模型"
-
 #: src/pages/Auth.tsx
 msgid "Forgot password?"
 msgstr "忘記密碼？"
@@ -3124,6 +3087,10 @@ msgstr "自 {0} 起"
 #: src/components/integrations/skills-dialog.tsx
 #: src/pages/PluginsOverlay.tsx
 msgid "From GitHub"
+msgstr ""
+
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "From the model"
 msgstr ""
 
 #: src/pages/WindowChrome.tsx
@@ -3526,6 +3493,14 @@ msgstr "稍後"
 msgid "Leave"
 msgstr "退出"
 
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "Leave empty to keep the stored key."
+msgstr ""
+
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "Leave empty to use the size the model reports. Saving checks it against the endpoint."
+msgstr ""
+
 #: src/components/ComputerDeviceSettings.tsx
 msgid "Let bots use this computer"
 msgstr ""
@@ -3592,13 +3567,13 @@ msgstr "自動載入網路圖片"
 msgid "Loading activity…"
 msgstr "正在載入動態…"
 
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "Loading Honcho status…"
-msgstr "正在載入 Honcho 狀態…"
-
 #: src/pages/PluginsOverlay.tsx
 msgid "Loading integrations…"
 msgstr "正在載入整合…"
+
+#: src/pages/NativeMemorySettings.tsx
+msgid "Loading memories…"
+msgstr ""
 
 #: src/pages/MemorySettingsOverlay.tsx
 msgid "Loading memory settings…"
@@ -3724,6 +3699,10 @@ msgstr "Markdown 表格"
 msgid "Marketing"
 msgstr ""
 
+#: src/pages/NativeMemorySettings.tsx
+msgid "match"
+msgstr ""
+
 #: src/pages/model-settings/compatible-model-fields.tsx
 #: src/pages/Onboarding.tsx
 msgid "Max"
@@ -3781,8 +3760,11 @@ msgstr "成員"
 msgid "Members ({0})"
 msgstr "成員（{0}）"
 
+#: src/pages/NativeMemorySettings.tsx
+msgid "Memories"
+msgstr ""
+
 #: src/pages/KnowledgeSection.tsx
-#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/MemorySettingsOverlay.tsx
 #: src/pages/settings-nav.ts
 #: src/pages/shell/agent-import.tsx
@@ -3792,6 +3774,10 @@ msgstr "記憶"
 #: src/pages/shell/agent-import.tsx
 msgid "Memory {position}"
 msgstr "記憶 {position}"
+
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "Memory embeddings"
+msgstr ""
 
 #: src/pages/shell/agent-import.tsx
 msgid "Memory for {title}"
@@ -3906,6 +3892,7 @@ msgstr "模式"
 
 #: src/pages/AccountSettingsOverlay.tsx
 #: src/pages/model-settings/compatible-model-fields.tsx
+#: src/pages/model-settings/memory-embedding-section.tsx
 #: src/pages/model-settings/model-picker.tsx
 #: src/pages/Onboarding.tsx
 #: src/pages/RoutineEditor.tsx
@@ -3917,10 +3904,6 @@ msgstr "模型"
 #: src/lib/model-connection-preflight.ts
 msgid "Model \"{modelId}\" was not listed."
 msgstr "模型「{modelId}」未列出。"
-
-#: src/pages/model-settings/honcho-model-section.tsx
-msgid "Model connection"
-msgstr "模型連線"
 
 #: src/pages/shell/bot-panel.tsx
 msgid "Model connections"
@@ -3935,10 +3918,6 @@ msgstr "模型 ID"
 #: src/pages/model-settings/role-model-picker.tsx
 msgid "Model options"
 msgstr "模型選項"
-
-#: src/pages/model-settings/honcho-model-section.tsx
-msgid "Model the built-in memory service reasons with."
-msgstr "內建記憶服務用於推理的模型。"
 
 #: src/pages/ModelSettingsOverlay.tsx
 #: src/pages/settings-nav.ts
@@ -4058,9 +4037,10 @@ msgstr "需要回覆"
 msgid "Needs an OAuth client ID"
 msgstr "需要 OAuth 用戶端 ID"
 
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "Needs attention"
-msgstr "需要處理"
+#. placeholder {0}: state.error ?? "the embedding endpoint is unreachable"
+#: src/pages/NativeMemorySettings.tsx
+msgid "Needs attention: {0}"
+msgstr ""
 
 #: src/pages/ActivityList.tsx
 msgid "Needs input"
@@ -4194,9 +4174,13 @@ msgstr "沒有符合的模型"
 msgid "No members yet"
 msgstr "尚無成員"
 
-#: src/pages/ManagedHonchoMemory.tsx
-msgid "No memory has been saved yet."
-msgstr "還沒有儲存任何記憶。"
+#: src/pages/NativeMemorySettings.tsx
+msgid "No memories yet"
+msgstr ""
+
+#: src/pages/NativeMemorySettings.tsx
+msgid "No memories yet."
+msgstr ""
 
 #: src/pages/PeerMessagesOverlay.tsx
 msgid "No messages with {peerBotName} yet."
@@ -4303,10 +4287,6 @@ msgstr "Rakazo 不使用"
 msgid "Not working"
 msgstr "無法正常工作"
 
-#: src/pages/ManagedHonchoMemory.tsx
-msgid "Nothing recorded for this pair yet."
-msgstr "這對觀察者與被觀察者還沒有任何記錄。"
-
 #: src/pages/KnowledgeSection.tsx
 msgid "Nothing remembered yet"
 msgstr "尚無記憶"
@@ -4343,11 +4323,7 @@ msgstr "OAuth 連線失敗"
 msgid "OAuth expired"
 msgstr "OAuth 已過期"
 
-#: src/pages/ManagedHonchoMemory.tsx
-msgid "Observed"
-msgstr "被觀察者"
-
-#: src/pages/ManagedHonchoMemory.tsx
+#: src/pages/NativeMemorySettings.tsx
 msgid "Observer"
 msgstr "觀察者"
 
@@ -4657,10 +4633,6 @@ msgstr "在聊天室中傳送「沒有變更」"
 msgid "POST to"
 msgstr "POST 到"
 
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "PostgreSQL"
-msgstr "PostgreSQL"
-
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Preferences"
 msgstr "偏好設定"
@@ -4742,6 +4714,10 @@ msgstr "Rakazo"
 msgid "Rakazo credits"
 msgstr "Rakazo 額度"
 
+#: src/pages/memory-providers/registry.ts
+msgid "Rakazo memory"
+msgstr ""
+
 #: src/pages/memory-providers/HonchoSettingsForm.tsx
 msgid "rakazo-shared and IDs starting with bot- are reserved for Rakazo."
 msgstr "rakazo-shared 與以 bot- 開頭的 ID 保留給 Rakazo 使用。"
@@ -4771,9 +4747,17 @@ msgstr ""
 msgid "Reasoning effort"
 msgstr "推理強度"
 
-#: src/pages/model-settings/honcho-model-section.tsx
-msgid "Reasoning model"
-msgstr "推理模型"
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "Rebuild after changing the model or its dimensions: vectors from different models are not comparable, so stored memories must be embedded again."
+msgstr ""
+
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "Rebuild memories"
+msgstr ""
+
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "Rebuilt {reembedded} memories."
+msgstr ""
 
 #: src/pages/memory-providers/SerenitySettingsForm.tsx
 msgid "Recall and write"
@@ -4872,10 +4856,6 @@ msgstr ""
 #: src/pages/McpServersOverlay.tsx
 msgid "Redirect URI"
 msgstr "重新導向 URI"
-
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "Redis cache"
-msgstr "Redis 快取"
 
 #: src/App.tsx
 #: src/components/ErrorBoundary.tsx
@@ -5103,10 +5083,6 @@ msgstr "調整面板大小"
 msgid "Responses"
 msgstr ""
 
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "Restart"
-msgstr "重新啟動"
-
 #: src/components/DesktopUpdates.tsx
 msgid "Restart to update"
 msgstr "重新啟動以更新"
@@ -5227,7 +5203,6 @@ msgstr "執行中"
 
 #: src/components/SubagentCard.tsx
 #: src/pages/ActivityList.tsx
-#: src/pages/ManagedHonchoSettings.tsx
 #: src/pages/RoutineEditor.tsx
 msgid "Running"
 msgstr "執行中"
@@ -5260,9 +5235,9 @@ msgstr "週六"
 #: src/pages/ExternalConversationSettings.tsx
 #: src/pages/GroupPanel.tsx
 #: src/pages/KnowledgeSection.tsx
-#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/model-settings/connection-controls.tsx
+#: src/pages/model-settings/memory-embedding-section.tsx
 #: src/pages/model-settings/providers-section.tsx
 #: src/pages/ModelSettingsOverlay.tsx
 #: src/pages/RoutineEditor.tsx
@@ -5319,6 +5294,7 @@ msgstr "儲存中…"
 #: src/pages/GroupPanel.tsx
 #: src/pages/McpServersOverlay.tsx
 #: src/pages/model-settings/connection-controls.tsx
+#: src/pages/model-settings/memory-embedding-section.tsx
 #: src/pages/model-settings/providers-section.tsx
 #: src/pages/ModelSettingsOverlay.tsx
 #: src/pages/RoutineEditor.tsx
@@ -5342,11 +5318,11 @@ msgstr "範圍（選填）"
 msgid "Screen not connected"
 msgstr "螢幕未連線"
 
-#: src/pages/ManagedHonchoMemory.tsx
 #: src/pages/model-settings/compatible-model-fields.tsx
 #: src/pages/model-settings/model-picker.tsx
 #: src/pages/model-settings/providers-section.tsx
 #: src/pages/model-settings/role-model-picker.tsx
+#: src/pages/NativeMemorySettings.tsx
 #: src/pages/PluginsOverlay.tsx
 #: src/pages/shell/bot-picker.tsx
 #: src/pages/shell/chat-model-picker.tsx
@@ -5377,9 +5353,9 @@ msgstr "依網域搜尋"
 msgid "Search integrations.sh"
 msgstr "搜尋 integrations.sh"
 
-#: src/pages/ManagedHonchoMemory.tsx
-msgid "Search memory by meaning"
-msgstr "按語義搜尋記憶"
+#: src/pages/NativeMemorySettings.tsx
+msgid "Search memories"
+msgstr ""
 
 #: src/pages/model-settings/compatible-model-fields.tsx
 #: src/pages/model-settings/model-picker.tsx
@@ -5496,6 +5472,10 @@ msgstr "伺服器名稱"
 msgid "Server URL"
 msgstr "伺服器 URL"
 
+#: src/pages/NativeMemorySettings.tsx
+msgid "Set up the embedding model in Models to start saving memories."
+msgstr ""
+
 #: src/components/call/CallCard.tsx
 #: src/components/SidebarFooter.tsx
 #: src/pages/MessagingSettingsPanel.tsx
@@ -5538,6 +5518,7 @@ msgid "Shape {0}"
 msgstr "形狀 {0}"
 
 #: src/pages/MemorySettingsOverlay.tsx
+#: src/pages/NativeMemorySettings.tsx
 #: src/pages/shell/bot-panel.tsx
 msgid "Shared"
 msgstr "共享"
@@ -5819,10 +5800,6 @@ msgstr "停止朗讀"
 msgid "Stop teaching"
 msgstr "停止示範"
 
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "Stopped"
-msgstr "已停止"
-
 #. js-lingui-explicit-id
 #: src/lib/browser-notifications.ts
 msgid "Stopped."
@@ -5835,6 +5812,11 @@ msgstr "正在停止…"
 #: src/pages/McpServersOverlay.tsx
 msgid "Stored encrypted"
 msgstr "已加密儲存"
+
+#. placeholder {0}: state.settings.embeddingApiKeyHint
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "Stored key {0}"
+msgstr ""
 
 #: src/pages/AccountSettingsOverlay.tsx
 msgid "Stream replies"
@@ -5973,6 +5955,14 @@ msgstr ""
 #: src/lib/model-connection-preflight.ts
 msgid "The connection timed out."
 msgstr "連線超時。"
+
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "The embedding model memories are stored and recalled with."
+msgstr ""
+
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "The key is stored encrypted and never shown again."
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/lib/run-error.ts
@@ -6428,9 +6418,9 @@ msgstr "存取權杖請使用 {oauthEnvReference}。"
 msgid "Use a found model"
 msgstr "使用找到的模型"
 
-#: src/pages/ManagedHonchoSettings.tsx
-msgid "Use an OpenAI-compatible embeddings service; chat providers may not support embeddings."
-msgstr "請使用相容 OpenAI 的嵌入服務；聊天模型供應商不一定支援嵌入。"
+#: src/pages/model-settings/memory-embedding-section.tsx
+msgid "Use a whole number between 1 and 65535."
+msgstr ""
 
 #: src/lib/model-connection-preflight.ts
 msgid "Use Connect to verify the key."
@@ -6605,10 +6595,6 @@ msgstr "歡迎使用 Rakazo"
 msgid "What about its memories?"
 msgstr "它的記憶怎麼處理？"
 
-#: src/pages/ManagedHonchoMemory.tsx
-msgid "What bots remember about <0>{observedId}</0> as seen by <1>{observerId}</1>."
-msgstr "機器人以 <1>{observerId}</1> 的視角記住的關於 <0>{observedId}</0> 的內容。"
-
 #: src/pages/shell/dialogs.tsx
 msgid "What can this space use?"
 msgstr ""
@@ -6691,10 +6677,6 @@ msgstr "可使用你的 ChatGPT 或 Claude 方案。"
 #: src/pages/memory-providers/HonchoSettingsForm.tsx
 msgid "Workspace"
 msgstr "工作空間"
-
-#: src/pages/ManagedHonchoMemory.tsx
-msgid "Write what should be remembered"
-msgstr "寫下需要記住的內容"
 
 #: src/lib/billing.ts
 msgid "year"

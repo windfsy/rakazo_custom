@@ -28,8 +28,13 @@ export function MemoryEmbeddingSection() {
   const [notice, setNotice] = useState<string | null>(null);
 
   useEffect(() => {
-    void rpc.memory
-      .nativeState()
+    // A server without the built-in provider (or an older one) serves no state, and a
+    // harness may stub only part of the router: leave the section empty instead of
+    // breaking the Models panel.
+    const read = rpc.memory?.nativeState;
+    if (!read) return;
+    void read
+      .call(rpc.memory)
       .then((next) => {
         setState(next);
         setModel(next.settings.embeddingModel ?? "");
@@ -58,6 +63,7 @@ export function MemoryEmbeddingSection() {
         ...(apiKey.trim() ? { embeddingApiKey: apiKey.trim() } : {}),
         ...(parsedDimensions ? { embeddingDimensions: parsedDimensions } : {}),
       });
+      // The key is never shown again; the stored hint tells a member which one is set.
       setApiKey("");
       setState(next);
       setNotice(t`Embedding settings saved.`);
@@ -137,7 +143,19 @@ export function MemoryEmbeddingSection() {
             type="password"
             autoComplete="new-password"
             maxLength={4096}
+            placeholder={
+              state?.settings.embeddingApiKeyHint
+                ? t`Stored key ${state.settings.embeddingApiKeyHint}`
+                : undefined
+            }
           />
+          <p className="mt-2 text-[13px] text-muted-foreground">
+            {state?.settings.embeddingApiKeyHint ? (
+              <Trans>Leave empty to keep the stored key.</Trans>
+            ) : (
+              <Trans>The key is stored encrypted and never shown again.</Trans>
+            )}
+          </p>
         </Field>
 
         <Field data-invalid={dimensionsValid ? undefined : true}>

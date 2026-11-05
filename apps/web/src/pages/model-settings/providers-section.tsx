@@ -125,6 +125,7 @@ export function ConnectionNameField({
       <div className="mt-2 flex gap-2">
         <Input
           id={nameId}
+          data-testid="connection-name"
           maxLength={MAX_MODEL_CONNECTION_LABEL}
           value={name}
           onChange={(event) => setName(event.target.value)}

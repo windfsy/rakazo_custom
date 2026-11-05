@@ -1558,7 +1558,7 @@ it("renames a connection", async () => {
   const view = await renderSettings();
   try {
     await openProvider("DeepSeek (Work)");
-    const input = view.container.querySelector<HTMLInputElement>("input[maxlength]");
+    const input = view.container.querySelector<HTMLInputElement>("[data-testid=connection-name]");
     if (!input) throw new Error("Missing name field");
     expect(input.value).toBe("Work");
     await typeInto(input, "Client work");

@@ -26,7 +26,8 @@ export interface MemoryProviderSettingsRegistration {
 export const MEMORY_PROVIDER_SETTINGS: readonly MemoryProviderSettingsRegistration[] = [
   {
     id: "native",
-    name: "Rakazo memory",
+    // Descriptive rather than a brand name, so it follows the interface language.
+    name: t`Rakazo memory`,
     SettingsForm: NativeSettingsForm,
     connectedLabel: () => t`Built into this deployment`,
   },

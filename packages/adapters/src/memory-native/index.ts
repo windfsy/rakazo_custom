@@ -45,6 +45,7 @@ export type {
   NativeMemoryStatus,
 } from "./state.js";
 export {
+  apiKeyHint,
   NATIVE_EMBEDDING_SECRET_KIND,
   NATIVE_PROVIDER_ID,
   readNativeMemoryState,
